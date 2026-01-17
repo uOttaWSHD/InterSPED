@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     # Yellowcake API Configuration
     yellowcake_api_key: str
     yellowcake_api_url: str = "https://api.yellowcake.dev/v1/extract-stream"
+    force_yellowcake_fallback: bool = False  # Set to TRUE in .env to bypass Yellowcake
 
     # Groq Configuration
     groq_api_key: str

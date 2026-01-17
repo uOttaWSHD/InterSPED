@@ -11,22 +11,24 @@ JobScraper uses a **multi-stage intelligent pipeline** to transform company name
 
 ## Pipeline Stages
 
-### Stage 1: RAW DATA SCRAPING (Yellowcake) 🔍
+### Stage 1: RAW DATA SCRAPING (Yellowcake & Custom) 🔍
 **Purpose**: Get unfiltered interview experiences and company data from the web
 
 **What it does**:
-- Scrapes Glassdoor-like interview experiences
-- Grabs company career pages and mission statements
+- **Yellowcake**: Intelligently scrapes LeetCode problem details (structure extraction)
+- **Custom Scrapers**:
+  - Fetches company problem lists from GitHub (CSV)
+  - Scrapes Glassdoor interview experiences
+  - Grabs company career pages and mission statements
 - Extracts job postings if provided
-- Gets RAW TEXT - no structuring, no filtering
 
 **Yellowcake's Role**:
-- Navigates complex websites
-- Handles JavaScript-rendered content
-- Returns complete text from multiple sources
-- Provides session IDs for tracking
+- Navigates dynamic LeetCode pages
+- Uses agentic prompts to extract structured problem data (description, constraints, examples)
+- Handles layout variations automatically
+- Provides resilient scraping compared to brittle CSS selectors
 
-**Output**: Raw, unstructured text about the company and interviews
+**Output**: Raw text and structured JSON about the company and interviews
 
 ### Stage 2: INTELLIGENT ANALYSIS (OpenAI LLM) 🤖
 **Purpose**: Read through raw data like a human would and extract patterns

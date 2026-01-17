@@ -1,0 +1,23 @@
+{
+  "company": "leetcode",
+  "source": "problem_details",
+  "url": "Longest Palindromic Substring",
+  "cached_at": "2026-01-17T17:15:39.080333",
+  "data": {
+    "url": "https://leetcode.ca/2015-12-05-5-Longest-Palindromic-Substring/",
+    "leetcode_number": null,
+    "examples": [
+      "Input:s = \"babad\"Output:\"bab\"Explanation:\"aba\" is also a valid answer.",
+      "Input:s = \"cbbd\"Output:\"bb\""
+    ],
+    "constraints": [
+      "1 <= s.length <= 1000",
+      "sconsist of only digits and English letters."
+    ],
+    "problem_statement": "Given a strings, returnthe longestpalindromicsubstringins.\n\n",
+    "difficulty": "medium",
+    "title": "Longest Palindromic Substring",
+    "example_input": "s = \"babad\"",
+    "example_output": "\"bab\""
+  }
+}

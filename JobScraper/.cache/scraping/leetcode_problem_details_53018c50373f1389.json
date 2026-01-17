@@ -1,0 +1,24 @@
+{
+  "company": "leetcode",
+  "source": "problem_details",
+  "url": "Best Time to Buy and Sell Stock",
+  "cached_at": "2026-01-17T17:15:41.207793",
+  "data": {
+    "url": "https://leetcode.ca/2025-09-22-3652-Best-Time-to-Buy-and-Sell-Stock-using-Strategy/",
+    "leetcode_number": null,
+    "examples": [
+      "classSolution{publiclongmaxProfit(int[]prices,int[]strategy,intk){intn=prices.length;long[]s=newlong[n+1];long[]t=newlong[n+1];for(inti=1;i<=n;i++){inta=prices[i-1];intb=strategy[i-1];s[i]=s[i-1]+a*b;t[i]=t[i-1]+a;}longans=s[n];for(inti=k;i<=n;i++){ans=Math.max(ans,s[n]-(s[i]-s[i-k])+(t[i]-t[i-k/2]));}returnans;}}",
+      "classSolution{publiclongmaxProfit(int[]prices,int[]strategy,intk){intn=prices.length;long[]s=newlong[n+1];long[]t=newlong[n+1];for(inti=1;i<=n;i++){inta=prices[i-1];intb=strategy[i-1];s[i]=s[i-1]+a*b;t[i]=t[i-1]+a;}longans=s[n];for(inti=k;i<=n;i++){ans=Math.max(ans,s[n]-(s[i]-s[i-k])+(t[i]-t[i-k/2]));}returnans;}}"
+    ],
+    "constraints": [
+      "2 <= prices.length == strategy.length <= 105",
+      "1 <= prices[i] <= 105",
+      "-1 <= strategy[i] <= 1",
+      "2 <= k <= prices.length",
+      "kis even"
+    ],
+    "problem_statement": "You are given two integer arrayspricesandstrategy, where:\n\nYou are also given anevenintegerk, and may performat most onemodification tostrategy. A modification consists of:\n\nTheprofitis defined as thesumofstrategy[i] * prices[i]across all days.\n\nReturn themaximumpossible profit you can achieve.\n\nNote:There are no constraints on budget or stock ownership, so all buy and sell operations are feasible regardless of past actions.\n\n",
+    "difficulty": "medium",
+    "title": "Best Time to Buy and Sell Stock using Strategy"
+  }
+}
