@@ -14,7 +14,7 @@ Swagger docs available at /docs
 """
 
 from __future__ import annotations
-from fastapi import FastAPI, HTTPException, status
+from fastapi import FastAPI, HTTPException, status, BackgroundTasks
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from typing import AsyncGenerator, Any
@@ -118,12 +118,14 @@ async def health_check() -> HealthResponse:
 )
 async def scrape_company_data(
     request: CompanySearchRequest,
+    background_tasks: BackgroundTasks,
 ) -> CompanyInterviewDataResponse:
     """
     Scrape company interview data and return complete results.
 
     Args:
         request: CompanySearchRequest with company name and optional details
+        background_tasks: FastAPI background tasks
 
     Returns:
         CompanyInterviewDataResponse with all scraped data
@@ -132,7 +134,16 @@ async def scrape_company_data(
         HTTPException: If scraping fails
     """
     try:
+        # 1. Execute the main pipeline (Fast Path)
+        # This will scrape 3 random problems immediately
         result = await scraper_service.scrape_company_data(request)
+
+        # 2. Schedule the remaining problems in the background (Slow Path)
+        # This updates the cache for future requests
+        background_tasks.add_task(
+            scraper_service.background_enrichment, request.company_name
+        )
+
         return result
     except Exception as e:
         import traceback
@@ -182,12 +193,14 @@ async def scrape_company_data(
 )
 async def scrape_company_data_stream(
     request: CompanySearchRequest,
+    background_tasks: BackgroundTasks,
 ) -> StreamingResponse:
     """
     Stream scraping progress using Server-Sent Events.
 
     Args:
         request: CompanySearchRequest with company name and optional details
+        background_tasks: FastAPI background tasks
 
     Returns:
         StreamingResponse with SSE events
@@ -196,6 +209,11 @@ async def scrape_company_data_stream(
     async def event_generator() -> AsyncGenerator[str, None]:
         """Generate SSE events from scraping progress."""
         try:
+            # Trigger background enrichment as soon as we start streaming
+            background_tasks.add_task(
+                scraper_service.background_enrichment, request.company_name
+            )
+
             async for update in scraper_service.scrape_company_data_stream(request):
                 # Format as SSE
                 event_type = "complete" if update.status == "complete" else "progress"

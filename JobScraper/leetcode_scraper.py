@@ -2,64 +2,140 @@
 LeetCode Company Problems Scraper
 
 Scrapes company-specific LeetCode problems from:
-1. GitHub repo: liquidslr/leetcode-company-wise-problems
+1. Local data folder (cloned from liquidslr/leetcode-company-wise-problems)
 2. LeetCode.ca for actual problem content
 
-Architecture: Modular and swappable for Yellowcake integration later.
+Architecture: Modular and swappable for Yellowcake integration.
 Uses file-based caching to avoid duplicate scraping.
-
-Data Flow:
-1. Fetch company CSV from GitHub repo
-2. Parse CSV to get LeetCode question numbers
-3. For each question, scrape leetcode.ca/<number>
-4. Extract problem details (title, description, difficulty, examples)
-5. Cache everything to avoid re-scraping
 """
 
 from __future__ import annotations
 
 import csv
-from typing import Optional
+import json
+import os
+import re
+from typing import Optional, Any, TypedDict, cast
 
 import httpx
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Tag
 
 from cache import get_cache
+from config import settings
+
+
+class LeetCodeProblemData(TypedDict, total=False):
+    leetcode_number: Optional[int]
+    title: Optional[str]
+    difficulty: Optional[str]
+    problem_statement: Optional[str]
+    examples: list[str]
+    constraints: list[str]
+    url: str
+    example_input: Optional[str]
+    example_output: Optional[str]
 
 
 class LeetCodeScraper:
     """
     Scrape company-specific LeetCode problems.
-
-    Modular interface allows swapping with Yellowcake later:
-    - All methods have clear contracts
-    - Caching is built-in
-    - Can be replaced with YellowcakeScraperAdapter
+    Uses Yellowcake for extracting structured data from problem pages.
     """
 
     def __init__(self) -> None:
         self.cache = get_cache()
-        self.github_base = "https://raw.githubusercontent.com/liquidslr/leetcode-company-wise-problems/main"
+        # Local data path (cloned repo)
+        self.data_dir = "/var/home/waaberi/Documents/uOttahack/Submission/JobScraper/data/leetcode_problems"
         self.leetcode_ca_base = "https://leetcode.ca"
+        self.yellowcake_api_key = settings.yellowcake_api_key
+        self.yellowcake_api_url = settings.yellowcake_api_url
+        self.force_fallback = settings.force_yellowcake_fallback
+
+        # Static optimized prompt for Yellowcake
+        self.yellowcake_prompt = """
+Extract the following LeetCode problem details from the page content:
+- leetcode_number (integer): The official LeetCode problem number (usually found in the title)
+- title (string): The title of the problem
+- difficulty (string): The difficulty level (Easy, Medium, or Hard)
+- problem_statement (string): The full text of the problem description/description section
+- examples (list of strings): Every example case provided (Input, Output, and optional Explanation)
+- constraints (list of strings): Every individual constraint mentioned (e.g., "1 <= n <= 10^5")
+- example_input (string): The 'Input' part of the very first example
+- example_output (string): The 'Output' part of the very first example
+- optimal_time_complexity (string): Based on constraints, what is the expected big-O time complexity?
+- optimal_space_complexity (string): Based on constraints, what is the expected big-O space complexity?
+
+Guidelines:
+- Look for "Description" or "Problem Statement" for the main text.
+- Look for "Example X:" labels and the text inside following <pre> tags.
+- Look for "Constraints:" and the list items below it.
+- If complexities aren't explicitly stated, infer them from typical LeetCode patterns for the given constraints.
+
+Return a clean, valid JSON object with these exact keys.
+"""
+
+    async def _scrape_with_yellowcake(self, url: str, prompt: str) -> Any | None:
+        """
+        Scrape a URL using Yellowcake API.
+        """
+        if self.force_fallback:
+            print("🚫 [YELLOWCAKE] Force fallback enabled. Bypassing API.")
+            return None
+
+        if (
+            not self.yellowcake_api_key
+            or self.yellowcake_api_key == "your_api_key_here"
+        ):
+            return None
+
+        print(f"🍰 [YELLOWCAKE] Scraping {url}...")
+
+        headers = {
+            "Content-Type": "application/json",
+            "X-API-Key": self.yellowcake_api_key,
+        }
+
+        payload = {
+            "url": url,
+            "prompt": prompt,
+        }
+
+        try:
+            async with httpx.AsyncClient(timeout=120.0) as client:
+                async with client.stream(
+                    "POST", self.yellowcake_api_url, headers=headers, json=payload
+                ) as response:
+                    if response.status_code != 200:
+                        print(f"❌ [YELLOWCAKE] API error: {response.status_code}")
+                        return None
+
+                    final_data = None
+                    async for line in response.aiter_lines():
+                        if line.startswith("data: "):
+                            data_str = line.replace("data: ", "", 1)
+                            try:
+                                event_data = json.loads(data_str)
+                                if (
+                                    isinstance(event_data, dict)
+                                    and event_data.get("success") is True
+                                    and "data" in event_data
+                                ):
+                                    final_data = event_data.get("data")
+                                    print("✅ [YELLOWCAKE] Received valid data chunk")
+                            except json.JSONDecodeError:
+                                pass
+
+                    return final_data
+
+        except Exception as e:
+            print(f"❌ [YELLOWCAKE] Error: {e}")
+            return None
 
     async def get_company_problems(
         self, company_name: str, limit: int = 20
     ) -> list[dict[str, str | int]]:
         """
-        Get LeetCode problems asked by a specific company.
-
-        Args:
-            company_name: Company name (e.g., 'Google', 'Amazon', 'Meta')
-            limit: Maximum number of problems to return
-
-        Returns:
-            List of problem metadata: [{
-                "leetcode_number": 1,
-                "title": "Two Sum",
-                "difficulty": "easy",
-                "link": "https://leetcode.com/problems/two-sum",
-                "frequency": "high"
-            }]
+        Get LeetCode problems asked by a specific company from local CSV files.
         """
         # Check cache first
         cached = self.cache.get_scraped_data(
@@ -68,16 +144,14 @@ class LeetCodeScraper:
 
         if cached:
             print(f"✅ Cache hit for {company_name} LeetCode problems")
-            return cached[:limit]  # type: ignore[return-value]
+            return cast(list[dict[str, str | int]], cached[:limit])
 
-        print(f"🔍 Fetching {company_name} LeetCode problems from GitHub...")
+        print(f"🔍 Searching local data for {company_name} LeetCode problems...")
 
         try:
-            # Find the company's CSV file in the GitHub repo
             csv_data = await self._fetch_company_csv(company_name)
 
             if not csv_data:
-                print(f"⚠️ No LeetCode data found for {company_name}")
                 return []
 
             # Parse CSV and extract problem metadata
@@ -91,29 +165,14 @@ class LeetCodeScraper:
             return problems[:limit]
 
         except Exception as e:
-            print(f"❌ Error fetching LeetCode problems: {e}")
+            print(f"❌ Error fetching local LeetCode problems: {e}")
             return []
 
     async def get_problem_details(
         self, leetcode_number: int | None = None, problem_title: str | None = None
-    ) -> dict[str, str | list[str] | int | None] | None:
+    ) -> dict[str, Any] | None:
         """
         Get full problem details from leetcode.ca.
-
-        Args:
-            leetcode_number: LeetCode problem number (if known)
-            problem_title: Problem title (if number unknown)
-
-        Returns:
-            Problem details: {
-                "number": 1,
-                "title": "Two Sum",
-                "difficulty": "easy",
-                "description": "Given an array...",
-                "examples": ["Example 1: ...", "Example 2: ..."],
-                "constraints": ["1 <= nums.length <= 10^4", ...],
-                "url": "https://leetcode.ca/2015-12-18-1-Two-Sum/"
-            }
         """
         cache_key = (
             str(leetcode_number) if leetcode_number else (problem_title or "unknown")
@@ -125,11 +184,9 @@ class LeetCodeScraper:
         )
 
         if cached:
-            return cached  # type: ignore[return-value]
+            return cast(dict[str, Any], cached)
 
-        print(
-            f"🔍 Scraping LeetCode problem from leetcode.ca (number={leetcode_number}, title={problem_title})..."
-        )
+        print(f"🔍 Scraping leetcode.ca for {cache_key}...")
 
         try:
             # Scrape from leetcode.ca
@@ -154,18 +211,11 @@ class LeetCodeScraper:
 
     async def enrich_with_details(
         self, problems: list[dict[str, str | int]], max_details: int = 10
-    ) -> list[dict[str, str | int | list[str]]]:
+    ) -> list[dict[str, Any]]:
         """
-        Enrich problem metadata with full details from leetcode.ca.
-
-        Args:
-            problems: List of problem metadata from get_company_problems()
-            max_details: Maximum number of problems to enrich (avoid too many requests)
-
-        Returns:
-            Enriched problems with full descriptions, examples, etc.
+        Enrich problem metadata with full details.
         """
-        enriched = []
+        enriched: list[dict[str, Any]] = []
 
         for i, problem in enumerate(problems[:max_details]):
             if i >= max_details:
@@ -174,7 +224,6 @@ class LeetCodeScraper:
             number = problem.get("leetcode_number")
             title = problem.get("title")
 
-            # Get full details (try with number first, then title)
             details = None
             if number is not None and isinstance(number, int):
                 details = await self.get_problem_details(leetcode_number=number)
@@ -182,473 +231,451 @@ class LeetCodeScraper:
                 details = await self.get_problem_details(problem_title=title)
 
             if details:
-                # Merge metadata with details
                 enriched_problem = {**problem, **details}
-                # Ensure leetcode_number is set if we got it from scraping
                 if "number" in details and "leetcode_number" not in enriched_problem:
                     enriched_problem["leetcode_number"] = details["number"]
                 enriched.append(enriched_problem)
             else:
-                # Keep original metadata even if scraping fails
                 enriched.append(problem)
 
         return enriched
 
-    # ========================================================================
-    # PRIVATE HELPER METHODS
-    # ========================================================================
-
     async def _fetch_company_csv(self, company_name: str) -> Optional[str]:
         """
-        Fetch the company's CSV file from GitHub.
-
-        CSV naming pattern in repo:
-        - companies/<CompanyName>All.csv
-        - e.g., GoogleAll.csv, AmazonAll.csv, MetaAll.csv
+        Fetch CSV from local directory using aggressive matching.
+        1. Try exact/partial matches.
+        2. Use LLM to resolve abbreviations/aliases (e.g. Royal Bank of Canada -> RBC).
+        3. Use fuzzy matching as final fallback.
         """
-        # Try different name variations
-        variations = [
-            company_name,  # Google
-            company_name.replace(" ", ""),  # JPMorgan Chase -> JPMorganChase
-            company_name.split()[0],  # "Bank of America" -> Bank
-        ]
+        import difflib
 
-        async with httpx.AsyncClient(timeout=30.0) as client:
-            for variant in variations:
-                # Try with "All" suffix (most common)
-                csv_url = f"{self.github_base}/companies/{variant}All.csv"
+        try:
+            if not os.path.exists(self.data_dir):
+                print(f"❌ Data directory missing: {self.data_dir}")
+                return None
 
+            # Get all company directories
+            company_dirs = [
+                d
+                for d in os.listdir(self.data_dir)
+                if os.path.isdir(os.path.join(self.data_dir, d))
+            ]
+
+            # 1. Aggressive local search with variations
+            search_names = [
+                company_name.lower(),
+                company_name.lower().replace(" ", ""),
+                re.sub(r"[^a-z0-9]", "", company_name.lower()),
+            ]
+
+            # Add potential abbreviation if it looks like one (e.g. "Royal Bank of Canada" -> "rbc")
+            if " " in company_name:
+                abbrev = "".join(
+                    word[0] for word in company_name.split() if word
+                ).lower()
+                if len(abbrev) >= 2:
+                    search_names.append(abbrev)
+
+            matched_dir = None
+
+            # Direct/Partial match loop
+            for d in company_dirs:
+                d_lower = d.lower().replace(" ", "")
+                for target in search_names:
+                    if target == d_lower or target in d_lower or d_lower in target:
+                        matched_dir = d
+                        break
+                if matched_dir:
+                    break
+
+            # 2. LLM Resolution (if local search failed)
+            if not matched_dir and settings.groq_api_key:
+                print(f"🤖 Asking LLM to resolve company name: {company_name}")
                 try:
-                    response = await client.get(csv_url)
+                    async with httpx.AsyncClient(timeout=10.0) as client:
+                        prompt = f"Given a company name '{company_name}', return 3 potential directory names (short, common abbreviations, or legal names) that might represent it in a list of LeetCode company folders. Respond with only the names separated by commas. Example: 'Royal Bank of Canada' -> 'RBC, RoyalBank, RoyalBankofCanada'"
+                        payload = {
+                            "model": settings.groq_model,
+                            "messages": [{"role": "user", "content": prompt}],
+                            "temperature": 0.1,
+                        }
+                        headers = {"Authorization": f"Bearer {settings.groq_api_key}"}
+                        response = await client.post(
+                            "https://api.groq.com/openai/v1/chat/completions",
+                            headers=headers,
+                            json=payload,
+                        )
+                        if response.status_code == 200:
+                            content = response.json()["choices"][0]["message"][
+                                "content"
+                            ]
+                            variations = [v.strip().lower() for v in content.split(",")]
+                            print(f"💡 LLM suggests variations: {variations}")
+                            for d in company_dirs:
+                                d_clean = d.lower().replace(" ", "")
+                                if any(
+                                    v in d_clean or d_clean in v for v in variations
+                                ):
+                                    matched_dir = d
+                                    break
+                except Exception as e:
+                    print(f"⚠️ LLM resolution failed: {e}")
 
-                    if response.status_code == 200:
-                        print(f"✅ Found CSV at {csv_url}")
-                        return response.text
+            # 3. Fuzzy matching fallback
+            if not matched_dir:
+                matches = difflib.get_close_matches(
+                    company_name, company_dirs, n=1, cutoff=0.5
+                )
+                if matches:
+                    matched_dir = matches[0]
+                    print(f"🎯 Fuzzy match selected: {matched_dir}")
 
-                except Exception:
-                    continue
+            if matched_dir:
+                dir_path = os.path.join(self.data_dir, matched_dir)
+                files = os.listdir(dir_path)
+                # Priority: All.csv, then any CSV containing "all"
+                csv_file = next((f for f in files if f.lower() == "all.csv"), None)
+                if not csv_file:
+                    csv_file = next(
+                        (f for f in files if "all" in f.lower() and f.endswith(".csv")),
+                        None,
+                    )
+                if not csv_file:
+                    csv_file = next((f for f in files if f.endswith(".csv")), None)
 
-        return None
+                if csv_file:
+                    print(f"✅ Found local CSV: {matched_dir}/{csv_file}")
+                    with open(
+                        os.path.join(dir_path, csv_file), "r", encoding="utf-8"
+                    ) as f:
+                        return f.read()
+
+            print(f"⚠️ No CSV folder found for {company_name}")
+            return None
+        except Exception as e:
+            print(f"❌ Local CSV error: {e}")
+            return None
+
+            # Get all company directories
+            company_dirs = [
+                d
+                for d in os.listdir(self.data_dir)
+                if os.path.isdir(os.path.join(self.data_dir, d))
+            ]
+
+            # 1. Aggressive local search with variations
+            search_names = [
+                company_name.lower(),
+                company_name.lower().replace(" ", ""),
+                re.sub(r"[^a-z0-9]", "", company_name.lower()),
+            ]
+
+            # Add potential abbreviation if it looks like one (e.g. "Royal Bank of Canada" -> "rbc")
+            if " " in company_name:
+                abbrev = "".join(
+                    word[0] for word in company_name.split() if word
+                ).lower()
+                if len(abbrev) >= 2:
+                    search_names.append(abbrev)
+
+            matched_dir = None
+
+            # Direct/Partial match loop
+            for d in company_dirs:
+                d_lower = d.lower().replace(" ", "")
+                for target in search_names:
+                    if target == d_lower or target in d_lower or d_lower in target:
+                        matched_dir = d
+                        break
+                if matched_dir:
+                    break
+
+            # 2. LLM Resolution (if local search failed)
+            if not matched_dir and settings.groq_api_key:
+                print(f"🤖 Asking LLM to resolve company name: {company_name}")
+                try:
+                    async with httpx.AsyncClient(timeout=10.0) as client:
+                        prompt = f"Given a company name '{company_name}', return 3 potential directory names (short, common abbreviations, or legal names) that might represent it in a list of LeetCode company folders. Respond with only the names separated by commas. Example: 'Royal Bank of Canada' -> 'RBC, RoyalBank, RoyalBankofCanada'"
+                        payload = {
+                            "model": settings.groq_model,
+                            "messages": [{"role": "user", "content": prompt}],
+                            "temperature": 0.1,
+                        }
+                        headers = {"Authorization": f"Bearer {settings.groq_api_key}"}
+                        response = await client.post(
+                            "https://api.groq.com/openai/v1/chat/completions",
+                            headers=headers,
+                            json=payload,
+                        )
+                        if response.status_code == 200:
+                            content = response.json()["choices"][0]["message"][
+                                "content"
+                            ]
+                            variations = [v.strip().lower() for v in content.split(",")]
+                            print(f"💡 LLM suggests variations: {variations}")
+                            for d in company_dirs:
+                                d_clean = d.lower().replace(" ", "")
+                                if any(
+                                    v in d_clean or d_clean in v for v in variations
+                                ):
+                                    matched_dir = d
+                                    break
+                except Exception as e:
+                    print(f"⚠️ LLM resolution failed: {e}")
+
+            # 3. Fuzzy matching fallback
+            if not matched_dir:
+                matches = difflib.get_close_matches(
+                    company_name, company_dirs, n=1, cutoff=0.5
+                )
+                if matches:
+                    matched_dir = matches[0]
+                    print(f"🎯 Fuzzy match selected: {matched_dir}")
+
+            if matched_dir:
+                dir_path = os.path.join(self.data_dir, matched_dir)
+                files = os.listdir(dir_path)
+                # Priority: All.csv, then any CSV containing "all"
+                csv_file = next((f for f in files if f.lower() == "all.csv"), None)
+                if not csv_file:
+                    csv_file = next(
+                        (f for f in files if "all" in f.lower() and f.endswith(".csv")),
+                        None,
+                    )
+                if not csv_file:
+                    csv_file = next((f for f in files if f.endswith(".csv")), None)
+
+                if csv_file:
+                    print(f"✅ Found local CSV: {matched_dir}/{csv_file}")
+                    with open(
+                        os.path.join(dir_path, csv_file), "r", encoding="utf-8"
+                    ) as f:
+                        return f.read()
+
+            print(f"⚠️ No CSV folder found for {company_name}")
+            return None
+        except Exception as e:
+            print(f"❌ Local CSV error: {e}")
+            return None
 
     def _parse_csv_data(self, csv_text: str) -> list[dict[str, str | int]]:
         """
-        Parse CSV data to extract problem metadata.
-
-        Expected CSV columns (from liquidslr/leetcode-company-wise-problems):
-        - ID (problem number)
-        - Title
-        - Acceptance
-        - Difficulty
-        - Frequency-something
-        - Link (to LeetCode problem)
+        Parse CSV metadata.
         """
-        problems = []
-
-        lines = csv_text.strip().split("\n")
-        if not lines:
-            return []
-
-        # Parse CSV
-        reader = csv.DictReader(lines)
+        problems: list[dict[str, str | int]] = []
+        reader = csv.DictReader(csv_text.strip().split("\n"))
 
         for row in reader:
             try:
-                # Extract relevant fields
-                problem = {}
-
-                # Problem number (from ID or Link)
+                problem: dict[str, str | int] = {}
                 if "ID" in row and row["ID"].strip():
-                    try:
-                        problem["leetcode_number"] = int(row["ID"].strip())
-                    except (ValueError, TypeError):
-                        pass
+                    problem["leetcode_number"] = int(row["ID"].strip())
 
-                # Try to extract from Link URL if no ID
-                if "leetcode_number" not in problem and "Link" in row and row["Link"]:
-                    link = row["Link"]
-                    # Some CSVs have problem numbers in the URL path
-                    # Format: https://leetcode.com/problems/two-sum/ (number is 1)
-                    # We can't get number from slug alone, but we'll try to get it when scraping
-                    # Store the link for later use
-                    problem["link"] = link
-
-                # Title
                 if "Title" in row:
                     problem["title"] = row["Title"]
 
-                # Difficulty
                 if "Difficulty" in row:
                     problem["difficulty"] = row["Difficulty"].lower()
 
-                # Link (if not already set)
-                if "link" not in problem and "Link" in row:
+                if "Link" in row:
                     problem["link"] = row["Link"]
 
-                # Frequency (if available)
-                freq_cols = [k for k in row.keys() if "frequency" in k.lower()]
-                if freq_cols:
-                    try:
-                        freq_val = float(row[freq_cols[0]])
-                        if freq_val > 0.7:
-                            problem["frequency"] = "very_common"
-                        elif freq_val > 0.4:
-                            problem["frequency"] = "common"
-                        elif freq_val > 0.2:
-                            problem["frequency"] = "occasional"
-                        else:
-                            problem["frequency"] = "rare"
-                    except (ValueError, KeyError):
-                        problem["frequency"] = "unknown"
-
-                # If we have a link but no ID, try to extract problem number from URL
-                if "link" in problem and "leetcode_number" not in problem:
-                    # Try to extract from URL slug or title
-                    # Some CSVs have problem numbers in the title or we can infer from order
-                    # For now, we'll try to get it from leetcode.ca when we scrape
-                    pass
-
-                # Only add if we have at least title (difficulty is nice but not required)
                 if "title" in problem:
-                    # If no leetcode_number, we'll try to find it when scraping leetcode.ca
-                    # If no difficulty, we'll try to infer it or leave it as None
                     if "difficulty" not in problem:
-                        problem["difficulty"] = "medium"  # Default
+                        problem["difficulty"] = "medium"
                     problems.append(problem)
-
-            except Exception as e:
-                print(f"Warning: Failed to parse CSV row: {e}")
+            except Exception:
                 continue
 
         return problems
 
     async def _scrape_leetcode_ca(
         self, problem_number: int | None = None, problem_title: str | None = None
-    ) -> dict[str, str | list[str] | int | None] | None:
+    ) -> dict[str, Any] | None:
         """
-        Scrape problem details from leetcode.ca.
-
-        LeetCode.ca URL pattern (from example):
-        - Problem pages: leetcode.ca/YYYY-MM-DD-NUMBER-Title/
-        - Example: leetcode.ca/2024-01-15-3000-Maximum-Area-of-Longest-Diagonal-Rectangle/
-        - All problems listing: leetcode.ca/all/problems.html
-
-        Args:
-            problem_number: LeetCode problem number (if known)
-            problem_title: Problem title to search for (if number unknown)
+        Discovers the specific problem URL on leetcode.ca by searching the index page,
+        then uses Yellowcake to extract structured data from that specific link.
         """
         async with httpx.AsyncClient(timeout=30.0, follow_redirects=True) as client:
             try:
-                problem_link = None
+                problem_link: Optional[str] = None
 
-                # Strategy 1: If we have problem number, try to find it in the all problems page
-                if problem_number:
-                    # Fetch the all problems page
-                    response = await client.get(
-                        f"{self.leetcode_ca_base}/all/problems.html"
-                    )
+                # 1. DISCOVERY: Go to leetcode.ca and find the link by searching inner text
+                print(
+                    f"🔍 Discovery: Fetching leetcode.ca index to find problem {problem_number or problem_title}..."
+                )
 
-                    if response.status_code == 200:
-                        soup = BeautifulSoup(response.text, "lxml")
+                resp = await client.get(self.leetcode_ca_base)
+                if resp.status_code != 200:
+                    print(f"❌ Failed to load leetcode.ca index: {resp.status_code}")
+                    return None
 
-                        # Find link containing the problem number
-                        # Links might be in format: /2024-01-15-3000-Title/ or just contain "3000"
-                        for link in soup.find_all("a", href=True):
-                            href = link.get("href")
-                            if not isinstance(href, str):
-                                continue
-                            text = link.get_text()
+                soup = BeautifulSoup(resp.text, "lxml")
 
-                            # Check if link or text contains problem number
-                            if (
-                                str(problem_number) in href
-                                or str(problem_number) in text
-                            ):
-                                # Verify it's a problem link (not a category link)
-                                if (
-                                    "/20" in href
-                                    or "problem" in href.lower()
-                                    or any(char.isdigit() for char in href)
-                                ):
-                                    problem_link = href
-                                    break
+                # We search for the <a> tag where the inner text contains the problem number
+                target_found = False
+                for link in soup.find_all("a"):
+                    if not isinstance(link, Tag):
+                        continue
 
-                # Strategy 2: If we have title, search for it
-                if not problem_link and problem_title:
-                    response = await client.get(
-                        f"{self.leetcode_ca_base}/all/problems.html"
-                    )
-                    if response.status_code == 200:
-                        soup = BeautifulSoup(response.text, "lxml")
-                        # Normalize title for matching
-                        title_words = set(
-                            word.lower()
-                            for word in problem_title.split()
-                            if len(word) > 3
-                        )
+                    inner_text = link.get_text(strip=True)
 
-                        for link in soup.find_all("a", href=True):
-                            text = link.get_text().lower()
-                            href = link.get("href")
-                            if not isinstance(href, str):
-                                continue
+                    # Logic: Check if the number (e.g., "3768") is in the inner text
+                    if problem_number:
+                        num_str = str(problem_number)
+                        # We look for the number as a standalone word or at the start of the text
+                        # e.g. "3768. Title" or "3768 - Title"
+                        if (
+                            num_str == inner_text.split(".")[0].strip()
+                            or num_str in inner_text.split()
+                        ):
+                            target_found = True
+                    elif problem_title and problem_title.lower() in inner_text.lower():
+                        target_found = True
 
-                            # Check if significant words from title match
-                            if title_words and any(
-                                word in text for word in title_words
-                            ):
-                                if "/20" in href or "problem" in href.lower():
-                                    problem_link = href
-                                    break
-
-                # Strategy 3: Try constructing URL directly if we have number
-                # Format: /YYYY-MM-DD-NUMBER-Title/ (we don't know exact date, so skip this)
+                    if target_found:
+                        href = link.get("href")
+                        if href and isinstance(href, str):
+                            problem_link = href
+                            if not problem_link.startswith("http"):
+                                problem_link = f"{self.leetcode_ca_base.rstrip('/')}/{problem_link.lstrip('/')}"
+                            print(f"🎯 Found link via inner text: {problem_link}")
+                            break
 
                 if not problem_link:
                     print(
-                        f"⚠️ Could not find problem on leetcode.ca (number={problem_number}, title={problem_title})"
+                        f"⚠️ Discovery failed: No <a> tag found containing '{problem_number or problem_title}' in text."
                     )
                     return None
 
-                # Make sure link is absolute
-                if not problem_link.startswith("http"):
-                    if problem_link.startswith("/"):
-                        problem_link = f"{self.leetcode_ca_base}{problem_link}"
-                    else:
-                        problem_link = f"{self.leetcode_ca_base}/{problem_link}"
-
-                # Now scrape the actual problem page
-                prob_response = await client.get(problem_link)
-
-                if prob_response.status_code != 200:
+                # 2. EXTRACTION: Pass the verified URL to Yellowcake
+                if self.yellowcake_api_key:
                     print(
-                        f"⚠️ Failed to fetch problem page: {problem_link} (status: {prob_response.status_code})"
+                        f"🍰 Yellowcake: Extracting from verified URL: {problem_link}"
                     )
-                    return None
+                    data = await self._scrape_with_yellowcake(
+                        problem_link, self.yellowcake_prompt
+                    )
 
-                # Extract problem number from page if not provided
-                actual_number = problem_number
-                if not actual_number:
-                    soup = BeautifulSoup(prob_response.text, "lxml")
-                    h1 = soup.find("h1")
-                    if h1:
-                        h1_text = h1.get_text()
-                        # Format: "3000 - Title" or "3000. Title"
-                        if " - " in h1_text:
-                            try:
-                                actual_number = int(h1_text.split(" - ")[0].strip())
-                            except ValueError:
-                                pass
-                        elif ". " in h1_text and h1_text[0].isdigit():
-                            try:
-                                actual_number = int(h1_text.split(". ")[0].strip())
-                            except ValueError:
-                                pass
+                    if data and isinstance(data, dict):
+                        return {
+                            "leetcode_number": data.get("leetcode_number")
+                            or problem_number,
+                            "title": data.get("title") or problem_title,
+                            "difficulty": data.get("difficulty") or "medium",
+                            "problem_statement": data.get("problem_statement"),
+                            "examples": data.get("examples") or [],
+                            "constraints": data.get("constraints") or [],
+                            "example_input": data.get("example_input"),
+                            "example_output": data.get("example_output"),
+                            "optimal_time_complexity": data.get(
+                                "optimal_time_complexity"
+                            ),
+                            "optimal_space_complexity": data.get(
+                                "optimal_space_complexity"
+                            ),
+                            "url": problem_link,
+                        }
 
-                return self._parse_leetcode_page(
-                    prob_response.text, actual_number, problem_link
-                )
+                # 3. FALLBACK: Manual BS4 parsing
+                print(f"🐚 Fallback: Manual scrape of {problem_link}")
+                resp = await client.get(problem_link)
+                if resp.status_code == 200:
+                    return self._parse_leetcode_page(
+                        resp.text, problem_number, problem_link
+                    )
 
+                return None
             except Exception as e:
-                print(f"Error scraping leetcode.ca: {e}")
-                import traceback
-
-                traceback.print_exc()
+                print(f"❌ Error in _scrape_leetcode_ca: {e}")
                 return None
 
     def _parse_leetcode_page(
         self, html: str, number: int | None, url: str
-    ) -> dict[str, str | list[str] | int | None]:
-        """
-        Parse LeetCode.ca problem page HTML.
-
-        Based on example_leetcode.ca structure:
-        - <h1> contains "NUMBER - Title" or link to leetcode.com
-        - <h2 id="description"> for problem description
-        - Examples in <pre> tags after "Example X:" headings
-        - Constraints in <ul> tags after "Constraints:" heading
-        """
+    ) -> dict[str, Any]:
+        """Manual parsing fallback based on leetcode.ca HTML structure."""
         soup = BeautifulSoup(html, "lxml")
+        data: dict[str, Any] = {
+            "url": url,
+            "leetcode_number": number,
+            "examples": [],
+            "constraints": [],
+            "problem_statement": "",
+            "difficulty": "medium",  # Default if not found
+        }
 
-        problem_data: dict[str, str | list[str] | int | None] = {"url": url}
-
-        if number:
-            problem_data["leetcode_number"] = number
-
-        # Extract title from <h1> - format: "3000 - Maximum Area of Longest Diagonal Rectangle"
-        # Or: <h1><a href="...">3000. Maximum Area...</a></h1>
+        # 1. Extract Title
         h1 = soup.find("h1")
-        if h1:
-            # Check if there's a link inside
-            h1_link = h1.find("a")
-            if h1_link:
-                title_text = h1_link.get_text(strip=True)
+        if h1 and isinstance(h1, Tag):
+            title_text = h1.get_text(strip=True)
+            # Remove problem number prefix if present (e.g., "3000. Title")
+            if "." in title_text and title_text.split(".")[0].isdigit():
+                data["title"] = title_text.split(".", 1)[1].strip()
+            elif " - " in title_text:
+                data["title"] = title_text.split(" - ", 1)[1].strip()
             else:
-                title_text = h1.get_text(strip=True)
+                data["title"] = title_text
 
-            # Format: "3000 - Maximum Area..." or "3000. Maximum Area..."
-            if " - " in title_text:
-                parts = title_text.split(" - ", 1)
-                if not number and parts[0].strip().isdigit():
-                    problem_data["leetcode_number"] = int(parts[0].strip())
-                problem_data["title"] = (
-                    parts[1].strip() if len(parts) > 1 else title_text
-                )
-            elif ". " in title_text and title_text[0].isdigit():
-                # Format: "3000. Maximum Area..."
-                parts = title_text.split(". ", 1)
-                if not number and parts[0].strip().isdigit():
-                    problem_data["leetcode_number"] = int(parts[0].strip())
-                problem_data["title"] = (
-                    parts[1].strip() if len(parts) > 1 else title_text
-                )
-            else:
-                problem_data["title"] = title_text.strip()
-
-        # Extract description - look for <h2 id="description"> or just Description section
-        desc_text = ""
-        desc_heading = soup.find("h2", id="description")
-        if not desc_heading:
-            # Try finding by text
-            for h2 in soup.find_all("h2"):
-                if "description" in h2.get_text().lower():
-                    desc_heading = h2
-                    break
-
-        if desc_heading:
-            # Get all content after description heading until next h2
-            description_parts = []
-            for sibling in desc_heading.find_next_siblings():
-                if sibling.name == "h2":
+        # 2. Extract Description / Problem Statement
+        # On leetcode.ca, description usually follows an h2 with id="description"
+        desc_header = soup.find("h2", id="description")
+        if desc_header:
+            statement_parts = []
+            for sibling in desc_header.find_next_siblings():
+                if not isinstance(sibling, Tag):
+                    continue
+                if sibling.name == "h2":  # Stop at next section (usually Solutions)
                     break
                 if sibling.name == "p":
-                    description_parts.append(sibling.get_text(strip=True))
-                elif sibling.name in ["div", "section"]:
-                    # Get text from nested elements
-                    text = sibling.get_text(separator="\n", strip=True)
-                    if text:
-                        description_parts.append(text)
-
-            desc_text = "\n\n".join(description_parts)
-
-        # If no description section found, try to get from article content
-        if not desc_text:
-            article = soup.find("article") or soup.find(
-                "div",
-                class_=lambda x: x is not None
-                and isinstance(x, str)
-                and "post" in x.lower(),
-            )
-            if article:
-                # Get all paragraphs before "Example" or "Constraints"
-                desc_parts = []
-                for elem in article.find_all(["p", "div"]):
-                    text = elem.get_text(strip=True)
-                    if text and not any(
-                        keyword in text.lower()
-                        for keyword in ["example", "constraint", "solution"]
-                    ):
-                        if len(text) > 20:  # Filter out short fragments
-                            desc_parts.append(text)
-                    if "example" in text.lower() or "constraint" in text.lower():
+                    # Check if we hit examples
+                    if sibling.find("strong", class_="example"):
                         break
-                desc_text = "\n\n".join(desc_parts[:10])  # Limit to first 10 paragraphs
+                    statement_parts.append(sibling.get_text(strip=True))
+            data["problem_statement"] = "\n\n".join(statement_parts)
 
-        if desc_text:
-            problem_data["problem_statement"] = desc_text[:5000]  # Limit length
+        # 3. Extract Examples
+        # Examples are often in <p><strong>Example X:</strong></p> followed by <pre>
+        for strong in soup.find_all("strong", class_="example"):
+            example_p = strong.parent
+            if not example_p:
+                continue
 
-        # Extract examples from <pre> tags or Example sections
-        examples = []
-        example_inputs = []
-        example_outputs = []
-
-        # Look for Example sections
-        for elem in soup.find_all(["h2", "h3", "strong", "p"]):
-            text = elem.get_text()
-            if "example" in text.lower() and (
-                "input" in text.lower() or "output" in text.lower()
-            ):
-                # Find the <pre> tag after this
-                pre = elem.find_next("pre")
-                if pre:
-                    example_text = pre.get_text(strip=True)
-                    examples.append(example_text)
-
-                    # Try to extract input/output separately
-                    if "input" in text.lower():
-                        example_inputs.append(example_text)
-                    if "output" in text.lower():
-                        example_outputs.append(example_text)
-
-        # Fallback: get all <pre> tags
-        if not examples:
-            for pre in soup.find_all("pre"):
+            # Find the following <pre> block
+            pre = example_p.find_next("pre")
+            if pre and isinstance(pre, Tag):
                 example_text = pre.get_text(strip=True)
-                # Filter out code solutions
-                if (
-                    "class Solution" not in example_text
-                    and "def " not in example_text[:50]
-                ):
-                    if len(example_text) > 10:
-                        examples.append(example_text)
+                data["examples"].append(example_text)
 
-        if examples:
-            problem_data["examples"] = examples[:5]  # Limit to 5 examples
-        if example_inputs:
-            problem_data["example_input"] = (
-                example_inputs[0] if example_inputs else None
-            )
-        if example_outputs:
-            problem_data["example_output"] = (
-                example_outputs[0] if example_outputs else None
-            )
+                # Try to extract input/output for first example
+                if not data.get("example_input") and "Input:" in example_text:
+                    try:
+                        # Extract between "Input:" and "Output:"
+                        input_part = (
+                            example_text.split("Input:")[1].split("Output:")[0].strip()
+                        )
+                        data["example_input"] = input_part
+                        output_part = (
+                            example_text.split("Output:")[1]
+                            .split("Explanation:")[0]
+                            .strip()
+                        )
+                        data["example_output"] = output_part
+                    except Exception:
+                        pass
 
-        # Extract constraints from <ul> tags after "Constraints:" heading
-        constraints = []
-        constraints_heading = None
-        for elem in soup.find_all(["h2", "h3", "strong", "p"]):
-            text = elem.get_text()
-            if "constraint" in text.lower():
-                constraints_heading = elem
-                break
-
-        if constraints_heading:
-            # Find <ul> after constraints heading
-            ul = constraints_heading.find_next("ul")
-            if ul:
+        # 4. Extract Constraints
+        # Usually starts with a <p><strong>Constraints:</strong></p> followed by <ul>
+        constraints_header = soup.find(
+            lambda t: t.name == "p" and t.strong and "Constraints:" in t.get_text()
+        )
+        if constraints_header:
+            ul = constraints_header.find_next("ul")
+            if ul and isinstance(ul, Tag):
                 for li in ul.find_all("li"):
-                    constraint_text = li.get_text(strip=True)
-                    if constraint_text:
-                        constraints.append(constraint_text)
+                    data["constraints"].append(li.get_text(strip=True))
 
-        # Fallback: find any <ul> with constraint-like content
-        if not constraints:
-            for ul in soup.find_all("ul"):
-                for li in ul.find_all("li"):
-                    constraint_text = li.get_text(strip=True)
-                    if any(
-                        char in constraint_text
-                        for char in ["<=", ">=", "<", ">", "1 <="]
-                    ):
-                        constraints.append(constraint_text)
-
-        if constraints:
-            problem_data["constraints"] = constraints
-
-        return problem_data
-
-
-# ============================================================================
-# FACTORY FUNCTION (for easy swapping with Yellowcake later)
-# ============================================================================
+        return data
 
 
 def create_leetcode_scraper() -> LeetCodeScraper:
-    """
-    Factory function to create LeetCode scraper.
-
-    Later this can be swapped to:
-        return YellowcakeScraperAdapter()
-
-    Which would implement the same interface but use Yellowcake API.
-    """
     return LeetCodeScraper()

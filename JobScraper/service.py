@@ -150,20 +150,14 @@ class ScraperService:
                     state["error"] = None
                     return state
 
-            # Use optimized prompt with few-shot examples
-            print("🎯 Using optimized prompt with few-shot examples...")
-            optimized_prompt_template = self.prompt_optimizer.get_optimized_prompt(
+            # Use static optimized prompt
+            print("🤖 Using static optimized interview reconstruction prompt...")
+            formatted_messages = self.prompt_optimizer.get_static_prompt(
                 company_name=state["company_name"],
                 position=state["position"],
                 scraped_data=combined_raw_text,
             )
-
-            # Format the prompt template with actual values
-            state["messages"] = optimized_prompt_template.format_messages(
-                company_name=state["company_name"],
-                position=state["position"],
-                scraped_data=combined_raw_text,
-            )
+            state["messages"] = formatted_messages
 
         try:
             # Use LangChain to call Groq
@@ -188,22 +182,22 @@ class ScraperService:
 
                 if start_idx != -1 and end_idx != -1:
                     json_str = content[start_idx : end_idx + 1]
-                    analysis = json.loads(json_str)
+                    try:
+                        analysis = json.loads(json_str)
+                    except json.JSONDecodeError as je:
+                        print(f"❌ [JSON ERROR] Invalid JSON structure from LLM.")
+                        print(f"--- FAILED JSON START ---")
+                        print(json_str[:1000] + "...")
+                        print(f"--- FAILED JSON END ---")
+                        raise je
+
                     state["llm_analysis"] = analysis
                     state["error"] = None  # Clear error on success
 
-                    # Cache the LLM response for future use (if successful)
-                    # We reconstruct the cache key based on initial input
-                    if state.get("raw_scraped_data"):
-                        # Reconstruct key for caching (simplified)
-                        # NOTE: In a complex retry loop, caching might be tricky.
-                        # Here we cache the final *successful* result against the original input.
-                        pass
-
                     print("✅ Analysis successful")
                 else:
-                    error_msg = "No JSON object found in response. Please ensure output is valid JSON starting with { and ending with }."
-                    print(f"❌ {error_msg}")
+                    error_msg = f"❌ [LLM FAILURE] No JSON object found in LLM response. Content: {content[:500]}..."
+                    print(error_msg)
                     state["error"] = error_msg
                     state["retry_count"] += 1
                     # Add error feedback to messages
@@ -320,22 +314,35 @@ class ScraperService:
     async def _leetcode_node(self, state: InterviewPrepState) -> InterviewPrepState:
         """
         LangGraph Node 2: Scrape company-specific LeetCode problems.
-        Modular design allows swapping with Yellowcake later.
+        Optimized for responsiveness: scrapes a few immediately, others handled via cache later.
         """
         print(f"💻 Fetching LeetCode problems for {state['company_name']}...")
+        import random
 
         try:
             # Get company-specific problems (with caching built-in)
             problems = await self.leetcode_scraper.get_company_problems(
                 company_name=state["company_name"],
-                limit=15,  # Get top 15 problems
+                limit=30,  # Get a decent list
             )
 
             if problems:
-                # Enrich first 5 with full details (avoid too many requests)
-                enriched = await self.leetcode_scraper.enrich_with_details(
-                    problems, max_details=5
+                # 1. Immediate Enrichment (Fast path)
+                # Pick 3 random problems to enrich immediately for the response
+                num_immediate = min(3, len(problems))
+                immediate_targets = random.sample(problems, num_immediate)
+
+                print(
+                    f"⚡ [FAST PATH] Enriching {num_immediate} random problems immediately..."
                 )
+                enriched = await self.leetcode_scraper.enrich_with_details(
+                    immediate_targets, max_details=num_immediate
+                )
+
+                # 2. Background Enrichment (Slow path)
+                # We'll return the 3 now, and the rest can be enriched in the background
+                # Note: In a real production system, we'd trigger a background worker here.
+                # For this setup, we'll use FastAPI BackgroundTasks in the controller.
 
                 # Add to scraped data
                 state["raw_scraped_data"].append(
@@ -344,13 +351,14 @@ class ScraperService:
                         "data": {
                             "company": state["company_name"],
                             "problems": enriched,
-                            "count": len(problems),
+                            "total_count": len(problems),
+                            "note": f"Enriched {len(enriched)} problems immediately. Full set being processed in background.",
                         },
                     }
                 )
 
                 print(
-                    f"✅ Found {len(problems)} LeetCode problems, enriched {len(enriched)}"
+                    f"✅ Found {len(problems)} LeetCode problems, enriched {len(enriched)} immediately."
                 )
             else:
                 print(f"⚠️ No LeetCode problems found for {state['company_name']}")
@@ -359,6 +367,25 @@ class ScraperService:
             print(f"Warning: Error fetching LeetCode problems: {e}")
 
         return state
+
+    async def background_enrichment(self, company_name: str):
+        """
+        Background task to fully enrich all LeetCode problems for a company.
+        This updates the cache so future requests are instant.
+        """
+        print(f"🕵️ [BACKGROUND] Starting full enrichment for {company_name}...")
+        try:
+            problems = await self.leetcode_scraper.get_company_problems(
+                company_name, limit=50
+            )
+            if problems:
+                # This will populate the cache for each individual problem
+                await self.leetcode_scraper.enrich_with_details(
+                    problems, max_details=50
+                )
+                print(f"✅ [BACKGROUND] Full enrichment complete for {company_name}")
+        except Exception as e:
+            print(f"❌ [BACKGROUND] Error: {e}")
 
     def _structure_node(self, state: InterviewPrepState) -> InterviewPrepState:
         """
@@ -464,49 +491,93 @@ class ScraperService:
 
         # Parse interview questions (with enhanced fields)
         questions: list[InterviewQuestion] = []
-        for q in llm_analysis.get("interview_questions", [])[:30]:  # Up to 30 questions
+        raw_qs = llm_analysis.get("interview_questions", [])
+        for idx, q in enumerate(raw_qs[:30]):
             try:
+                # Self-healing for list fields
+                processed_q = q.copy() if isinstance(q, dict) else {}
+                for list_field in [
+                    "key_points_to_cover",
+                    "follow_up_questions",
+                    "red_flags",
+                ]:
+                    if list_field in processed_q and isinstance(
+                        processed_q[list_field], str
+                    ):
+                        print(
+                            f"🔧 [HEALING] Converting string field '{list_field}' to list for question {idx}"
+                        )
+                        processed_q[list_field] = [processed_q[list_field]]
+
                 questions.append(
                     InterviewQuestion(
-                        question=q.get("question", ""),
-                        category=q.get("category", "behavioral"),
-                        difficulty=q.get("difficulty"),
-                        tips=q.get("tips"),
-                        sample_answer=q.get("sample_answer"),
-                        key_points_to_cover=q.get("key_points_to_cover", []),
-                        follow_up_questions=q.get("follow_up_questions", []),
-                        red_flags=q.get("red_flags", []),
-                        company_specific_context=q.get("company_specific_context"),
+                        question=processed_q.get("question", ""),
+                        category=processed_q.get("category", "behavioral"),
+                        difficulty=processed_q.get("difficulty"),
+                        tips=processed_q.get("tips"),
+                        sample_answer=processed_q.get("sample_answer"),
+                        key_points_to_cover=processed_q.get("key_points_to_cover")
+                        or [],
+                        follow_up_questions=processed_q.get("follow_up_questions")
+                        or [],
+                        red_flags=processed_q.get("red_flags") or [],
+                        company_specific_context=processed_q.get(
+                            "company_specific_context"
+                        ),
                     )
                 )
             except Exception as e:
-                print(f"Warning: Failed to parse question: {e}")
+                print(f"🔥 [QUESTION PARSE FAILURE] Index: {idx}")
+                print(f"❌ Error Detail: {str(e)}")
+                print(f"📦 Raw Input Data: {json.dumps(q, indent=2)}")
                 continue
 
         # Parse coding problems
         coding_problems: list[CodingProblem] = []
-        for prob in llm_analysis.get("coding_problems", [])[:15]:
+        raw_probs = llm_analysis.get("coding_problems", [])
+        for idx, prob in enumerate(raw_probs):
             try:
+                # Pre-processing/Healing for common LLM structure errors
+                # If constraints/hints are strings instead of lists, convert them
+                processed_prob = prob.copy() if isinstance(prob, dict) else {}
+
+                for field in ["constraints", "approach_hints", "topics"]:
+                    if field in processed_prob and isinstance(
+                        processed_prob[field], str
+                    ):
+                        print(
+                            f"🔧 [HEALING] Converting string field '{field}' to list for coding problem {idx}"
+                        )
+                        processed_prob[field] = [processed_prob[field]]
+
                 coding_problems.append(
                     CodingProblem(
-                        title=prob.get("title", ""),
-                        difficulty=prob.get("difficulty", "medium"),
-                        problem_statement=prob.get("problem_statement", ""),
-                        example_input=prob.get("example_input"),
-                        example_output=prob.get("example_output"),
-                        constraints=prob.get("constraints", []),
-                        leetcode_number=prob.get("leetcode_number"),
-                        leetcode_url=prob.get("leetcode_url"),
-                        topics=prob.get("topics", []),
-                        approach_hints=prob.get("approach_hints", []),
-                        optimal_time_complexity=prob.get("optimal_time_complexity"),
-                        optimal_space_complexity=prob.get("optimal_space_complexity"),
-                        frequency=prob.get("frequency"),
-                        company_specific_notes=prob.get("company_specific_notes"),
+                        title=processed_prob.get("title", ""),
+                        difficulty=processed_prob.get("difficulty", "medium"),
+                        problem_statement=processed_prob.get("problem_statement", ""),
+                        example_input=processed_prob.get("example_input"),
+                        example_output=processed_prob.get("example_output"),
+                        constraints=processed_prob.get("constraints") or [],
+                        leetcode_number=processed_prob.get("leetcode_number"),
+                        leetcode_url=processed_prob.get("leetcode_url"),
+                        topics=processed_prob.get("topics") or [],
+                        approach_hints=processed_prob.get("approach_hints") or [],
+                        optimal_time_complexity=processed_prob.get(
+                            "optimal_time_complexity"
+                        ),
+                        optimal_space_complexity=processed_prob.get(
+                            "optimal_space_complexity"
+                        ),
+                        frequency=processed_prob.get("frequency"),
+                        company_specific_notes=processed_prob.get(
+                            "company_specific_notes"
+                        ),
                     )
                 )
             except Exception as e:
-                print(f"Warning: Failed to parse coding problem: {e}")
+                print(f"🔥 [CODING PROBLEM PARSE FAILURE] Index: {idx}")
+                print(f"❌ Error Detail: {str(e)}")
+                print(f"📦 Raw Input Data: {json.dumps(prob, indent=2)}")
                 continue
 
         # Parse system design questions
@@ -554,13 +625,46 @@ class ScraperService:
         # Parse interview stages (with enhanced fields)
         stages: list[InterviewStage] = []
         process_data = llm_analysis.get("interview_process", {})
-        for stage in process_data.get("stages", []):
+        raw_stages = process_data.get("stages", [])
+
+        for idx, stage in enumerate(raw_stages):
             try:
+                if isinstance(stage, str):
+                    print(
+                        f"⚠️ [PARSING ERROR] Stage {idx} is a string ('{stage[:50]}...'), expected an object. Attempting recovery."
+                    )
+                    stages.append(
+                        InterviewStage(
+                            stage_name=stage,
+                            description="Details not provided in structured format.",
+                            duration=None,
+                            format=None,
+                            interviewers=None,
+                            focus_areas=[],
+                            sample_questions=[],
+                            success_criteria=[],
+                            preparation_strategy=None,
+                        )
+                    )
+                    continue
+
+                if not isinstance(stage, dict):
+                    print(
+                        f"❌ [PARSING FAILURE] Stage {idx} is type {type(stage)}, cannot parse. Value: {stage}"
+                    )
+                    continue
+
+                # Validate required field stage_name
+                name = stage.get("name", stage.get("stage_name"))
+                if not name:
+                    print(
+                        f"⚠️ [PARSING ERROR] Stage {idx} missing name/stage_name. Raw data: {stage}"
+                    )
+                    name = f"Unknown Stage {idx + 1}"
+
                 stages.append(
                     InterviewStage(
-                        stage_name=stage.get(
-                            "name", stage.get("stage_name", "Unknown")
-                        ),
+                        stage_name=name,
                         description=stage.get("description"),
                         duration=stage.get("duration"),
                         format=stage.get("format"),
@@ -571,6 +675,14 @@ class ScraperService:
                         preparation_strategy=stage.get("preparation_strategy"),
                     )
                 )
+            except Exception as e:
+                print(
+                    f"🔥 [CRITICAL PARSE ERROR] Failed to process stage {idx}: {str(e)}"
+                )
+                import traceback
+
+                traceback.print_exc()
+                continue
             except Exception as e:
                 print(f"Warning: Failed to parse stage: {e}")
                 continue
