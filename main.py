@@ -50,7 +50,7 @@ def query(params: dict[str, Any]) -> str:
     return f"?{'&'.join(map(fmt_item, params.items()))}"
 
 async def send_as_json(socket: ClientConnection, obj: Any):
-    await socket.send(orjson.dumps(obj))
+    await socket.send(orjson.dumps(obj).decode("utf-8"))
 
 async def record_chunks(queue: asyncio.Queue):
     loop = asyncio.get_running_loop()
@@ -67,10 +67,9 @@ async def record_chunks(queue: asyncio.Queue):
                 audio_pcm16 = (chunk * 32767).astype(np.int16)
 
                 chunks.append(audio_pcm16)
-
-            aud = np.vstack(chunks)
-
-            sf.write('output.wav', aud, SAMPLE_RATE, subtype='PCM_16')
+            if chunks:
+                aud = np.vstack(chunks)
+                sf.write('output.wav', aud, SAMPLE_RATE, subtype='PCM_16')
 
             event.set()
         else:
@@ -98,15 +97,20 @@ async def open_connection(chunk_queue: asyncio.Queue):
     stop = False
 
     async def log_messages(socket: ClientConnection):
+        nonlocal stop
         while not socket.close_code:
             msg = await socket.recv()
             d = orjson.loads(msg)
+            print(msg)
             if d["message_type"] == "partial_transcript" and "stop" in d["text"]:
                 stop = True
                 return
 
     params = {
         "model_id": "scribe_v2_realtime",
+        "commit_strategy": "vad",
+        "vad_silence_threshold_secs": 3,
+        "vad_threshold": 0.7
     }
 
     headers = {
@@ -118,23 +122,25 @@ async def open_connection(chunk_queue: asyncio.Queue):
         additional_headers=headers
     ) as socket:
         task = asyncio.create_task(log_messages(socket))
-        count = 10
         while not stop:
-            chunk = await chunk_queue.get()
+            chunks = []
+            while not chunk_queue.empty():
+                chunk = chunk_queue.get_nowait()
+                audio_pcm16 = (chunk * 32767).astype(np.int16)
+                chunks.append(audio_pcm16)
+            if not chunks:
+                await asyncio.sleep(1)
+                continue
 
-            audio_pcm16 = (chunk * 32767).astype(np.int16)
+            aud = np.vstack(chunks)
 
             m = {
                 "message_type": "input_audio_chunk",
                 "sample_rate": 16000,
-                "commit": count == 0,
-                "audio_base_64": chunk_to_b64(audio_pcm16)
+                "audio_base_64": chunk_to_b64(aud)
             }
 
             await send_as_json(socket, m)
-            count += 1
-            if count > 1000:
-                count = 0
 
         task.exception()
 
