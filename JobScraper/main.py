@@ -12,6 +12,7 @@ Clear Contracts:
 All request/response schemas are defined in models.py using Pydantic.
 Swagger docs available at /docs
 """
+
 from __future__ import annotations
 from fastapi import FastAPI, HTTPException, status
 from fastapi.responses import StreamingResponse
@@ -24,7 +25,7 @@ from models import (
     CompanyInterviewDataResponse,
     ErrorResponse,
     HealthResponse,
-    ScrapingProgressUpdate
+    ScrapingProgressUpdate,
 )
 from service import ScraperService
 
@@ -34,7 +35,7 @@ app = FastAPI(
     version=settings.api_version,
     description=settings.api_description,
     docs_url="/docs",
-    redoc_url="/redoc"
+    redoc_url="/redoc",
 )
 
 # Add CORS middleware
@@ -54,23 +55,21 @@ scraper_service = ScraperService()
 # ENDPOINTS
 # ============================================================================
 
+
 @app.get(
     "/health",
     response_model=HealthResponse,
     tags=["Health"],
-    summary="Health check endpoint"
+    summary="Health check endpoint",
 )
 async def health_check() -> HealthResponse:
     """
     Check if the API is running and healthy.
-    
+
     Returns:
         HealthResponse with status and version
     """
-    return HealthResponse(
-        status="healthy",
-        version=settings.api_version
-    )
+    return HealthResponse(status="healthy", version=settings.api_version)
 
 
 @app.post(
@@ -79,16 +78,10 @@ async def health_check() -> HealthResponse:
     responses={
         200: {
             "description": "Successfully scraped company data",
-            "model": CompanyInterviewDataResponse
+            "model": CompanyInterviewDataResponse,
         },
-        400: {
-            "description": "Invalid request",
-            "model": ErrorResponse
-        },
-        500: {
-            "description": "Internal server error",
-            "model": ErrorResponse
-        }
+        400: {"description": "Invalid request", "model": ErrorResponse},
+        500: {"description": "Internal server error", "model": ErrorResponse},
     },
     tags=["Scraping"],
     summary="Scrape company interview data",
@@ -113,20 +106,20 @@ async def health_check() -> HealthResponse:
     
     This endpoint waits for all scraping to complete before returning.
     Use `/api/v1/scrape/stream` for real-time progress updates.
-    """
+    """,
 )
 async def scrape_company_data(
-    request: CompanySearchRequest
+    request: CompanySearchRequest,
 ) -> CompanyInterviewDataResponse:
     """
     Scrape company interview data and return complete results.
-    
+
     Args:
         request: CompanySearchRequest with company name and optional details
-        
+
     Returns:
         CompanyInterviewDataResponse with all scraped data
-        
+
     Raises:
         HTTPException: If scraping fails
     """
@@ -134,9 +127,12 @@ async def scrape_company_data(
         result = await scraper_service.scrape_company_data(request)
         return result
     except Exception as e:
+        import traceback
+
+        traceback.print_exc()  # Print full stack trace to console
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Failed to scrape company data: {str(e)}"
+            detail=f"Failed to scrape company data: {str(e)}",
         )
 
 
@@ -147,9 +143,9 @@ async def scrape_company_data(
             "description": "Server-Sent Events stream of scraping progress",
             "content": {
                 "text/event-stream": {
-                    "example": "event: progress\ndata: {\"status\":\"in_progress\",\"message\":\"Scraping...\"}\n\n"
+                    "example": 'event: progress\ndata: {"status":"in_progress","message":"Scraping..."}\n\n'
                 }
-            }
+            },
         }
     },
     tags=["Scraping"],
@@ -174,20 +170,21 @@ async def scrape_company_data(
     ```
     
     Use this for better UX when scraping takes time (typically 30s - 5min).
-    """
+    """,
 )
 async def scrape_company_data_stream(
-    request: CompanySearchRequest
+    request: CompanySearchRequest,
 ) -> StreamingResponse:
     """
     Stream scraping progress using Server-Sent Events.
-    
+
     Args:
         request: CompanySearchRequest with company name and optional details
-        
+
     Returns:
         StreamingResponse with SSE events
     """
+
     async def event_generator() -> AsyncGenerator[str, None]:
         """Generate SSE events from scraping progress."""
         try:
@@ -199,20 +196,18 @@ async def scrape_company_data_stream(
         except Exception as e:
             # Send error event
             error_update = ScrapingProgressUpdate(
-                status="error",
-                message=f"Error: {str(e)}",
-                progress_percent=0
+                status="error", message=f"Error: {str(e)}", progress_percent=0
             )
             yield f"event: error\ndata: {error_update.model_dump_json()}\n\n"
-    
+
     return StreamingResponse(
         event_generator(),
         media_type="text/event-stream",
         headers={
             "Cache-Control": "no-cache",
             "Connection": "keep-alive",
-            "X-Accel-Buffering": "no"  # Disable nginx buffering
-        }
+            "X-Accel-Buffering": "no",  # Disable nginx buffering
+        },
     )
 
 
@@ -220,11 +215,12 @@ async def scrape_company_data_stream(
 # EXAMPLE REQUEST CONTRACTS
 # ============================================================================
 
+
 @app.get(
     "/api/v1/examples",
     tags=["Documentation"],
     summary="View example requests and responses",
-    description="Get example JSON contracts for API requests"
+    description="Get example JSON contracts for API requests",
 )
 async def get_examples() -> dict[str, Any]:
     """
@@ -234,12 +230,12 @@ async def get_examples() -> dict[str, Any]:
         "basic_request": {
             "company_name": "Google",
             "job_posting_url": None,
-            "position": None
+            "position": None,
         },
         "detailed_request": {
             "company_name": "Microsoft",
             "job_posting_url": "https://careers.microsoft.com/us/en/job/1234567/Software-Engineer",
-            "position": "Software Engineer"
+            "position": "Software Engineer",
         },
         "example_response_structure": {
             "success": True,
@@ -250,7 +246,7 @@ async def get_examples() -> dict[str, Any]:
                 "headquarters": "San Francisco, CA",
                 "mission": "To organize the world's information",
                 "culture": "Innovation-focused, collaborative",
-                "recent_news": ["Launched new product", "Expanded to EMEA"]
+                "recent_news": ["Launched new product", "Expanded to EMEA"],
             },
             "interview_insights": {
                 "common_questions": [
@@ -258,7 +254,7 @@ async def get_examples() -> dict[str, Any]:
                         "question": "Tell me about yourself",
                         "category": "behavioral",
                         "difficulty": "easy",
-                        "tips": "Focus on relevant experience"
+                        "tips": "Focus on relevant experience",
                     }
                 ],
                 "interview_process": {
@@ -267,29 +263,29 @@ async def get_examples() -> dict[str, Any]:
                             "stage_name": "Phone Screen",
                             "description": "Initial conversation with recruiter",
                             "duration": "30 minutes",
-                            "format": "Video call"
+                            "format": "Video call",
                         }
                     ],
                     "total_duration": "2-4 weeks",
-                    "preparation_tips": ["Practice coding", "Review STAR method"]
+                    "preparation_tips": ["Practice coding", "Review STAR method"],
                 },
                 "technical_requirements": {
                     "programming_languages": ["Python", "Java"],
                     "frameworks_tools": ["React", "Docker"],
                     "concepts": ["System Design", "Algorithms"],
-                    "experience_level": "2-5 years"
+                    "experience_level": "2-5 years",
                 },
                 "what_they_look_for": ["Problem-solving", "Communication"],
                 "red_flags_to_avoid": ["Bad-mouthing previous employers"],
-                "salary_range": "$120k - $180k"
+                "salary_range": "$120k - $180k",
             },
             "sources": ["https://example.com/careers"],
             "session_id": "yellowcake-session-id",
             "metadata": {
                 "total_sources_scraped": 3,
-                "yellowcake_sessions": ["session-1", "session-2"]
-            }
-        }
+                "yellowcake_sessions": ["session-1", "session-2"],
+            },
+        },
     }
 
 

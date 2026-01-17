@@ -24,4 +24,4 @@ echo "✅ Environment configured"
 echo "📦 Starting server with uv..."
 echo ""
 
-uv run uvicorn main:app --reload --host 0.0.0.0 --port 8000
+uv run python -m uvicorn main:app --reload --host 0.0.0.0 --port 3000
