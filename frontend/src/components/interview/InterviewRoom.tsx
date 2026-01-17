@@ -137,7 +137,7 @@ const InterviewRoom = ({ onEndInterview }: InterviewRoomProps) => {
 
                 {/* User video in code mode */}
                 <div className="p-4 flex justify-center border-b border-border">
-                  <UserVideo isVideoOn={isVideoOn} size="small" />
+                  <UserVideo isVideoOn={isVideoOn} isMuted={isMuted} size="small" />
                 </div>
 
                 {/* Question in code mode */}
@@ -172,7 +172,7 @@ const InterviewRoom = ({ onEndInterview }: InterviewRoomProps) => {
 
               {/* User Video - Picture in Picture */}
               <div className="absolute bottom-6 right-6 z-20">
-                <UserVideo isVideoOn={isVideoOn} size="medium" />
+                <UserVideo isVideoOn={isVideoOn} isMuted={isMuted} size="medium" />
               </div>
             </div>
           )}
