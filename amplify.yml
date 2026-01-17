@@ -5,6 +5,9 @@ applications:
       phases:
         preBuild:
           commands:
+            # Try to select a modern Python version available in the environment
+            - pyenv global 3.11 || pyenv global 3.10 || pyenv global 3.9
+            - python --version
             - pip install uv
             - uv export --format requirements-txt --output-file requirements.txt
             - pip install -r requirements.txt
