@@ -1,0 +1,17 @@
+name: jobscraper
+services:
+- name: jobscraper-api
+  github:
+    branch: main
+    deploy_on_push: true
+    repo: uOttaWSHD/Submission
+  source_dir: JobScraper
+  dockerfile_path: Dockerfile
+  http_port: 3000
+  instance_count: 1
+  instance_size_slug: basic-xs
+  envs:
+  - key: YELLOWCAKE_API_KEY
+    value: ${YELLOWCAKE_API_KEY}
+  - key: GROQ_API_KEY
+    value: ${GROQ_API_KEY}

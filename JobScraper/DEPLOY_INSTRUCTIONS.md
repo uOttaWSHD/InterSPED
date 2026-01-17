@@ -1,37 +1,31 @@
-# How to Deploy JobScraper
+# How to Deploy JobScraper on DigitalOcean App Platform
 
-This application is a **Python Backend** that uses **Playwright** (requires Chrome/Browsers).
-It **CANNOT** be deployed on **AWS Amplify Hosting** (which is for static websites like React/Vue).
-Using Amplify Hosting will result in a **404 Error**.
+DigitalOcean App Platform is much simpler than AWS. It will natively support the Docker setup we have prepared.
 
-## ✅ The Solution: AWS App Runner
+## Step-by-Step Instructions
 
-AWS App Runner is the correct service for this. It connects to this repo just like Amplify but runs the Docker container.
+1.  **Go to DigitalOcean App Platform**: [https://cloud.digitalocean.com/apps](https://cloud.digitalocean.com/apps)
+2.  Click **Create App**.
+3.  **Choose Source**:
+    *   Select **GitHub**.
+    *   Authorize if needed, then select your repository (`Submission`).
+    *   Branch: `main`.
+    *   **Source Directory**: Click "Edit" (pencil icon) and select `/JobScraper`. **(Crucial Step)**
+    *   Click **Next**.
+4.  **Resources**:
+    *   It should detect **Docker** automatically because of the Dockerfile.
+    *   HTTP Port: Ensure it says **3000** (Click Edit if it says 8080).
+    *   Plan: "Basic" ($5/mo) is fine for testing.
+    *   Click **Next**.
+5.  **Environment Variables**:
+    *   Click **Edit** next to Environment Variables.
+    *   Add `YELLOWCAKE_API_KEY` = `your_key_here`
+    *   Add `GROQ_API_KEY` = `your_key_here`
+    *   Click **Save**, then **Next**.
+6.  **Info**:
+    *   Change the App Name if you want.
+    *   Click **Create Resources**.
 
-### Step-by-Step Instructions
-
-1.  **Go to AWS App Runner Console**: [https://console.aws.amazon.com/apprunner](https://console.aws.amazon.com/apprunner)
-2.  Click **Create Service**.
-3.  **Source & Deployment**:
-    *   **Repository Type**: Source code repository.
-    *   **Provider**: GitHub.
-    *   **Repository**: Select this repository (`Submission`).
-    *   **Branch**: `main`.
-    *   **Deployment Trigger**: Automatic.
-4.  **Build Settings**:
-    *   **Configuration**: Select **"Configure all settings here"**.
-    *   **Source Directory**: `/JobScraper` (or browse to select the JobScraper folder).
-    *   **Runtime**: **Docker** (Do NOT select Python).
-    *   **Dockerfile location**: `Dockerfile` (It should default to this).
-    *   **Build command**: (Leave empty).
-    *   **Start command**: (Leave empty).
-    *   **Port**: `3000`.
-5.  **Service Configuration**:
-    *   **Service Name**: `jobscraper-api`.
-    *   **Environment Variables** (Add these):
-        *   `YELLOWCAKE_API_KEY`: `your_key_here`
-        *   `GROQ_API_KEY`: `your_key_here`
-6.  **Review & Create**.
-
-### Why this is necessary
-This application scrapes websites using a real browser (Chromium). This requires a complex system environment that standard web hosting (Amplify) does not provide. Docker packages that entire environment for you.
+## Troubleshooting
+- If the build fails, check the "Build Logs".
+- If the URL gives a 404, make sure to add `/docs` to the end of the URL (e.g., `https://sea-lion-app-123.ondigitalocean.app/docs`).
