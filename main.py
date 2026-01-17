@@ -6,9 +6,14 @@ import orjson
 from typing import TYPE_CHECKING, Any
 from urllib.parse import quote
 
+from dotenv import load_dotenv
+import os
+
 import sounddevice as sd
 import soundfile as sf
 import numpy as np
+
+import quart
 
 from elevenlabs.client import ElevenLabs
 from websockets.asyncio.client import connect
@@ -17,20 +22,20 @@ if TYPE_CHECKING:
     from websockets.asyncio.client import ClientConnection
     from sounddevice import CallbackFlags
 
+load_dotenv()
+TOKEN = os.getenv("TOKEN", "")
 VOICE_ID = "UgBBYS2sOqTuMpoF3BR0"
-TOKEN = "sk_81e6f0ed55fb3c01bdbd72c980e12c027cd1ac798c9a4d39"
 
 SAMPLE_RATE = 16000
-# SAMPLE_RATE = 48000
 CHUNKSIZE = 1024
 
 client = ElevenLabs(api_key=TOKEN)
 
-audio_stream = client.text_to_speech.stream(
-    text="This is a test",
-    voice_id=VOICE_ID,
-    model_id="eleven_multilingual_v2"
-)
+# audio_stream = client.text_to_speech.stream(
+#     text="This is a test",
+#     voice_id=VOICE_ID,
+#     model_id="eleven_multilingual_v2"
+# )
 
 # why its bad to do this in frontend
 # you'll expose your api key in clientside code
