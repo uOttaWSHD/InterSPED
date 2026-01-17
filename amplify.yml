@@ -1,0 +1,21 @@
+version: 1
+applications:
+  - appRoot: JobScraper
+    frontend:
+      phases:
+        preBuild:
+          commands:
+            - pip install uv
+            - uv export --format requirements-txt --output-file requirements.txt
+            - pip install -r requirements.txt
+        build:
+          commands:
+            - echo "Building JobScraper..."
+      artifacts:
+        baseDirectory: .
+        files:
+          - '**/*'
+      cache:
+        paths:
+          - .venv/**/*
+          - ~/.cache/pip
