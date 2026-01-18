@@ -12,4 +12,7 @@ export const auth = betterAuth({
             clientSecret: process.env.DISCORD_CLIENT_SECRET as string,
         },
     },
+    emailVerification: {
+        autoSignInAfterVerification: true,
+    },
 });

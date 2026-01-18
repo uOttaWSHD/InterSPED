@@ -34,13 +34,14 @@ RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 ENV PATH="/root/.local/bin:$PATH"
 
 # Copy the backend code
-COPY . .
-
-# Install dependencies
-RUN uv sync
+COPY pyproject.toml uv.lock ./
+RUN uv sync --no-install-project
 
 # Install Playwright browsers for the scraper
 RUN uv run playwright install --with-deps chromium
+
+COPY . .
+RUN uv sync
 
 # Expose port
 EXPOSE 8000

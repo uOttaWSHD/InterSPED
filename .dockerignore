@@ -1,0 +1,10 @@
+.git
+.venv
+node_modules
+.next
+__pycache__
+*.db
+.env
+Backend/.cache
+Backend/intersped.db
+intersped.db
