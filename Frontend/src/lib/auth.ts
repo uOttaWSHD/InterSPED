@@ -1,10 +1,16 @@
 import { betterAuth } from "better-auth";
-import Database from "better-sqlite3";
+import { createClient } from "@libsql/client";
 
-const db = new Database("intersped.db");
+const client = createClient({
+    url: process.env.TURSO_DATABASE_URL || "file:intersped.db",
+    authToken: process.env.TURSO_AUTH_TOKEN,
+});
 
 export const auth = betterAuth({
-    database: new Database("intersped.db"),
+    database: {
+        db: client,
+        type: "libsql",
+    },
     trustedOrigins: ["http://127.0.0.1:3000", "http://localhost:3000"],
     socialProviders: {
         discord: {

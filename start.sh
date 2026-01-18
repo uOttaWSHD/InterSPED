@@ -20,28 +20,19 @@ fuser -k 8000/tcp 2>/dev/null
 fuser -k 8001/tcp 2>/dev/null
 sleep 2
 
-# 1. Sync BetterAuth Schema (Local)
-echo -e "${BLUE}🔐 Syncing BetterAuth Database Schema...${NC}"
-cd Frontend
-# Using --yes to auto-accept the migration in dev
-npx better-auth migrate --yes
-cd ..
-
-# 1. Check for .env file
-if [ ! -f .env ]; then
+# 1. Check for .env file and export variables
+if [ -f .env ]; then
+    echo -e "${BLUE}🔑 Loading environment variables from .env...${NC}"
+    # Export all variables from .env, ignoring comments
+    export $(grep -v '^#' .env | xargs)
+else
     echo "❌ Error: .env file not found in root directory."
     exit 1
 fi
 
-# 2. Setup Backend
-echo -e "${BLUE}📦 Setting up Backend dependencies...${NC}"
-cd Backend
-if command -v uv &> /dev/null; then
-    uv sync
-else
-    pip install -e .
-fi
-cd ..
+# 2. Sync BetterAuth Schema (SKIPPED - Manually created in Turso)
+# echo -e "${BLUE}🔐 Syncing BetterAuth Database Schema...${NC}"
+# cd Frontend && npx better-auth migrate --yes && cd ..
 
 # 3. Setup Frontend
 echo -e "${BLUE}📦 Setting up Frontend dependencies...${NC}"

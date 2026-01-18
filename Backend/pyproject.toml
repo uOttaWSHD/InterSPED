@@ -27,6 +27,7 @@ dependencies = [
     "websockets",
     "aiofiles",
     "orjson",
-    "quart" 
+    "quart",
+    "libsql-client>=0.3.1",
 ]
 # Kept quart just in case, but aim to remove it.
