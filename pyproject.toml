@@ -1,0 +1,18 @@
+[project]
+name = "submission"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "aiofiles>=25.1.0",
+    "aiortc>=1.14.0",
+    "dotenv>=0.9.9",
+    "elevenlabs>=2.30.0",
+    "orjson>=3.11.5",
+    "quart>=0.20.0",
+    "resampy>=0.4.3",
+    "sounddevice>=0.5.3",
+    "soundfile>=0.13.1",
+    "websockets>=16.0",
+]

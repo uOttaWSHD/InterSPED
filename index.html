@@ -1,42 +1,225 @@
 <!doctype html>
-<html>
-    <body>
-        <h2>Mic → Quart WebSocket</h2>
-        <button onclick="start()">Start Streaming</button>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Interviewer</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 1rem;
+            overflow: hidden;
+        }
+        #chat-container {
+            flex: 1;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 1rem;
+            overflow-y: auto;
+            margin-bottom: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .message {
+            max-width: 80%;
+            padding: 0.8rem 1rem;
+            border-radius: 15px;
+            line-height: 1.4;
+        }
+        .user-message {
+            align-self: flex-end;
+            background-color: #3498db;
+            color: white;
+            border-bottom-right-radius: 2px;
+        }
+        .ai-message {
+            align-self: flex-start;
+            background-color: #ecf0f1;
+            color: #2c3e50;
+            border-bottom-left-radius: 2px;
+        }
+        #status-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            padding: 1rem;
+        }
+        #start-btn {
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        #start-btn:hover {
+            background-color: #2ecc71;
+        }
+        #start-btn:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        #recording-indicator {
+            display: none;
+            width: 12px;
+            height: 12px;
+            background-color: #e74c3c;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 0.5; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        #partial-transcript {
+            font-style: italic;
+            color: #7f8c8d;
+            text-align: center;
+            height: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>AI Interviewer</h1>
+    </header>
+    <main>
+        <div id="chat-container">
+            <div class="message ai-message">Click "Start Interview" and allow microphone access to begin.</div>
+        </div>
+        <div id="partial-transcript"></div>
+        <div id="status-container">
+            <div id="recording-indicator"></div>
+            <button id="start-btn" onclick="start()">Start Interview</button>
+        </div>
+    </main>
 
-        <script>
-            async function start() {
-                // get microphone
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                const audioContext = new AudioContext();
+    <script>
+        let ws;
+        let audioContext;
+        let processor;
+        let stream;
+
+        function addMessage(text, isUser) {
+            const container = document.getElementById('chat-container');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${isUser ? 'user-message' : 'ai-message'}`;
+            msgDiv.textContent = text;
+            container.appendChild(msgDiv);
+            container.scrollTop = container.scrollHeight;
+            
+            if (isUser) {
+                document.getElementById('partial-transcript').textContent = '';
+            }
+        }
+
+        async function playAudio(base64Data) {
+            const binaryString = atob(base64Data);
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            
+            const audioBuffer = await audioContext.decodeAudioData(bytes.buffer);
+            const source = audioContext.createBufferSource();
+            source.buffer = audioBuffer;
+            source.connect(audioContext.destination);
+            source.start();
+        }
+
+        async function start() {
+            const startBtn = document.getElementById('start-btn');
+            startBtn.disabled = true;
+            startBtn.textContent = 'Connected';
+            document.getElementById('recording-indicator').style.display = 'block';
+
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                
                 const source = audioContext.createMediaStreamSource(stream);
+                
+                ws = new WebSocket(`ws://${window.location.host}/receive?sampleRate=${audioContext.sampleRate}`);
+                ws.binaryType = 'arraybuffer';
 
-                const ws = new WebSocket(
-                    `ws://localhost:3000/receive?sampleRate=${audioContext.sampleRate}`,
-                );
+                ws.onopen = () => {
+                    console.log("WebSocket connected!");
+                };
 
-                const processor = audioContext.createScriptProcessor(4096, 1, 1);
+                ws.onmessage = async (msg) => {
+                    const data = JSON.parse(msg.data);
+                    if (data.type === 'transcript') {
+                        addMessage(data.text, true);
+                    } else if (data.type === 'partial') {
+                        document.getElementById('partial-transcript').textContent = data.text;
+                    } else if (data.type === 'audio') {
+                        addMessage(data.text, false);
+                        await playAudio(data.audio);
+                    }
+                };
+
+                ws.onclose = () => {
+                    console.log("WebSocket closed");
+                    stop();
+                };
+
+                // Using ScriptProcessor for compatibility, although deprecated
+                processor = audioContext.createScriptProcessor(4096, 1, 1);
                 source.connect(processor);
                 processor.connect(audioContext.destination);
 
                 processor.onaudioprocess = (e) => {
-                    const data = e.inputBuffer.getChannelData(0); // Float32Array
-                    // Convert to int16 PCM
-                    const int16 = new Int16Array(data.length);
-                    for (let i = 0; i < data.length; i++) {
-                        int16[i] = Math.max(-1, Math.min(1, data[i])) * 32767;
+                    if (ws && ws.readyState === WebSocket.OPEN) {
+                        const inputData = e.inputBuffer.getChannelData(0);
+                        const int16Data = new Int16Array(inputData.length);
+                        for (let i = 0; i < inputData.length; i++) {
+                            int16Data[i] = Math.max(-1, Math.min(1, inputData[i])) * 32767;
+                        }
+                        ws.send(int16Data.buffer);
                     }
-                    // Send Base64
-                    ws.send(btoa(String.fromCharCode(...new Uint8Array(int16.buffer))));
                 };
 
-                ws.onmessage = (msg) => {
-                    console.log("Server:", msg.data);
-                };
-
-                ws.onopen = () => console.log("WebSocket connected!");
-                ws.onclose = () => console.log("WebSocket closed");
+            } catch (err) {
+                console.error("Error starting stream:", err);
+                alert("Could not access microphone.");
+                startBtn.disabled = false;
+                startBtn.textContent = 'Start Interview';
+                document.getElementById('recording-indicator').style.display = 'none';
             }
-        </script>
-    </body>
+        }
+
+        function stop() {
+            if (processor) processor.disconnect();
+            if (stream) stream.getTracks().forEach(track => track.stop());
+            const startBtn = document.getElementById('start-btn');
+            startBtn.disabled = false;
+            startBtn.textContent = 'Start Interview';
+            document.getElementById('recording-indicator').style.display = 'none';
+        }
+    </script>
+</body>
 </html>
