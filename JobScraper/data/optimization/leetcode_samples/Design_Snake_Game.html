@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="shortcut icon" type="image/png" href="/assets/img/favicon.png">
+  <link rel="stylesheet" href="/assets/css/uikit.min.css" />
+  <script src="/assets/js/uikit.min.js" type="text/javascript"></script>
+  <script src="/assets/js/uikit-icons.min.js" type="text/javascript"></script>
+
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        packages: {'[+]': ['ams']}  // Include the 'ams' package
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  
+  
+
+  
+<!-- below block is overlapping with SEO plugin generated title and description   -->
+<!-- 
+  <title>353 - Design Snake Game</title>
+
+  
+  <meta name="author" content="Leetcode">
+  
+
+  
+  <meta name="description" content="Welcome to Subscribe On Youtube Question Formatted question description: https://leetcode.ca/all/353.html Design a Snake game that is played on a device with screen size height x width. Play the game online if you are not familiar with the game. The snake is initially positioned at the top left corner (0, 0)...">
+   -->
+
+  
+
+  
+  <meta name="keywords" content="LeetCode, Solution, Company Tag, Unlock Prime, Java, C++, Interview, Job, Algorithm, SQL, Canada">
+  
+
+  <link rel="alternate" type="application/rss+xml" title="Leetcode" href="https://leetcode.ca/feed.xml">
+
+  
+
+  
+
+  
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-K108N8L891"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-K108N8L891');
+  </script>
+  <!-- End Google Analytics -->
+
+
+  
+  <script data-ad-client="ca-pub-6766885420008650" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+
+
+
+  
+    
+      
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+
+    
+      
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
+
+
+    
+      
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic">
+
+
+    
+      
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800">
+
+
+    
+  
+
+  
+    
+      <link rel="stylesheet" href="/assets/css/bootstrap-social.css">
+    
+      <link rel="stylesheet" href="/assets/css/beautifuljekyll.css">
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <meta property="og:site_name" content="Leetcode">
+  <meta property="og:title" content="353 - Design Snake Game">
+  <meta property="og:description" content="Welcome to Subscribe On Youtube Question Formatted question description: https://leetcode.ca/all/353.html Design a Snake game that is played on a device with screen size height x width. Play the game online if you are not familiar with the game. The snake is initially positioned at the top left corner (0, 0) with a length of 1 unit. You are given an array food where food[i] = (ri, ci) is the row and column position of a piece of food that the snake can eat. When a snake eats a piece of food, its length and the game&amp;#39;s score both increase by 1. Each piece of food appears one by one on the screen, meaning the second piece of food will not appear until the snake eats the first piece of food. When a piece of food appears on the screen, it is guaranteed that it will not appear on a block occupied by the snake. The game is over if the snake goes out of bounds (hits a wall) or if its head occupies a space that its body occupies after moving (i.e. a snake of length 4 cannot run into itself). Implement the SnakeGame class: SnakeGame(int width, int height, int[][] food) Initializes the object with a screen of size height x width and the positions of the food. int move(String direction) Returns the score of the game after applying one direction move by the snake. If the game is over, return -1. &amp;nbsp; Example 1: Input [&amp;quot;SnakeGame&amp;quot;, &amp;quot;move&amp;quot;, &amp;quot;move&amp;quot;, &amp;quot;move&amp;quot;, &amp;quot;move&amp;quot;, &amp;quot;move&amp;quot;, &amp;quot;move&amp;quot;] [[3, 2, [[1, 2], [0, 1]]], [&amp;quot;R&amp;quot;], [&amp;quot;D&amp;quot;], [&amp;quot;R&amp;quot;], [&amp;quot;U&amp;quot;], [&amp;quot;L&amp;quot;], [&amp;quot;U&amp;quot;]] Output [null, 0, 0, 1, 1, 2, -1] Explanation SnakeGame snakeGame = new SnakeGame(3, 2, [[1, 2], [0, 1]]); snakeGame.move(&amp;quot;R&amp;quot;); // return 0 snakeGame.move(&amp;quot;D&amp;quot;); // return 0 snakeGame.move(&amp;quot;R&amp;quot;); // return 1, snake eats the first piece of food. The second piece of food appears at (0, 1). snakeGame.move(&amp;quot;U&amp;quot;); // return 1 snakeGame.move(&amp;quot;L&amp;quot;); // return 2, snake eats the second food. No more food appears. snakeGame.move(&amp;quot;U&amp;quot;); // return -1, game over because snake collides with border &amp;nbsp; Constraints: 1 &amp;lt;= width, height &amp;lt;= 104 1 &amp;lt;= food.length &amp;lt;= 50 food[i].length == 2 0 &amp;lt;= ri &amp;lt; height 0 &amp;lt;= ci &amp;lt; width direction.length == 1 direction is &amp;#39;U&amp;#39;, &amp;#39;D&amp;#39;, &amp;#39;L&amp;#39;, or &amp;#39;R&amp;#39;. At most 104 calls will be made to move. Algorithm We need a one-dimensional array to store the position of the snake body. As the head of the snake moves forward a step, the tail of the snake also moves forward, and the body in the middle is still in its original position. As a result of the movement, the head of the snake changes to a new position, removing the position of the tail. What needs attention is whether the position of removing the snake tail is before or after detecting the collision with the snake body. If it is later, you cannot pass this test case: [[3,3,[[2,0],[0,0]]],[&quot;D&quot;],[&quot;D&quot;],[&quot;U&quot;]] , If it is before, there is no problem To detect whether the snake head...">
+
+  
+  <meta property="og:image" content="https://leetcode.ca/assets/img/avatar-icon.jpg">
+  
+
+  <!-- remove canonical below to use SEO plugin -->
+  
+  <meta property="og:type" content="article">
+  <meta property="og:article:author" content="Leetcode">
+  <meta property="og:article:published_time" content="2016-11-17T21:21:01-08:00">
+  <meta property="og:url" content="https://leetcode.ca/2016-11-17-353-Design-Snake-Game/">
+  <!-- <link rel="canonical" href="https://leetcode.ca/2016-11-17-353-Design-Snake-Game/"> -->
+  
+
+  
+  <meta name="twitter:card" content="summary">
+  
+  <meta name="twitter:site" content="@">
+  <meta name="twitter:creator" content="@">
+
+  <meta property="twitter:title" content="353 - Design Snake Game">
+  <meta property="twitter:description" content="Welcome to Subscribe On Youtube Question Formatted question description: https://leetcode.ca/all/353.html Design a Snake game that is played on a device with screen size height x width. Play the game online if you are not familiar with the game. The snake is initially positioned at the top left corner (0, 0) with a length of 1 unit. You are given an array food where food[i] = (ri, ci) is the row and column position of a piece of food that the snake can eat. When a snake eats a piece of food, its length and the game&amp;#39;s score both increase by 1. Each piece of food appears one by one on the screen, meaning the second piece of food will not appear until the snake eats the first piece of food. When a piece of food appears on the screen, it is guaranteed that it will not appear on a block occupied by the snake. The game is over if the snake goes out of bounds (hits a wall) or if its head occupies a space that its body occupies after moving (i.e. a snake of length 4 cannot run into itself). Implement the SnakeGame class: SnakeGame(int width, int height, int[][] food) Initializes the object with a screen of size height x width and the positions of the food. int move(String direction) Returns the score of the game after applying one direction move by the snake. If the game is over, return -1. &amp;nbsp; Example 1: Input [&amp;quot;SnakeGame&amp;quot;, &amp;quot;move&amp;quot;, &amp;quot;move&amp;quot;, &amp;quot;move&amp;quot;, &amp;quot;move&amp;quot;, &amp;quot;move&amp;quot;, &amp;quot;move&amp;quot;] [[3, 2, [[1, 2], [0, 1]]], [&amp;quot;R&amp;quot;], [&amp;quot;D&amp;quot;], [&amp;quot;R&amp;quot;], [&amp;quot;U&amp;quot;], [&amp;quot;L&amp;quot;], [&amp;quot;U&amp;quot;]] Output [null, 0, 0, 1, 1, 2, -1] Explanation SnakeGame snakeGame = new SnakeGame(3, 2, [[1, 2], [0, 1]]); snakeGame.move(&amp;quot;R&amp;quot;); // return 0 snakeGame.move(&amp;quot;D&amp;quot;); // return 0 snakeGame.move(&amp;quot;R&amp;quot;); // return 1, snake eats the first piece of food. The second piece of food appears at (0, 1). snakeGame.move(&amp;quot;U&amp;quot;); // return 1 snakeGame.move(&amp;quot;L&amp;quot;); // return 2, snake eats the second food. No more food appears. snakeGame.move(&amp;quot;U&amp;quot;); // return -1, game over because snake collides with border &amp;nbsp; Constraints: 1 &amp;lt;= width, height &amp;lt;= 104 1 &amp;lt;= food.length &amp;lt;= 50 food[i].length == 2 0 &amp;lt;= ri &amp;lt; height 0 &amp;lt;= ci &amp;lt; width direction.length == 1 direction is &amp;#39;U&amp;#39;, &amp;#39;D&amp;#39;, &amp;#39;L&amp;#39;, or &amp;#39;R&amp;#39;. At most 104 calls will be made to move. Algorithm We need a one-dimensional array to store the position of the snake body. As the head of the snake moves forward a step, the tail of the snake also moves forward, and the body in the middle is still in its original position. As a result of the movement, the head of the snake changes to a new position, removing the position of the tail. What needs attention is whether the position of removing the snake tail is before or after detecting the collision with the snake body. If it is later, you cannot pass this test case: [[3,3,[[2,0],[0,0]]],[&quot;D&quot;],[&quot;D&quot;],[&quot;U&quot;]] , If it is before, there is no problem To detect whether the snake head...">
+
+  
+  <meta name="twitter:image" content="https://leetcode.ca/assets/img/avatar-icon.jpg">
+  
+
+  
+
+
+  <!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>353 - Design Snake Game | Leetcode</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="353 - Design Snake Game" />
+<meta name="author" content="Leetcode" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Welcome to Subscribe On Youtube" />
+<meta property="og:description" content="Welcome to Subscribe On Youtube" />
+<link rel="canonical" href="https://leetcode.ca/2016-11-17-353-Design-Snake-Game/" />
+<meta property="og:url" content="https://leetcode.ca/2016-11-17-353-Design-Snake-Game/" />
+<meta property="og:site_name" content="Leetcode" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2016-11-17T21:21:01-08:00" />
+<script type="application/ld+json">
+{"description":"Welcome to Subscribe On Youtube","headline":"353 - Design Snake Game","dateModified":"2016-11-17T21:21:01-08:00","datePublished":"2016-11-17T21:21:01-08:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://leetcode.ca/2016-11-17-353-Design-Snake-Game/"},"url":"https://leetcode.ca/2016-11-17-353-Design-Snake-Game/","author":{"@type":"Person","name":"Leetcode"},"@type":"BlogPosting","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+  
+
+  
+
+</head>
+
+
+<body>
+
+  
+
+
+  <nav class="navbar navbar-expand-xl navbar-light fixed-top navbar-custom top-nav-regular"><a class="navbar-brand" href="https://leetcode.ca/">Leetcode</a><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="main-navbar">
+    <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/blog">Posts</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/tags">Tag Index</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/search">Search</a>
+          </li></ul>
+  </div>
+
+  
+
+  
+    <div class="avatar-container">
+      <div class="avatar-img-border">
+        <a href="https://leetcode.ca/">
+          <img alt="Navigation bar avatar" class="avatar-img" src="/assets/img/avatar-icon.jpg" />
+        </a>
+      </div>
+    </div>
+  
+
+</nav>
+
+
+  <!-- TODO this file has become a mess, refactor it -->
+
+
+
+
+
+
+
+<header class="header-section ">
+
+<div class="intro-header no-img">
+  <div class="container-md">
+    <div class="row">
+      <div class="col-xl-8 offset-xl-2 col-lg-10 offset-lg-1">
+        <div class="post-heading">
+          <h1>353 - Design Snake Game</h1>
+          
+
+          
+            <span class="post-meta">Posted on November 17, 2016</span>
+            
+            
+              
+
+
+
+
+
+  
+  <span class="post-meta"><span class="d-none d-md-inline middot">&middot;</span> 8 minute read</span>
+
+
+            
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</header>
+
+
+
+
+
+<div class=" container-md ">
+  <div class="row">
+    <div class=" col-xl-8 offset-xl-2 col-lg-10 offset-lg-1 ">
+
+      
+
+      
+
+      <article role="main" class="blog-post">
+        <h5 id="welcome-to-subscribe-on-youtube">Welcome to Subscribe On Youtube</h5>
+<script src="https://apis.google.com/js/platform.js"></script>
+
+<div class="g-ytsubscribe" data-channelid="UCslk3mmaMJy1enit3L9vWig" data-layout="full" data-count="hidden"></div>
+
+<h1 id="question">Question</h1>
+
+<p>Formatted question description: <a href="https://leetcode.ca/all/353.html">https://leetcode.ca/all/353.html</a></p>
+
+<p>Design a <a href="https://en.wikipedia.org/wiki/Snake_(video_game)" target="_blank">Snake game</a> that is played on a device with screen size <code>height x width</code>. <a href="http://patorjk.com/games/snake/" target="_blank">Play the game online</a> if you are not familiar with the game.</p>
+
+<p>The snake is initially positioned at the top left corner <code>(0, 0)</code> with a length of <code>1</code> unit.</p>
+
+<p>You are given an array <code>food</code> where <code>food[i] = (r<sub>i</sub>, c<sub>i</sub>)</code> is the row and column position of a piece of food that the snake can eat. When a snake eats a piece of food, its length and the game&#39;s score both increase by <code>1</code>.</p>
+
+<p>Each piece of food appears one by one on the screen, meaning the second piece of food will not appear until the snake eats the first piece of food.</p>
+
+<p>When a piece of food appears on the screen, it is <strong>guaranteed</strong> that it will not appear on a block occupied by the snake.</p>
+
+<p>The game is over if the snake goes out of bounds (hits a wall) or if its head occupies a space that its body occupies <strong>after</strong> moving (i.e. a snake of length 4 cannot run into itself).</p>
+
+<p>Implement the <code>SnakeGame</code> class:</p>
+
+<ul>
+	<li><code>SnakeGame(int width, int height, int[][] food)</code> Initializes the object with a screen of size <code>height x width</code> and the positions of the <code>food</code>.</li>
+	<li><code>int move(String direction)</code> Returns the score of the game after applying one <code>direction</code> move by the snake. If the game is over, return <code>-1</code>.</li>
+</ul>
+
+<p>&nbsp;</p>
+<p><strong class="example">Example 1:</strong></p>
+<p><img alt="" src="https://fastly.jsdelivr.net/gh/doocs/leetcode@main/solution/0300-0399/0353.Design%20Snake%20Game/images/snake.jpg" style="width: 800px; height: 302px;" /></p>
+<pre>
+<strong>Input</strong>
+[&quot;SnakeGame&quot;, &quot;move&quot;, &quot;move&quot;, &quot;move&quot;, &quot;move&quot;, &quot;move&quot;, &quot;move&quot;]
+[[3, 2, [[1, 2], [0, 1]]], [&quot;R&quot;], [&quot;D&quot;], [&quot;R&quot;], [&quot;U&quot;], [&quot;L&quot;], [&quot;U&quot;]]
+<strong>Output</strong>
+[null, 0, 0, 1, 1, 2, -1]
+
+<strong>Explanation</strong>
+SnakeGame snakeGame = new SnakeGame(3, 2, [[1, 2], [0, 1]]);
+snakeGame.move(&quot;R&quot;); // return 0
+snakeGame.move(&quot;D&quot;); // return 0
+snakeGame.move(&quot;R&quot;); // return 1, snake eats the first piece of food. The second piece of food appears at (0, 1).
+snakeGame.move(&quot;U&quot;); // return 1
+snakeGame.move(&quot;L&quot;); // return 2, snake eats the second food. No more food appears.
+snakeGame.move(&quot;U&quot;); // return -1, game over because snake collides with border
+
+</pre>
+
+<p>&nbsp;</p>
+<p><strong>Constraints:</strong></p>
+
+<ul>
+	<li><code>1 &lt;= width, height &lt;= 10<sup>4</sup></code></li>
+	<li><code>1 &lt;= food.length &lt;= 50</code></li>
+	<li><code>food[i].length == 2</code></li>
+	<li><code>0 &lt;= r<sub>i</sub> &lt; height</code></li>
+	<li><code>0 &lt;= c<sub>i</sub> &lt; width</code></li>
+	<li><code>direction.length == 1</code></li>
+	<li><code>direction</code> is <code>&#39;U&#39;</code>, <code>&#39;D&#39;</code>, <code>&#39;L&#39;</code>, or <code>&#39;R&#39;</code>.</li>
+	<li>At most <code>10<sup>4</sup></code> calls will be made to <code>move</code>.</li>
+</ul>
+
+<h1 id="algorithm">Algorithm</h1>
+
+<p>We need a one-dimensional array to store the position of the snake body.</p>
+
+<p>As the head of the snake moves forward a step, the tail of the snake also moves forward, and the body in the middle is still in its original position. As a result of the movement, the head of the snake changes to a new position, removing the position of the tail.</p>
+
+<p>What needs attention is whether the position of removing the snake tail is before or after detecting the collision with the snake body.</p>
+<ul>
+  <li>If it is later, you cannot pass this test case: <code class="language-plaintext highlighter-rouge">[[3,3,[[2,0],[0,0]]],["D"],["D"],["U"]]</code> ,</li>
+  <li>If it is before, there is no problem
+To detect whether the snake head and the snake body collide, use <code class="language-plaintext highlighter-rouge">count(snake.begin(), snake.end(), head)</code></li>
+</ul>
+
+<h1 id="code">Code</h1>
+
+<ul class="uk-tab" data-uk-switcher="{connect:'#13323463-80f1-4ec6-81a4-b05afcd69c00'}">
+
+	<li class="uk-active"><a href="#">Java</a></li>
+
+	<li><a href="#">Python</a></li>
+
+	<li><a href="#">C++</a></li>
+
+	<li><a href="#">Go</a></li>
+
+	<li><a href="#">TypeScript</a></li>
+
+</ul>
+
+<ul id="13323463-80f1-4ec6-81a4-b05afcd69c00" class="uk-switcher uk-margin">
+
+	<li>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">SnakeGame</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">m</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">n</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kt">int</span><span class="o">[][]</span> <span class="n">food</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">score</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">idx</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="nc">Deque</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">q</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayDeque</span><span class="o">&lt;&gt;();</span>
+    <span class="kd">private</span> <span class="nc">Set</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">vis</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashSet</span><span class="o">&lt;&gt;();</span>
+
+    <span class="kd">public</span> <span class="nf">SnakeGame</span><span class="o">(</span><span class="kt">int</span> <span class="n">width</span><span class="o">,</span> <span class="kt">int</span> <span class="n">height</span><span class="o">,</span> <span class="kt">int</span><span class="o">[][]</span> <span class="n">food</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">height</span><span class="o">;</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">width</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">food</span> <span class="o">=</span> <span class="n">food</span><span class="o">;</span>
+        <span class="n">q</span><span class="o">.</span><span class="na">offer</span><span class="o">(</span><span class="mi">0</span><span class="o">);</span>
+        <span class="n">vis</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="mi">0</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">move</span><span class="o">(</span><span class="nc">String</span> <span class="n">direction</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kt">int</span> <span class="n">p</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="na">peekFirst</span><span class="o">();</span>
+        <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">p</span> <span class="o">/</span> <span class="n">n</span><span class="o">,</span> <span class="n">j</span> <span class="o">=</span> <span class="n">p</span> <span class="o">%</span> <span class="n">n</span><span class="o">;</span>
+        <span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="n">i</span><span class="o">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">j</span><span class="o">;</span>
+        <span class="k">if</span> <span class="o">(</span><span class="s">"U"</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">direction</span><span class="o">))</span> <span class="o">{</span>
+            <span class="o">--</span><span class="n">x</span><span class="o">;</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="s">"D"</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">direction</span><span class="o">))</span> <span class="o">{</span>
+            <span class="o">++</span><span class="n">x</span><span class="o">;</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="s">"L"</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">direction</span><span class="o">))</span> <span class="o">{</span>
+            <span class="o">--</span><span class="n">y</span><span class="o">;</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="o">++</span><span class="n">y</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">x</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="n">m</span> <span class="o">||</span> <span class="n">y</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="n">y</span> <span class="o">&gt;=</span> <span class="n">n</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">idx</span> <span class="o">&lt;</span> <span class="n">food</span><span class="o">.</span><span class="na">length</span> <span class="o">&amp;&amp;</span> <span class="n">x</span> <span class="o">==</span> <span class="n">food</span><span class="o">[</span><span class="n">idx</span><span class="o">][</span><span class="mi">0</span><span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="n">y</span> <span class="o">==</span> <span class="n">food</span><span class="o">[</span><span class="n">idx</span><span class="o">][</span><span class="mi">1</span><span class="o">])</span> <span class="o">{</span>
+            <span class="o">++</span><span class="n">score</span><span class="o">;</span>
+            <span class="o">++</span><span class="n">idx</span><span class="o">;</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="kt">int</span> <span class="n">t</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="na">pollLast</span><span class="o">();</span>
+            <span class="n">vis</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="n">t</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="kt">int</span> <span class="n">cur</span> <span class="o">=</span> <span class="n">f</span><span class="o">(</span><span class="n">x</span><span class="o">,</span> <span class="n">y</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">vis</span><span class="o">.</span><span class="na">contains</span><span class="o">(</span><span class="n">cur</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="n">q</span><span class="o">.</span><span class="na">offerFirst</span><span class="o">(</span><span class="n">cur</span><span class="o">);</span>
+        <span class="n">vis</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">cur</span><span class="o">);</span>
+        <span class="k">return</span> <span class="n">score</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">private</span> <span class="kt">int</span> <span class="nf">f</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">,</span> <span class="kt">int</span> <span class="n">j</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">i</span> <span class="o">*</span> <span class="n">n</span> <span class="o">+</span> <span class="n">j</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="cm">/**
+ * Your SnakeGame object will be instantiated and called as such:
+ * SnakeGame obj = new SnakeGame(width, height, food);
+ * int param_1 = obj.move(direction);
+ */</span>
+
+</code></pre></div></div>
+
+</li>
+
+	<li>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">'''
+- The `SnakeGame` class is initialized with `width`, `height`, and `food`.
+- The `move` method handles the movement of the snake based on the given direction and updates its position.
+- It checks for collisions with the wall or the snake itself.
+- It also checks if the snake has eaten food, in which case it increases the size of the snake and increments the score.
+- The coordinates and movement logic are handled using tuple manipulation.
+
+'''</span>
+<span class="k">class</span> <span class="nc">SnakeGame</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">food</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">width</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">height</span> <span class="o">=</span> <span class="n">height</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">food</span> <span class="o">=</span> <span class="n">food</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">score</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">snake</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)]</span>
+
+    <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">direction</span><span class="p">):</span>
+        <span class="n">head</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">snake</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">tail</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">snake</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># Pop the tail, as the snake moves forward
+</span>        <span class="bp">self</span><span class="p">.</span><span class="n">snake</span><span class="p">.</span><span class="n">pop</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">direction</span> <span class="o">==</span> <span class="s">'U'</span><span class="p">:</span>
+            <span class="n">head</span> <span class="o">=</span> <span class="p">(</span><span class="n">head</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">head</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">direction</span> <span class="o">==</span> <span class="s">'L'</span><span class="p">:</span>
+            <span class="n">head</span> <span class="o">=</span> <span class="p">(</span><span class="n">head</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">head</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">direction</span> <span class="o">==</span> <span class="s">'R'</span><span class="p">:</span>
+            <span class="n">head</span> <span class="o">=</span> <span class="p">(</span><span class="n">head</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">head</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">direction</span> <span class="o">==</span> <span class="s">'D'</span><span class="p">:</span>
+            <span class="n">head</span> <span class="o">=</span> <span class="p">(</span><span class="n">head</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">head</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="c1"># Check if the snake has hit the wall or itself
+</span>        <span class="k">if</span> <span class="p">(</span><span class="n">head</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">.</span><span class="n">snake</span> <span class="ow">or</span> <span class="n">head</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">head</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="p">.</span><span class="n">height</span> <span class="ow">or</span>
+            <span class="n">head</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">head</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="p">.</span><span class="n">width</span><span class="p">):</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+
+        <span class="c1"># Insert the new head position
+</span>        <span class="bp">self</span><span class="p">.</span><span class="n">snake</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">head</span><span class="p">)</span>
+
+        <span class="c1"># Check if the snake eats food
+</span>        <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">food</span> <span class="ow">and</span> <span class="n">head</span> <span class="o">==</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">food</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">food</span><span class="p">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">snake</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">tail</span><span class="p">)</span>  <span class="c1"># Grow the snake
+</span>            <span class="bp">self</span><span class="p">.</span><span class="n">score</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">score</span>
+
+<span class="c1"># Example usage
+</span><span class="n">game</span> <span class="o">=</span> <span class="n">SnakeGame</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
+<span class="k">print</span><span class="p">(</span><span class="n">game</span><span class="p">.</span><span class="n">move</span><span class="p">(</span><span class="s">'R'</span><span class="p">))</span>  <span class="c1"># 0
+</span><span class="k">print</span><span class="p">(</span><span class="n">game</span><span class="p">.</span><span class="n">move</span><span class="p">(</span><span class="s">'D'</span><span class="p">))</span>  <span class="c1"># 1 (eats food)
+</span><span class="k">print</span><span class="p">(</span><span class="n">game</span><span class="p">.</span><span class="n">move</span><span class="p">(</span><span class="s">'D'</span><span class="p">))</span>  <span class="c1"># -1 (hits the wall)
+</span>
+
+<span class="c1">#############
+</span>
+<span class="k">class</span> <span class="nc">SnakeGame</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">height</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">food</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">m</span> <span class="o">=</span> <span class="n">height</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">n</span> <span class="o">=</span> <span class="n">width</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">food</span> <span class="o">=</span> <span class="n">food</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">score</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">q</span> <span class="o">=</span> <span class="n">deque</span><span class="p">([(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)])</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">vis</span> <span class="o">=</span> <span class="p">{(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)}</span>
+
+    <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">direction</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span>
+        <span class="n">match</span> <span class="n">direction</span><span class="p">:</span>
+            <span class="n">case</span> <span class="s">"U"</span><span class="p">:</span>
+                <span class="n">x</span> <span class="o">-=</span> <span class="mi">1</span>
+            <span class="n">case</span> <span class="s">"D"</span><span class="p">:</span>
+                <span class="n">x</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">case</span> <span class="s">"L"</span><span class="p">:</span>
+                <span class="n">y</span> <span class="o">-=</span> <span class="mi">1</span>
+            <span class="n">case</span> <span class="s">"R"</span><span class="p">:</span>
+                <span class="n">y</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="p">.</span><span class="n">m</span> <span class="ow">or</span> <span class="n">y</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">y</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="p">.</span><span class="n">n</span><span class="p">:</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">food</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="n">x</span> <span class="o">==</span> <span class="bp">self</span><span class="p">.</span><span class="n">food</span><span class="p">[</span><span class="bp">self</span><span class="p">.</span><span class="n">idx</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="ow">and</span> <span class="n">y</span> <span class="o">==</span> <span class="bp">self</span><span class="p">.</span><span class="n">food</span><span class="p">[</span><span class="bp">self</span><span class="p">.</span><span class="n">idx</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+        <span class="p">):</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">score</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">vis</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">q</span><span class="p">.</span><span class="n">pop</span><span class="p">())</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">.</span><span class="n">vis</span><span class="p">:</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">q</span><span class="p">.</span><span class="n">appendleft</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">vis</span><span class="p">.</span><span class="n">add</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">score</span>
+
+
+<span class="c1"># Your SnakeGame object will be instantiated and called as such:
+# obj = SnakeGame(width, height, food)
+# param_1 = obj.move(direction)
+</span></code></pre></div></div>
+</li>
+
+	<li>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">SnakeGame</span> <span class="p">{</span>
+<span class="nl">public:</span>
+    <span class="cm">/** Initialize your data structure here.
+        @param width - screen width
+        @param height - screen height
+        @param food - A list of food positions
+        E.g food = [[1,1], [1,0]] means the first food is positioned at [1,1], the second is at [1,0]. */</span>
+    <span class="n">SnakeGame</span><span class="p">(</span><span class="kt">int</span> <span class="n">width</span><span class="p">,</span> <span class="kt">int</span> <span class="n">height</span><span class="p">,</span> <span class="n">vector</span><span class="o">&lt;</span><span class="n">pair</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="kt">int</span><span class="o">&gt;&gt;</span> <span class="n">food</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="o">-&gt;</span><span class="n">width</span> <span class="o">=</span> <span class="n">width</span><span class="p">;</span>
+        <span class="k">this</span><span class="o">-&gt;</span><span class="n">height</span> <span class="o">=</span> <span class="n">height</span><span class="p">;</span>
+        <span class="k">this</span><span class="o">-&gt;</span><span class="n">food</span> <span class="o">=</span> <span class="n">food</span><span class="p">;</span>
+        <span class="n">score</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="n">snake</span><span class="p">.</span><span class="n">push_back</span><span class="p">({</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">});</span>
+    <span class="p">}</span>
+
+    <span class="cm">/** Moves the snake.
+        @param direction - 'U' = Up, 'L' = Left, 'R' = Right, 'D' = Down
+        @return The game's score after the move. Return -1 if game over.
+        Game over when snake crosses the screen boundary or bites its body. */</span>
+    <span class="kt">int</span> <span class="n">move</span><span class="p">(</span><span class="n">string</span> <span class="n">direction</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">auto</span> <span class="n">head</span> <span class="o">=</span> <span class="n">snake</span><span class="p">.</span><span class="n">front</span><span class="p">(),</span> <span class="n">tail</span> <span class="o">=</span> <span class="n">snake</span><span class="p">.</span><span class="n">back</span><span class="p">();</span>
+        <span class="n">snake</span><span class="p">.</span><span class="n">pop_back</span><span class="p">();</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">direction</span> <span class="o">==</span> <span class="s">"U"</span><span class="p">)</span> <span class="o">--</span><span class="n">head</span><span class="p">.</span><span class="n">first</span><span class="p">;</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">direction</span> <span class="o">==</span> <span class="s">"L"</span><span class="p">)</span> <span class="o">--</span><span class="n">head</span><span class="p">.</span><span class="n">second</span><span class="p">;</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">direction</span> <span class="o">==</span> <span class="s">"R"</span><span class="p">)</span> <span class="o">++</span><span class="n">head</span><span class="p">.</span><span class="n">second</span><span class="p">;</span>
+        <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">direction</span> <span class="o">==</span> <span class="s">"D"</span><span class="p">)</span> <span class="o">++</span><span class="n">head</span><span class="p">.</span><span class="n">first</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">count</span><span class="p">(</span><span class="n">snake</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">snake</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span> <span class="n">head</span><span class="p">)</span> <span class="o">||</span> <span class="n">head</span><span class="p">.</span><span class="n">first</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="n">head</span><span class="p">.</span><span class="n">first</span> <span class="o">&gt;=</span> <span class="n">height</span> <span class="o">||</span> <span class="n">head</span><span class="p">.</span><span class="n">second</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="n">head</span><span class="p">.</span><span class="n">second</span> <span class="o">&gt;=</span> <span class="n">width</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="n">snake</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="n">snake</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">head</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">food</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="n">head</span> <span class="o">==</span> <span class="n">food</span><span class="p">.</span><span class="n">front</span><span class="p">())</span> <span class="p">{</span>
+            <span class="n">food</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span><span class="n">food</span><span class="p">.</span><span class="n">begin</span><span class="p">());</span>
+            <span class="n">snake</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">tail</span><span class="p">);</span>
+            <span class="o">++</span><span class="n">score</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">score</span><span class="p">;</span>
+    <span class="p">}</span>
+
+<span class="nl">private:</span>
+    <span class="kt">int</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">score</span><span class="p">;</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="n">pair</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="kt">int</span><span class="o">&gt;&gt;</span> <span class="n">food</span><span class="p">,</span> <span class="n">snake</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="cm">/**
+ * Your SnakeGame object will be instantiated and called as such:
+ * SnakeGame* obj = new SnakeGame(width, height, food);
+ * int param_1 = obj-&gt;move(direction);
+ */</span>
+</code></pre></div></div>
+</li>
+
+	<li>
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">SnakeGame</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="n">m</span>     <span class="kt">int</span>
+	<span class="n">n</span>     <span class="kt">int</span>
+	<span class="n">food</span>  <span class="p">[][]</span><span class="kt">int</span>
+	<span class="n">score</span> <span class="kt">int</span>
+	<span class="n">idx</span>   <span class="kt">int</span>
+	<span class="n">q</span>     <span class="p">[]</span><span class="kt">int</span>
+	<span class="n">vis</span>   <span class="k">map</span><span class="p">[</span><span class="kt">int</span><span class="p">]</span><span class="kt">bool</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">Constructor</span><span class="p">(</span><span class="n">width</span> <span class="kt">int</span><span class="p">,</span> <span class="n">height</span> <span class="kt">int</span><span class="p">,</span> <span class="n">food</span> <span class="p">[][]</span><span class="kt">int</span><span class="p">)</span> <span class="n">SnakeGame</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="n">SnakeGame</span><span class="p">{</span><span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">food</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="p">[]</span><span class="kt">int</span><span class="p">{</span><span class="m">0</span><span class="p">},</span> <span class="k">map</span><span class="p">[</span><span class="kt">int</span><span class="p">]</span><span class="kt">bool</span><span class="p">{}</span> <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">this</span> <span class="o">*</span><span class="n">SnakeGame</span><span class="p">)</span> <span class="n">Move</span><span class="p">(</span><span class="n">direction</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
+	<span class="n">f</span> <span class="o">:=</span> <span class="k">func</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="n">i</span><span class="o">*</span><span class="n">this</span><span class="o">.</span><span class="n">n</span> <span class="o">+</span> <span class="n">j</span>
+	<span class="p">}</span>
+	<span class="n">p</span> <span class="o">:=</span> <span class="n">this</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="m">0</span><span class="p">]</span>
+	<span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="o">:=</span> <span class="n">p</span><span class="o">/</span><span class="n">this</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="o">%</span><span class="n">this</span><span class="o">.</span><span class="n">n</span>
+	<span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">:=</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span>
+	<span class="k">if</span> <span class="n">direction</span> <span class="o">==</span> <span class="s">"U"</span> <span class="p">{</span>
+		<span class="n">x</span><span class="o">--</span>
+	<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="n">direction</span> <span class="o">==</span> <span class="s">"D"</span> <span class="p">{</span>
+		<span class="n">x</span><span class="o">++</span>
+	<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="n">direction</span> <span class="o">==</span> <span class="s">"L"</span> <span class="p">{</span>
+		<span class="n">y</span><span class="o">--</span>
+	<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+		<span class="n">y</span><span class="o">++</span>
+	<span class="p">}</span>
+	<span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="m">0</span> <span class="o">||</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="n">this</span><span class="o">.</span><span class="n">m</span> <span class="o">||</span> <span class="n">y</span> <span class="o">&lt;</span> <span class="m">0</span> <span class="o">||</span> <span class="n">y</span> <span class="o">&gt;=</span> <span class="n">this</span><span class="o">.</span><span class="n">n</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="o">-</span><span class="m">1</span>
+	<span class="p">}</span>
+	<span class="k">if</span> <span class="n">this</span><span class="o">.</span><span class="n">idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">this</span><span class="o">.</span><span class="n">food</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">x</span> <span class="o">==</span> <span class="n">this</span><span class="o">.</span><span class="n">food</span><span class="p">[</span><span class="n">this</span><span class="o">.</span><span class="n">idx</span><span class="p">][</span><span class="m">0</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="n">y</span> <span class="o">==</span> <span class="n">this</span><span class="o">.</span><span class="n">food</span><span class="p">[</span><span class="n">this</span><span class="o">.</span><span class="n">idx</span><span class="p">][</span><span class="m">1</span><span class="p">]</span> <span class="p">{</span>
+		<span class="n">this</span><span class="o">.</span><span class="n">score</span><span class="o">++</span>
+		<span class="n">this</span><span class="o">.</span><span class="n">idx</span><span class="o">++</span>
+	<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+		<span class="n">t</span> <span class="o">:=</span> <span class="n">this</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">this</span><span class="o">.</span><span class="n">q</span><span class="p">)</span><span class="o">-</span><span class="m">1</span><span class="p">]</span>
+		<span class="n">this</span><span class="o">.</span><span class="n">q</span> <span class="o">=</span> <span class="n">this</span><span class="o">.</span><span class="n">q</span><span class="p">[</span><span class="o">:</span><span class="nb">len</span><span class="p">(</span><span class="n">this</span><span class="o">.</span><span class="n">q</span><span class="p">)</span><span class="o">-</span><span class="m">1</span><span class="p">]</span>
+		<span class="n">this</span><span class="o">.</span><span class="n">vis</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="no">false</span>
+	<span class="p">}</span>
+	<span class="n">cur</span> <span class="o">:=</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">this</span><span class="o">.</span><span class="n">vis</span><span class="p">[</span><span class="n">cur</span><span class="p">]</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="o">-</span><span class="m">1</span>
+	<span class="p">}</span>
+	<span class="n">this</span><span class="o">.</span><span class="n">q</span> <span class="o">=</span> <span class="nb">append</span><span class="p">([]</span><span class="kt">int</span><span class="p">{</span><span class="n">cur</span><span class="p">},</span> <span class="n">this</span><span class="o">.</span><span class="n">q</span><span class="o">...</span><span class="p">)</span>
+	<span class="n">this</span><span class="o">.</span><span class="n">vis</span><span class="p">[</span><span class="n">cur</span><span class="p">]</span> <span class="o">=</span> <span class="no">true</span>
+	<span class="k">return</span> <span class="n">this</span><span class="o">.</span><span class="n">score</span>
+<span class="p">}</span>
+
+<span class="c">/**
+ * Your SnakeGame object will be instantiated and called as such:
+ * obj := Constructor(width, height, food);
+ * param_1 := obj.Move(direction);
+ */</span>
+</code></pre></div></div>
+</li>
+
+	<li>
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">SnakeGame</span> <span class="p">{</span>
+    <span class="k">private</span> <span class="nx">m</span><span class="p">:</span> <span class="kr">number</span><span class="p">;</span>
+    <span class="k">private</span> <span class="nx">n</span><span class="p">:</span> <span class="kr">number</span><span class="p">;</span>
+    <span class="k">private</span> <span class="nx">food</span><span class="p">:</span> <span class="kr">number</span><span class="p">[][];</span>
+    <span class="k">private</span> <span class="nx">score</span><span class="p">:</span> <span class="kr">number</span><span class="p">;</span>
+    <span class="k">private</span> <span class="nx">idx</span><span class="p">:</span> <span class="kr">number</span><span class="p">;</span>
+    <span class="k">private</span> <span class="nx">q</span><span class="p">:</span> <span class="kr">number</span><span class="p">[];</span>
+    <span class="k">private</span> <span class="nx">vis</span><span class="p">:</span> <span class="nb">Set</span><span class="o">&lt;</span><span class="kr">number</span><span class="o">&gt;</span><span class="p">;</span>
+
+    <span class="kd">constructor</span><span class="p">(</span><span class="nx">width</span><span class="p">:</span> <span class="kr">number</span><span class="p">,</span> <span class="nx">height</span><span class="p">:</span> <span class="kr">number</span><span class="p">,</span> <span class="nx">food</span><span class="p">:</span> <span class="kr">number</span><span class="p">[][])</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">m</span> <span class="o">=</span> <span class="nx">height</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">n</span> <span class="o">=</span> <span class="nx">width</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">food</span> <span class="o">=</span> <span class="nx">food</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">score</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">idx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">q</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">vis</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Set</span><span class="p">([</span><span class="mi">0</span><span class="p">]);</span>
+    <span class="p">}</span>
+
+    <span class="nx">move</span><span class="p">(</span><span class="nx">direction</span><span class="p">:</span> <span class="kr">string</span><span class="p">):</span> <span class="kr">number</span> <span class="p">{</span>
+        <span class="kd">const</span> <span class="nx">p</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">q</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+        <span class="kd">const</span> <span class="nx">i</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nx">p</span> <span class="o">/</span> <span class="k">this</span><span class="p">.</span><span class="nx">n</span><span class="p">);</span>
+        <span class="kd">const</span> <span class="nx">j</span> <span class="o">=</span> <span class="nx">p</span> <span class="o">%</span> <span class="k">this</span><span class="p">.</span><span class="nx">n</span><span class="p">;</span>
+        <span class="kd">let</span> <span class="nx">x</span> <span class="o">=</span> <span class="nx">i</span><span class="p">;</span>
+        <span class="kd">let</span> <span class="nx">y</span> <span class="o">=</span> <span class="nx">j</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">direction</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">U</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
+            <span class="o">--</span><span class="nx">x</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">direction</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">D</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
+            <span class="o">++</span><span class="nx">x</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">direction</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">L</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
+            <span class="o">--</span><span class="nx">y</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="o">++</span><span class="nx">y</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">x</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="nx">x</span> <span class="o">&gt;=</span> <span class="k">this</span><span class="p">.</span><span class="nx">m</span> <span class="o">||</span> <span class="nx">y</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="nx">y</span> <span class="o">&gt;=</span> <span class="k">this</span><span class="p">.</span><span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">idx</span> <span class="o">&lt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">food</span><span class="p">.</span><span class="nx">length</span> <span class="o">&amp;&amp;</span>
+            <span class="nx">x</span> <span class="o">===</span> <span class="k">this</span><span class="p">.</span><span class="nx">food</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">idx</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">&amp;&amp;</span>
+            <span class="nx">y</span> <span class="o">===</span> <span class="k">this</span><span class="p">.</span><span class="nx">food</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">idx</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+        <span class="p">)</span> <span class="p">{</span>
+            <span class="o">++</span><span class="k">this</span><span class="p">.</span><span class="nx">score</span><span class="p">;</span>
+            <span class="o">++</span><span class="k">this</span><span class="p">.</span><span class="nx">idx</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="kd">const</span> <span class="nx">t</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">q</span><span class="p">.</span><span class="nx">pop</span><span class="p">()</span><span class="o">!</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">vis</span><span class="p">.</span><span class="k">delete</span><span class="p">(</span><span class="nx">t</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="kd">const</span> <span class="nx">cur</span> <span class="o">=</span> <span class="nx">x</span> <span class="o">*</span> <span class="k">this</span><span class="p">.</span><span class="nx">n</span> <span class="o">+</span> <span class="nx">y</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">vis</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="nx">cur</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">q</span><span class="p">.</span><span class="nx">unshift</span><span class="p">(</span><span class="nx">cur</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">vis</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">cur</span><span class="p">);</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">score</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="cm">/**
+ * Your SnakeGame object will be instantiated and called as such:
+ * var obj = new SnakeGame(width, height, food)
+ * var param_1 = obj.move(direction)
+ */</span>
+
+</code></pre></div></div>
+</li>
+
+</ul>
+
+<h1 id="all-problems"><a href="https://leetcode.ca/all/problems.html">All Problems</a></h1>
+
+<h1 id="all-solutions"><a href="https://leetcode.ca/blog">All Solutions</a></h1>
+
+      </article>
+
+      
+        <div class="blog-tags">
+          <span>Tags:</span>
+          
+            <a href="/tags#Amazon">Amazon</a>
+          
+            <a href="/tags#Facebook">Facebook</a>
+          
+            <a href="/tags#Google">Google</a>
+          
+            <a href="/tags#Salesforce">Salesforce</a>
+          
+            <a href="/tags#Uber">Uber</a>
+          
+            <a href="/tags#Zillow">Zillow</a>
+          
+            <a href="/tags#Design">Design</a>
+          
+            <a href="/tags#.Design">.Design</a>
+          
+        </div>
+      
+
+      
+
+      
+        <!-- Check if any share-links are active -->
+
+
+
+
+<section id = "social-share-section">
+  <span class="sr-only">Share: </span>
+
+  
+    <a href="https://twitter.com/intent/tweet?text=353+-+Design+Snake+Game&url=https%3A%2F%2Fleetcode.ca%2F2016-11-17-353-Design-Snake-Game%2F"
+      class="btn btn-social-icon btn-twitter" title="Share on Twitter">
+      <span class="fab fa-fw fa-twitter" aria-hidden="true"></span>
+      <span class="sr-only">Twitter</span>
+    </a>
+  
+
+  
+    <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fleetcode.ca%2F2016-11-17-353-Design-Snake-Game%2F"
+      class="btn btn-social-icon btn-facebook" title="Share on Facebook">
+      <span class="fab fa-fw fa-facebook" aria-hidden="true"></span>
+      <span class="sr-only">Facebook</span>
+    </a>
+  
+
+  
+    <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fleetcode.ca%2F2016-11-17-353-Design-Snake-Game%2F"
+      class="btn btn-social-icon btn-linkedin" title="Share on LinkedIn">
+      <span class="fab fa-fw fa-linkedin" aria-hidden="true"></span>
+      <span class="sr-only">LinkedIn</span>
+    </a>
+  
+
+  
+
+</section>
+
+
+
+      
+
+      <ul class="pagination blog-pager">
+        
+        <li class="page-item previous">
+          <a class="page-link" href="/2016-11-16-352-Data-Stream-as-Disjoint-Intervals/" data-toggle="tooltip" data-placement="top" title="352 - Data Stream as Disjoint Intervals">&larr; Previous Post</a>
+        </li>
+        
+        
+        <li class="page-item next">
+          <a class="page-link" href="/2016-11-18-354-Russian-Doll-Envelopes/" data-toggle="tooltip" data-placement="top" title="354 - Russian Doll Envelopes">Next Post &rarr;</a>
+        </li>
+        
+      </ul>
+      
+  <div class="disqus-comments">
+  <div class="comments">
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+	  var disqus_shortname = 'leetcodeca';
+	  /* ensure that pages with query string get the same discussion */
+	  var url_parts = window.location.href.split("?");
+	  var disqus_url = url_parts[0];
+	  (function() {
+		var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+		dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+		(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	  })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</div>
+  
+  
+
+  
+
+
+
+
+    </div>
+  </div>
+</div>
+
+
+  <footer>
+  <div class="container-md beautiful-jekyll-footer">
+    <div class="row">
+      <div class="col-xl-8 offset-xl-2 col-lg-10 offset-lg-1">
+      <ul class="list-inline text-center footer-links"><li class="list-inline-item">
+    <a href="/feed.xml" title="RSS">
+      <span class="fa-stack fa-lg" aria-hidden="true">
+        <i class="fas fa-circle fa-stack-2x"></i>
+        <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+      </span>
+      <span class="sr-only">RSS</span>
+    </a>
+  </li><li class="list-inline-item">
+    <a href="mailto:admin@leetcode.ca" title="Email me">
+      <span class="fa-stack fa-lg" aria-hidden="true">
+        <i class="fas fa-circle fa-stack-2x"></i>
+        <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+      </span>
+      <span class="sr-only">Email me</span>
+   </a>
+  </li></ul>
+
+      
+      <p class="copyright text-muted">
+      
+        Leetcode
+        &nbsp;&bull;&nbsp;
+      
+      2026
+
+      
+        &nbsp;&bull;&nbsp;
+        <span class="author-site">
+          <a href="https://leetcode.ca/">leetcode.ca</a>
+        </span>
+      
+
+      
+      </p>
+      
+      <p class="theme-by text-muted">
+        Copyright © 2025 leetcode.ca
+      </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+  
+  
+    
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous"></script>
+
+
+  
+    
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+
+
+  
+    
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+
+  
+
+
+
+  
+    <!-- doing something a bit funky here because I want to be careful not to include JQuery twice! -->
+    
+      <script src="/assets/js/beautifuljekyll.js"></script>
+    
+  
+
+
+
+
+
+  
+    
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+  
+    
+  <script src="https://cdn.jsdelivr.net/npm/anchor-js/anchor.min.js"></script>
+
+
+  
+
+
+
+  
+    <script src="/assets/js/anchor-js-config.js"></script>
+  
+
+
+
+</body>
+</html>

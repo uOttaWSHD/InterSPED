@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="shortcut icon" type="image/png" href="/assets/img/favicon.png">
+  <link rel="stylesheet" href="/assets/css/uikit.min.css" />
+  <script src="/assets/js/uikit.min.js" type="text/javascript"></script>
+  <script src="/assets/js/uikit-icons.min.js" type="text/javascript"></script>
+
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        packages: {'[+]': ['ams']}  // Include the 'ams' package
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  
+  
+
+  
+<!-- below block is overlapping with SEO plugin generated title and description   -->
+<!-- 
+  <title>2071 - Maximum Number of Tasks You Can Assign</title>
+
+  
+  <meta name="author" content="Leetcode">
+  
+
+  
+  <meta name="description" content="Welcome to Subscribe On Youtube 2071. Maximum Number of Tasks You Can Assign Description You have n tasks and m workers. Each task has a strength requirement stored in a 0-indexed integer array tasks, with the ith task requiring tasks[i] strength to complete. The strength of each worker is stored...">
+   -->
+
+  
+
+  
+  <meta name="keywords" content="LeetCode, Solution, Company Tag, Unlock Prime, Java, C++, Interview, Job, Algorithm, SQL, Canada">
+  
+
+  <link rel="alternate" type="application/rss+xml" title="Leetcode" href="https://leetcode.ca/feed.xml">
+
+  
+
+  
+
+  
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-K108N8L891"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-K108N8L891');
+  </script>
+  <!-- End Google Analytics -->
+
+
+  
+  <script data-ad-client="ca-pub-6766885420008650" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+
+
+
+  
+    
+      
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+
+    
+      
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
+
+
+    
+      
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic">
+
+
+    
+      
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800">
+
+
+    
+  
+
+  
+    
+      <link rel="stylesheet" href="/assets/css/bootstrap-social.css">
+    
+      <link rel="stylesheet" href="/assets/css/beautifuljekyll.css">
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <meta property="og:site_name" content="Leetcode">
+  <meta property="og:title" content="2071 - Maximum Number of Tasks You Can Assign">
+  <meta property="og:description" content="Welcome to Subscribe On Youtube 2071. Maximum Number of Tasks You Can Assign Description You have n tasks and m workers. Each task has a strength requirement stored in a 0-indexed integer array tasks, with the ith task requiring tasks[i] strength to complete. The strength of each worker is stored in a 0-indexed integer array workers, with the jth worker having workers[j] strength. Each worker can only be assigned to a single task and must have a strength greater than or equal to the task&amp;#39;s strength requirement (i.e., workers[j] &amp;gt;= tasks[i]). Additionally, you have pills magical pills that will increase a worker&amp;#39;s strength by strength. You can decide which workers receive the magical pills, however, you may only give each worker at most one magical pill. Given the 0-indexed integer arrays tasks and workers and the integers pills and strength, return the maximum number of tasks that can be completed. &amp;nbsp; Example 1: Input: tasks = [3,2,1], workers = [0,3,3], pills = 1, strength = 1 Output: 3 Explanation: We can assign the magical pill and tasks as follows: - Give the magical pill to worker 0. - Assign worker 0 to task 2 (0 + 1 &amp;gt;= 1) - Assign worker 1 to task 1 (3 &amp;gt;= 2) - Assign worker 2 to task 0 (3 &amp;gt;= 3) Example 2: Input: tasks = [5,4], workers = [0,0,0], pills = 1, strength = 5 Output: 1 Explanation: We can assign the magical pill and tasks as follows: - Give the magical pill to worker 0. - Assign worker 0 to task 0 (0 + 5 &amp;gt;= 5) Example 3: Input: tasks = [10,15,30], workers = [0,10,10,10,10], pills = 3, strength = 10 Output: 2 Explanation: We can assign the magical pills and tasks as follows: - Give the magical pill to worker 0 and worker 1. - Assign worker 0 to task 0 (0 + 10 &amp;gt;= 10) - Assign worker 1 to task 1 (10 + 10 &amp;gt;= 15) The last pill is not given because it will not make any worker strong enough for the last task. &amp;nbsp; Constraints: n == tasks.length m == workers.length 1 &amp;lt;= n, m &amp;lt;= 5 * 104 0 &amp;lt;= pills &amp;lt;= m 0 &amp;lt;= tasks[i], workers[j], strength &amp;lt;= 109 Solutions Java C++ Python Go TypeScript class Solution { private int[] tasks; private int[] workers; private int strength; private int pills; private int m; private int n; public int maxTaskAssign(int[] tasks, int[] workers, int pills, int strength) { Arrays.sort(tasks); Arrays.sort(workers); this.tasks = tasks; this.workers = workers; this.strength = strength; this.pills = pills; n = tasks.length; m = workers.length; int left = 0, right = Math.min(m, n); while (left &amp;lt; right) { int mid = (left + right + 1) &amp;gt;&amp;gt; 1; if (check(mid)) { left = mid; } else { right = mid - 1; } } return left; } private boolean check(int x) { int i = 0; Deque&amp;lt;Integer&amp;gt; q = new ArrayDeque&amp;lt;&amp;gt;(); int p = pills; for (int j = m...">
+
+  
+  <meta property="og:image" content="https://leetcode.ca/assets/img/avatar-icon.jpg">
+  
+
+  <!-- remove canonical below to use SEO plugin -->
+  
+  <meta property="og:type" content="article">
+  <meta property="og:article:author" content="Leetcode">
+  <meta property="og:article:published_time" content="2021-08-01T00:00:00-07:00">
+  <meta property="og:url" content="https://leetcode.ca/2021-08-01-2071-Maximum-Number-of-Tasks-You-Can-Assign/">
+  <!-- <link rel="canonical" href="https://leetcode.ca/2021-08-01-2071-Maximum-Number-of-Tasks-You-Can-Assign/"> -->
+  
+
+  
+  <meta name="twitter:card" content="summary">
+  
+  <meta name="twitter:site" content="@">
+  <meta name="twitter:creator" content="@">
+
+  <meta property="twitter:title" content="2071 - Maximum Number of Tasks You Can Assign">
+  <meta property="twitter:description" content="Welcome to Subscribe On Youtube 2071. Maximum Number of Tasks You Can Assign Description You have n tasks and m workers. Each task has a strength requirement stored in a 0-indexed integer array tasks, with the ith task requiring tasks[i] strength to complete. The strength of each worker is stored in a 0-indexed integer array workers, with the jth worker having workers[j] strength. Each worker can only be assigned to a single task and must have a strength greater than or equal to the task&amp;#39;s strength requirement (i.e., workers[j] &amp;gt;= tasks[i]). Additionally, you have pills magical pills that will increase a worker&amp;#39;s strength by strength. You can decide which workers receive the magical pills, however, you may only give each worker at most one magical pill. Given the 0-indexed integer arrays tasks and workers and the integers pills and strength, return the maximum number of tasks that can be completed. &amp;nbsp; Example 1: Input: tasks = [3,2,1], workers = [0,3,3], pills = 1, strength = 1 Output: 3 Explanation: We can assign the magical pill and tasks as follows: - Give the magical pill to worker 0. - Assign worker 0 to task 2 (0 + 1 &amp;gt;= 1) - Assign worker 1 to task 1 (3 &amp;gt;= 2) - Assign worker 2 to task 0 (3 &amp;gt;= 3) Example 2: Input: tasks = [5,4], workers = [0,0,0], pills = 1, strength = 5 Output: 1 Explanation: We can assign the magical pill and tasks as follows: - Give the magical pill to worker 0. - Assign worker 0 to task 0 (0 + 5 &amp;gt;= 5) Example 3: Input: tasks = [10,15,30], workers = [0,10,10,10,10], pills = 3, strength = 10 Output: 2 Explanation: We can assign the magical pills and tasks as follows: - Give the magical pill to worker 0 and worker 1. - Assign worker 0 to task 0 (0 + 10 &amp;gt;= 10) - Assign worker 1 to task 1 (10 + 10 &amp;gt;= 15) The last pill is not given because it will not make any worker strong enough for the last task. &amp;nbsp; Constraints: n == tasks.length m == workers.length 1 &amp;lt;= n, m &amp;lt;= 5 * 104 0 &amp;lt;= pills &amp;lt;= m 0 &amp;lt;= tasks[i], workers[j], strength &amp;lt;= 109 Solutions Java C++ Python Go TypeScript class Solution { private int[] tasks; private int[] workers; private int strength; private int pills; private int m; private int n; public int maxTaskAssign(int[] tasks, int[] workers, int pills, int strength) { Arrays.sort(tasks); Arrays.sort(workers); this.tasks = tasks; this.workers = workers; this.strength = strength; this.pills = pills; n = tasks.length; m = workers.length; int left = 0, right = Math.min(m, n); while (left &amp;lt; right) { int mid = (left + right + 1) &amp;gt;&amp;gt; 1; if (check(mid)) { left = mid; } else { right = mid - 1; } } return left; } private boolean check(int x) { int i = 0; Deque&amp;lt;Integer&amp;gt; q = new ArrayDeque&amp;lt;&amp;gt;(); int p = pills; for (int j = m...">
+
+  
+  <meta name="twitter:image" content="https://leetcode.ca/assets/img/avatar-icon.jpg">
+  
+
+  
+
+
+  <!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>2071 - Maximum Number of Tasks You Can Assign | Leetcode</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="2071 - Maximum Number of Tasks You Can Assign" />
+<meta name="author" content="Leetcode" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Welcome to Subscribe On Youtube" />
+<meta property="og:description" content="Welcome to Subscribe On Youtube" />
+<link rel="canonical" href="https://leetcode.ca/2021-08-01-2071-Maximum-Number-of-Tasks-You-Can-Assign/" />
+<meta property="og:url" content="https://leetcode.ca/2021-08-01-2071-Maximum-Number-of-Tasks-You-Can-Assign/" />
+<meta property="og:site_name" content="Leetcode" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-08-01T00:00:00-07:00" />
+<script type="application/ld+json">
+{"description":"Welcome to Subscribe On Youtube","headline":"2071 - Maximum Number of Tasks You Can Assign","dateModified":"2021-08-01T00:00:00-07:00","datePublished":"2021-08-01T00:00:00-07:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://leetcode.ca/2021-08-01-2071-Maximum-Number-of-Tasks-You-Can-Assign/"},"url":"https://leetcode.ca/2021-08-01-2071-Maximum-Number-of-Tasks-You-Can-Assign/","author":{"@type":"Person","name":"Leetcode"},"@type":"BlogPosting","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+  
+
+  
+
+</head>
+
+
+<body>
+
+  
+
+
+  <nav class="navbar navbar-expand-xl navbar-light fixed-top navbar-custom top-nav-regular"><a class="navbar-brand" href="https://leetcode.ca/">Leetcode</a><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="main-navbar">
+    <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/blog">Posts</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/tags">Tag Index</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/search">Search</a>
+          </li></ul>
+  </div>
+
+  
+
+  
+    <div class="avatar-container">
+      <div class="avatar-img-border">
+        <a href="https://leetcode.ca/">
+          <img alt="Navigation bar avatar" class="avatar-img" src="/assets/img/avatar-icon.jpg" />
+        </a>
+      </div>
+    </div>
+  
+
+</nav>
+
+
+  <!-- TODO this file has become a mess, refactor it -->
+
+
+
+
+
+
+
+<header class="header-section ">
+
+<div class="intro-header no-img">
+  <div class="container-md">
+    <div class="row">
+      <div class="col-xl-8 offset-xl-2 col-lg-10 offset-lg-1">
+        <div class="post-heading">
+          <h1>2071 - Maximum Number of Tasks You Can Assign</h1>
+          
+
+          
+            <span class="post-meta">Posted on August 1, 2021</span>
+            
+            
+              
+
+
+
+
+
+  
+  <span class="post-meta"><span class="d-none d-md-inline middot">&middot;</span> 5 minute read</span>
+
+
+            
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</header>
+
+
+
+
+
+<div class=" container-md ">
+  <div class="row">
+    <div class=" col-xl-8 offset-xl-2 col-lg-10 offset-lg-1 ">
+
+      
+
+      
+
+      <article role="main" class="blog-post">
+        <h5 id="welcome-to-subscribe-on-youtube">Welcome to Subscribe On Youtube</h5>
+<script src="https://apis.google.com/js/platform.js"></script>
+
+<div class="g-ytsubscribe" data-channelid="UCslk3mmaMJy1enit3L9vWig" data-layout="full" data-count="hidden"></div>
+
+<h1 id="2071-maximum-number-of-tasks-you-can-assign"><a href="https://leetcode.com/problems/maximum-number-of-tasks-you-can-assign">2071. Maximum Number of Tasks You Can Assign</a></h1>
+
+<h2 id="description">Description</h2>
+
+<p>You have <code>n</code> tasks and <code>m</code> workers. Each task has a strength requirement stored in a <strong>0-indexed</strong> integer array <code>tasks</code>, with the <code>i<sup>th</sup></code> task requiring <code>tasks[i]</code> strength to complete. The strength of each worker is stored in a <strong>0-indexed</strong> integer array <code>workers</code>, with the <code>j<sup>th</sup></code> worker having <code>workers[j]</code> strength. Each worker can only be assigned to a <strong>single</strong> task and must have a strength <strong>greater than or equal</strong> to the task&#39;s strength requirement (i.e., <code>workers[j] &gt;= tasks[i]</code>).</p>
+
+<p>Additionally, you have <code>pills</code> magical pills that will <strong>increase a worker&#39;s strength</strong> by <code>strength</code>. You can decide which workers receive the magical pills, however, you may only give each worker <strong>at most one</strong> magical pill.</p>
+
+<p>Given the <strong>0-indexed </strong>integer arrays <code>tasks</code> and <code>workers</code> and the integers <code>pills</code> and <code>strength</code>, return <em>the <strong>maximum</strong> number of tasks that can be completed.</em></p>
+
+<p>&nbsp;</p>
+<p><strong class="example">Example 1:</strong></p>
+
+<pre>
+<strong>Input:</strong> tasks = [<u><strong>3</strong></u>,<u><strong>2</strong></u>,<u><strong>1</strong></u>], workers = [<u><strong>0</strong></u>,<u><strong>3</strong></u>,<u><strong>3</strong></u>], pills = 1, strength = 1
+<strong>Output:</strong> 3
+<strong>Explanation:</strong>
+We can assign the magical pill and tasks as follows:
+- Give the magical pill to worker 0.
+- Assign worker 0 to task 2 (0 + 1 &gt;= 1)
+- Assign worker 1 to task 1 (3 &gt;= 2)
+- Assign worker 2 to task 0 (3 &gt;= 3)
+</pre>
+
+<p><strong class="example">Example 2:</strong></p>
+
+<pre>
+<strong>Input:</strong> tasks = [<u><strong>5</strong></u>,4], workers = [<u><strong>0</strong></u>,0,0], pills = 1, strength = 5
+<strong>Output:</strong> 1
+<strong>Explanation:</strong>
+We can assign the magical pill and tasks as follows:
+- Give the magical pill to worker 0.
+- Assign worker 0 to task 0 (0 + 5 &gt;= 5)
+</pre>
+
+<p><strong class="example">Example 3:</strong></p>
+
+<pre>
+<strong>Input:</strong> tasks = [<u><strong>10</strong></u>,<u><strong>15</strong></u>,30], workers = [<u><strong>0</strong></u>,<u><strong>10</strong></u>,10,10,10], pills = 3, strength = 10
+<strong>Output:</strong> 2
+<strong>Explanation:</strong>
+We can assign the magical pills and tasks as follows:
+- Give the magical pill to worker 0 and worker 1.
+- Assign worker 0 to task 0 (0 + 10 &gt;= 10)
+- Assign worker 1 to task 1 (10 + 10 &gt;= 15)
+The last pill is not given because it will not make any worker strong enough for the last task.
+</pre>
+
+<p>&nbsp;</p>
+<p><strong>Constraints:</strong></p>
+
+<ul>
+	<li><code>n == tasks.length</code></li>
+	<li><code>m == workers.length</code></li>
+	<li><code>1 &lt;= n, m &lt;= 5 * 10<sup>4</sup></code></li>
+	<li><code>0 &lt;= pills &lt;= m</code></li>
+	<li><code>0 &lt;= tasks[i], workers[j], strength &lt;= 10<sup>9</sup></code></li>
+</ul>
+
+<h2 id="solutions">Solutions</h2>
+
+<ul class="uk-tab" data-uk-switcher="{connect:'#cfd32827-4616-4957-8e91-8eed42910816'}">
+
+	<li class="uk-active"><a href="#">Java</a></li>
+
+	<li><a href="#">C++</a></li>
+
+	<li><a href="#">Python</a></li>
+
+	<li><a href="#">Go</a></li>
+
+	<li><a href="#">TypeScript</a></li>
+
+</ul>
+
+<ul id="cfd32827-4616-4957-8e91-8eed42910816" class="uk-switcher uk-margin">
+
+	<li>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Solution</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kt">int</span><span class="o">[]</span> <span class="n">tasks</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kt">int</span><span class="o">[]</span> <span class="n">workers</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">strength</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">pills</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">m</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">n</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">maxTaskAssign</span><span class="o">(</span><span class="kt">int</span><span class="o">[]</span> <span class="n">tasks</span><span class="o">,</span> <span class="kt">int</span><span class="o">[]</span> <span class="n">workers</span><span class="o">,</span> <span class="kt">int</span> <span class="n">pills</span><span class="o">,</span> <span class="kt">int</span> <span class="n">strength</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">Arrays</span><span class="o">.</span><span class="na">sort</span><span class="o">(</span><span class="n">tasks</span><span class="o">);</span>
+        <span class="nc">Arrays</span><span class="o">.</span><span class="na">sort</span><span class="o">(</span><span class="n">workers</span><span class="o">);</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">tasks</span> <span class="o">=</span> <span class="n">tasks</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">workers</span> <span class="o">=</span> <span class="n">workers</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">strength</span> <span class="o">=</span> <span class="n">strength</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">pills</span> <span class="o">=</span> <span class="n">pills</span><span class="o">;</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">tasks</span><span class="o">.</span><span class="na">length</span><span class="o">;</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">workers</span><span class="o">.</span><span class="na">length</span><span class="o">;</span>
+        <span class="kt">int</span> <span class="n">left</span> <span class="o">=</span> <span class="mi">0</span><span class="o">,</span> <span class="n">right</span> <span class="o">=</span> <span class="nc">Math</span><span class="o">.</span><span class="na">min</span><span class="o">(</span><span class="n">m</span><span class="o">,</span> <span class="n">n</span><span class="o">);</span>
+        <span class="k">while</span> <span class="o">(</span><span class="n">left</span> <span class="o">&lt;</span> <span class="n">right</span><span class="o">)</span> <span class="o">{</span>
+            <span class="kt">int</span> <span class="n">mid</span> <span class="o">=</span> <span class="o">(</span><span class="n">left</span> <span class="o">+</span> <span class="n">right</span> <span class="o">+</span> <span class="mi">1</span><span class="o">)</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span><span class="o">;</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">check</span><span class="o">(</span><span class="n">mid</span><span class="o">))</span> <span class="o">{</span>
+                <span class="n">left</span> <span class="o">=</span> <span class="n">mid</span><span class="o">;</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="n">right</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">-</span> <span class="mi">1</span><span class="o">;</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="n">left</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">private</span> <span class="kt">boolean</span> <span class="nf">check</span><span class="o">(</span><span class="kt">int</span> <span class="n">x</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+        <span class="nc">Deque</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">q</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayDeque</span><span class="o">&lt;&gt;();</span>
+        <span class="kt">int</span> <span class="n">p</span> <span class="o">=</span> <span class="n">pills</span><span class="o">;</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="n">m</span> <span class="o">-</span> <span class="n">x</span><span class="o">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">m</span><span class="o">;</span> <span class="o">++</span><span class="n">j</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">while</span> <span class="o">(</span><span class="n">i</span> <span class="o">&lt;</span> <span class="n">x</span> <span class="o">&amp;&amp;</span> <span class="n">tasks</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">&lt;=</span> <span class="n">workers</span><span class="o">[</span><span class="n">j</span><span class="o">]</span> <span class="o">+</span> <span class="n">strength</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">q</span><span class="o">.</span><span class="na">offer</span><span class="o">(</span><span class="n">tasks</span><span class="o">[</span><span class="n">i</span><span class="o">++]);</span>
+            <span class="o">}</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">q</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+            <span class="o">}</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">q</span><span class="o">.</span><span class="na">peekFirst</span><span class="o">()</span> <span class="o">&lt;=</span> <span class="n">workers</span><span class="o">[</span><span class="n">j</span><span class="o">])</span> <span class="o">{</span>
+                <span class="n">q</span><span class="o">.</span><span class="na">pollFirst</span><span class="o">();</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">p</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="o">--</span><span class="n">p</span><span class="o">;</span>
+                <span class="n">q</span><span class="o">.</span><span class="na">pollLast</span><span class="o">();</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+</li>
+
+	<li>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Solution</span> <span class="p">{</span>
+<span class="nl">public:</span>
+    <span class="kt">int</span> <span class="n">maxTaskAssign</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">tasks</span><span class="p">,</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">workers</span><span class="p">,</span> <span class="kt">int</span> <span class="n">pills</span><span class="p">,</span> <span class="kt">int</span> <span class="n">strength</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">sort</span><span class="p">(</span><span class="n">tasks</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">tasks</span><span class="p">.</span><span class="n">end</span><span class="p">());</span>
+        <span class="n">sort</span><span class="p">(</span><span class="n">workers</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">workers</span><span class="p">.</span><span class="n">end</span><span class="p">());</span>
+        <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="n">tasks</span><span class="p">.</span><span class="n">size</span><span class="p">(),</span> <span class="n">m</span> <span class="o">=</span> <span class="n">workers</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+        <span class="kt">int</span> <span class="n">left</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="n">min</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">);</span>
+        <span class="k">auto</span> <span class="n">check</span> <span class="o">=</span> <span class="p">[</span><span class="o">&amp;</span><span class="p">](</span><span class="kt">int</span> <span class="n">x</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kt">int</span> <span class="n">p</span> <span class="o">=</span> <span class="n">pills</span><span class="p">;</span>
+            <span class="n">deque</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">q</span><span class="p">;</span>
+            <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="n">m</span> <span class="o">-</span> <span class="n">x</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">m</span><span class="p">;</span> <span class="o">++</span><span class="n">j</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">while</span> <span class="p">(</span><span class="n">i</span> <span class="o">&lt;</span> <span class="n">x</span> <span class="o">&amp;&amp;</span> <span class="n">tasks</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">workers</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">strength</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">q</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">tasks</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">]);</span>
+                <span class="p">}</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">q</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">q</span><span class="p">.</span><span class="n">front</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="n">workers</span><span class="p">[</span><span class="n">j</span><span class="p">])</span> <span class="p">{</span>
+                    <span class="n">q</span><span class="p">.</span><span class="n">pop_front</span><span class="p">();</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">p</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="o">--</span><span class="n">p</span><span class="p">;</span>
+                    <span class="n">q</span><span class="p">.</span><span class="n">pop_back</span><span class="p">();</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
+        <span class="p">};</span>
+        <span class="k">while</span> <span class="p">(</span><span class="n">left</span> <span class="o">&lt;</span> <span class="n">right</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kt">int</span> <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">left</span> <span class="o">+</span> <span class="n">right</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">check</span><span class="p">(</span><span class="n">mid</span><span class="p">))</span> <span class="p">{</span>
+                <span class="n">left</span> <span class="o">=</span> <span class="n">mid</span><span class="p">;</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="n">right</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">left</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</code></pre></div></div>
+</li>
+
+	<li>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Solution</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">maxTaskAssign</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">tasks</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">workers</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">pills</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">strength</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">q</span> <span class="o">=</span> <span class="n">deque</span><span class="p">()</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">pills</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span> <span class="o">-</span> <span class="n">x</span><span class="p">,</span> <span class="n">m</span><span class="p">):</span>
+                <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">x</span> <span class="ow">and</span> <span class="n">tasks</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">workers</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">strength</span><span class="p">:</span>
+                    <span class="n">q</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">tasks</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">q</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="bp">False</span>
+                <span class="k">if</span> <span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">workers</span><span class="p">[</span><span class="n">j</span><span class="p">]:</span>
+                    <span class="n">q</span><span class="p">.</span><span class="n">popleft</span><span class="p">()</span>
+                <span class="k">elif</span> <span class="n">p</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="bp">False</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">p</span> <span class="o">-=</span> <span class="mi">1</span>
+                    <span class="n">q</span><span class="p">.</span><span class="n">pop</span><span class="p">()</span>
+            <span class="k">return</span> <span class="bp">True</span>
+
+        <span class="n">n</span><span class="p">,</span> <span class="n">m</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tasks</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">workers</span><span class="p">)</span>
+        <span class="n">tasks</span><span class="p">.</span><span class="n">sort</span><span class="p">()</span>
+        <span class="n">workers</span><span class="p">.</span><span class="n">sort</span><span class="p">()</span>
+        <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span>
+        <span class="k">while</span> <span class="n">left</span> <span class="o">&lt;</span> <span class="n">right</span><span class="p">:</span>
+            <span class="n">mid</span> <span class="o">=</span> <span class="p">(</span><span class="n">left</span> <span class="o">+</span> <span class="n">right</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">check</span><span class="p">(</span><span class="n">mid</span><span class="p">):</span>
+                <span class="n">left</span> <span class="o">=</span> <span class="n">mid</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">right</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">left</span>
+
+</code></pre></div></div>
+</li>
+
+	<li>
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="n">maxTaskAssign</span><span class="p">(</span><span class="n">tasks</span> <span class="p">[]</span><span class="kt">int</span><span class="p">,</span> <span class="n">workers</span> <span class="p">[]</span><span class="kt">int</span><span class="p">,</span> <span class="n">pills</span> <span class="kt">int</span><span class="p">,</span> <span class="n">strength</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
+	<span class="n">sort</span><span class="o">.</span><span class="n">Ints</span><span class="p">(</span><span class="n">tasks</span><span class="p">)</span>
+	<span class="n">sort</span><span class="o">.</span><span class="n">Ints</span><span class="p">(</span><span class="n">workers</span><span class="p">)</span>
+	<span class="n">n</span><span class="p">,</span> <span class="n">m</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tasks</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">workers</span><span class="p">)</span>
+	<span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">:=</span> <span class="m">0</span><span class="p">,</span> <span class="n">min</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+	<span class="n">check</span> <span class="o">:=</span> <span class="k">func</span><span class="p">(</span><span class="n">x</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+		<span class="n">p</span> <span class="o">:=</span> <span class="n">pills</span>
+		<span class="n">q</span> <span class="o">:=</span> <span class="p">[]</span><span class="kt">int</span><span class="p">{}</span>
+		<span class="n">i</span> <span class="o">:=</span> <span class="m">0</span>
+		<span class="k">for</span> <span class="n">j</span> <span class="o">:=</span> <span class="n">m</span> <span class="o">-</span> <span class="n">x</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="n">m</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span> <span class="p">{</span>
+			<span class="k">for</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">x</span> <span class="o">&amp;&amp;</span> <span class="n">tasks</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">workers</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">+</span><span class="n">strength</span> <span class="p">{</span>
+				<span class="n">q</span> <span class="o">=</span> <span class="nb">append</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">tasks</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+				<span class="n">i</span><span class="o">++</span>
+			<span class="p">}</span>
+			<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">q</span><span class="p">)</span> <span class="o">==</span> <span class="m">0</span> <span class="p">{</span>
+				<span class="k">return</span> <span class="no">false</span>
+			<span class="p">}</span>
+			<span class="k">if</span> <span class="n">q</span><span class="p">[</span><span class="m">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">workers</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="p">{</span>
+				<span class="n">q</span> <span class="o">=</span> <span class="n">q</span><span class="p">[</span><span class="m">1</span><span class="o">:</span><span class="p">]</span>
+			<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="n">p</span> <span class="o">==</span> <span class="m">0</span> <span class="p">{</span>
+				<span class="k">return</span> <span class="no">false</span>
+			<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+				<span class="n">p</span><span class="o">--</span>
+				<span class="n">q</span> <span class="o">=</span> <span class="n">q</span><span class="p">[</span><span class="o">:</span><span class="nb">len</span><span class="p">(</span><span class="n">q</span><span class="p">)</span><span class="o">-</span><span class="m">1</span><span class="p">]</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+		<span class="k">return</span> <span class="no">true</span>
+	<span class="p">}</span>
+	<span class="k">for</span> <span class="n">left</span> <span class="o">&lt;</span> <span class="n">right</span> <span class="p">{</span>
+		<span class="n">mid</span> <span class="o">:=</span> <span class="p">(</span><span class="n">left</span> <span class="o">+</span> <span class="n">right</span> <span class="o">+</span> <span class="m">1</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="m">1</span>
+		<span class="k">if</span> <span class="n">check</span><span class="p">(</span><span class="n">mid</span><span class="p">)</span> <span class="p">{</span>
+			<span class="n">left</span> <span class="o">=</span> <span class="n">mid</span>
+		<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+			<span class="n">right</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">-</span> <span class="m">1</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="n">left</span>
+<span class="p">}</span>
+</code></pre></div></div>
+</li>
+
+	<li>
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">maxTaskAssign</span><span class="p">(</span>
+    <span class="nx">tasks</span><span class="p">:</span> <span class="kr">number</span><span class="p">[],</span>
+    <span class="nx">workers</span><span class="p">:</span> <span class="kr">number</span><span class="p">[],</span>
+    <span class="nx">pills</span><span class="p">:</span> <span class="kr">number</span><span class="p">,</span>
+    <span class="nx">strength</span><span class="p">:</span> <span class="kr">number</span><span class="p">,</span>
+<span class="p">):</span> <span class="kr">number</span> <span class="p">{</span>
+    <span class="nx">tasks</span><span class="p">.</span><span class="nx">sort</span><span class="p">((</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">a</span> <span class="o">-</span> <span class="nx">b</span><span class="p">);</span>
+    <span class="nx">workers</span><span class="p">.</span><span class="nx">sort</span><span class="p">((</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">a</span> <span class="o">-</span> <span class="nx">b</span><span class="p">);</span>
+
+    <span class="kd">const</span> <span class="nx">n</span> <span class="o">=</span> <span class="nx">tasks</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+    <span class="kd">const</span> <span class="nx">m</span> <span class="o">=</span> <span class="nx">workers</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+
+    <span class="kd">const</span> <span class="nx">check</span> <span class="o">=</span> <span class="p">(</span><span class="nx">x</span><span class="p">:</span> <span class="kr">number</span><span class="p">):</span> <span class="nx">boolean</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="kd">const</span> <span class="nx">dq</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="o">&lt;</span><span class="kr">number</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">x</span><span class="p">);</span>
+        <span class="kd">let</span> <span class="nx">head</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="kd">let</span> <span class="nx">tail</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="kd">const</span> <span class="nx">empty</span> <span class="o">=</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="nx">head</span> <span class="o">===</span> <span class="nx">tail</span><span class="p">;</span>
+        <span class="kd">const</span> <span class="nx">pushBack</span> <span class="o">=</span> <span class="p">(</span><span class="na">val</span><span class="p">:</span> <span class="kr">number</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+            <span class="nx">dq</span><span class="p">[</span><span class="nx">tail</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="nx">val</span><span class="p">;</span>
+        <span class="p">};</span>
+        <span class="kd">const</span> <span class="nx">popFront</span> <span class="o">=</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+            <span class="nx">head</span><span class="o">++</span><span class="p">;</span>
+        <span class="p">};</span>
+        <span class="kd">const</span> <span class="nx">popBack</span> <span class="o">=</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+            <span class="nx">tail</span><span class="o">--</span><span class="p">;</span>
+        <span class="p">};</span>
+        <span class="kd">const</span> <span class="nx">front</span> <span class="o">=</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="nx">dq</span><span class="p">[</span><span class="nx">head</span><span class="p">];</span>
+
+        <span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="kd">let</span> <span class="nx">p</span> <span class="o">=</span> <span class="nx">pills</span><span class="p">;</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">j</span> <span class="o">=</span> <span class="nx">m</span> <span class="o">-</span> <span class="nx">x</span><span class="p">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">m</span><span class="p">;</span> <span class="nx">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">while</span> <span class="p">(</span><span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">x</span> <span class="o">&amp;&amp;</span> <span class="nx">tasks</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="nx">workers</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span> <span class="o">+</span> <span class="nx">strength</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">pushBack</span><span class="p">(</span><span class="nx">tasks</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+                <span class="nx">i</span><span class="o">++</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">empty</span><span class="p">())</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="nx">front</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="nx">workers</span><span class="p">[</span><span class="nx">j</span><span class="p">])</span> <span class="p">{</span>
+                <span class="nx">popFront</span><span class="p">();</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">p</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+                <span class="nx">p</span><span class="o">--</span><span class="p">;</span>
+                <span class="nx">popBack</span><span class="p">();</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="kc">true</span><span class="p">;</span>
+    <span class="p">};</span>
+
+    <span class="kd">let</span> <span class="p">[</span><span class="nx">left</span><span class="p">,</span> <span class="nx">right</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">min</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="nx">m</span><span class="p">)];</span>
+    <span class="k">while</span> <span class="p">(</span><span class="nx">left</span> <span class="o">&lt;</span> <span class="nx">right</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">const</span> <span class="nx">mid</span> <span class="o">=</span> <span class="p">(</span><span class="nx">left</span> <span class="o">+</span> <span class="nx">right</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">check</span><span class="p">(</span><span class="nx">mid</span><span class="p">))</span> <span class="nx">left</span> <span class="o">=</span> <span class="nx">mid</span><span class="p">;</span>
+        <span class="k">else</span> <span class="nx">right</span> <span class="o">=</span> <span class="nx">mid</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">left</span><span class="p">;</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+</li>
+
+</ul>
+
+<h1 id="all-problems"><a href="https://leetcode.ca/all/problems.html">All Problems</a></h1>
+
+<h1 id="all-solutions"><a href="https://leetcode.ca/blog">All Solutions</a></h1>
+
+      </article>
+
+      
+
+      
+
+      
+        <!-- Check if any share-links are active -->
+
+
+
+
+<section id = "social-share-section">
+  <span class="sr-only">Share: </span>
+
+  
+    <a href="https://twitter.com/intent/tweet?text=2071+-+Maximum+Number+of+Tasks+You+Can+Assign&url=https%3A%2F%2Fleetcode.ca%2F2021-08-01-2071-Maximum-Number-of-Tasks-You-Can-Assign%2F"
+      class="btn btn-social-icon btn-twitter" title="Share on Twitter">
+      <span class="fab fa-fw fa-twitter" aria-hidden="true"></span>
+      <span class="sr-only">Twitter</span>
+    </a>
+  
+
+  
+    <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fleetcode.ca%2F2021-08-01-2071-Maximum-Number-of-Tasks-You-Can-Assign%2F"
+      class="btn btn-social-icon btn-facebook" title="Share on Facebook">
+      <span class="fab fa-fw fa-facebook" aria-hidden="true"></span>
+      <span class="sr-only">Facebook</span>
+    </a>
+  
+
+  
+    <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fleetcode.ca%2F2021-08-01-2071-Maximum-Number-of-Tasks-You-Can-Assign%2F"
+      class="btn btn-social-icon btn-linkedin" title="Share on LinkedIn">
+      <span class="fab fa-fw fa-linkedin" aria-hidden="true"></span>
+      <span class="sr-only">LinkedIn</span>
+    </a>
+  
+
+  
+
+</section>
+
+
+
+      
+
+      <ul class="pagination blog-pager">
+        
+        <li class="page-item previous">
+          <a class="page-link" href="/2021-07-31-2070-Most-Beautiful-Item-for-Each-Query/" data-toggle="tooltip" data-placement="top" title="2070 - Most Beautiful Item for Each Query">&larr; Previous Post</a>
+        </li>
+        
+        
+        <li class="page-item next">
+          <a class="page-link" href="/2021-08-02-2072-The-Winner-University/" data-toggle="tooltip" data-placement="top" title="2072 - The Winner University">Next Post &rarr;</a>
+        </li>
+        
+      </ul>
+      
+  <div class="disqus-comments">
+  <div class="comments">
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+	  var disqus_shortname = 'leetcodeca';
+	  /* ensure that pages with query string get the same discussion */
+	  var url_parts = window.location.href.split("?");
+	  var disqus_url = url_parts[0];
+	  (function() {
+		var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+		dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+		(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	  })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</div>
+  
+  
+
+  
+
+
+
+
+    </div>
+  </div>
+</div>
+
+
+  <footer>
+  <div class="container-md beautiful-jekyll-footer">
+    <div class="row">
+      <div class="col-xl-8 offset-xl-2 col-lg-10 offset-lg-1">
+      <ul class="list-inline text-center footer-links"><li class="list-inline-item">
+    <a href="/feed.xml" title="RSS">
+      <span class="fa-stack fa-lg" aria-hidden="true">
+        <i class="fas fa-circle fa-stack-2x"></i>
+        <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+      </span>
+      <span class="sr-only">RSS</span>
+    </a>
+  </li><li class="list-inline-item">
+    <a href="mailto:admin@leetcode.ca" title="Email me">
+      <span class="fa-stack fa-lg" aria-hidden="true">
+        <i class="fas fa-circle fa-stack-2x"></i>
+        <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+      </span>
+      <span class="sr-only">Email me</span>
+   </a>
+  </li></ul>
+
+      
+      <p class="copyright text-muted">
+      
+        Leetcode
+        &nbsp;&bull;&nbsp;
+      
+      2026
+
+      
+        &nbsp;&bull;&nbsp;
+        <span class="author-site">
+          <a href="https://leetcode.ca/">leetcode.ca</a>
+        </span>
+      
+
+      
+      </p>
+      
+      <p class="theme-by text-muted">
+        Copyright © 2025 leetcode.ca
+      </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+  
+  
+    
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous"></script>
+
+
+  
+    
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+
+
+  
+    
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+
+  
+
+
+
+  
+    <!-- doing something a bit funky here because I want to be careful not to include JQuery twice! -->
+    
+      <script src="/assets/js/beautifuljekyll.js"></script>
+    
+  
+
+
+
+
+
+  
+    
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+  
+    
+  <script src="https://cdn.jsdelivr.net/npm/anchor-js/anchor.min.js"></script>
+
+
+  
+
+
+
+  
+    <script src="/assets/js/anchor-js-config.js"></script>
+  
+
+
+
+</body>
+</html>

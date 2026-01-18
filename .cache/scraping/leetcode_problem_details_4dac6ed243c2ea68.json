@@ -1,0 +1,24 @@
+{
+  "company": "leetcode",
+  "source": "problem_details",
+  "url": "Valid Palindrome",
+  "cached_at": "2026-01-17T19:16:59.125600",
+  "data": {
+    "url": "https://leetcode.ca/2022-04-17-2330-Valid-Palindrome-IV/",
+    "leetcode_number": null,
+    "examples": [
+      "Input:s = \"abcdba\"Output:trueExplanation:One way to make s a palindrome using 1 operation is:\n- Change s[2] to 'd'. Now, s = \"abddba\".\nOne operation could be performed to make s a palindrome so return true.",
+      "Input:s = \"aa\"Output:trueExplanation:One way to make s a palindrome using 2 operations is:\n- Change s[0] to 'b'. Now, s = \"ba\".\n- Change s[1] to 'b'. Now, s = \"bb\".\nTwo operations could be performed to make s a palindrome so return true.",
+      "Input:s = \"abcdef\"Output:falseExplanation:It is not possible to make s a palindrome using one or two operations so return false."
+    ],
+    "constraints": [
+      "1 <= s.length <= 105",
+      "sconsists only of lowercase English letters."
+    ],
+    "problem_statement": "You are given a0-indexedstringsconsisting of only lowercase English letters. In one operation, you can changeanycharacter ofsto anyothercharacter.\n\nReturntrueif you can makesa palindrome after performingexactlyone or two operations, or returnfalseotherwise.\n\n",
+    "difficulty": "medium",
+    "title": "Valid Palindrome IV",
+    "example_input": "s = \"abcdba\"",
+    "example_output": "true"
+  }
+}
