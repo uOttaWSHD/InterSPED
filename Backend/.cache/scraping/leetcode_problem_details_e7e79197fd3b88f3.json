@@ -1,0 +1,25 @@
+{
+  "company": "leetcode",
+  "source": "problem_details",
+  "url": "Koko Eating Bananas",
+  "cached_at": "2026-01-18T02:59:54.623735",
+  "data": {
+    "url": "https://leetcode.ca/2018-04-23-875-Koko-Eating-Bananas/",
+    "leetcode_number": null,
+    "examples": [
+      "Input:piles = [3,6,7,11], h = 8Output:4",
+      "Input:piles = [30,11,23,4,20], h = 5Output:30",
+      "Input:piles = [30,11,23,4,20], h = 6Output:23"
+    ],
+    "constraints": [
+      "1 <= piles.length <= 104",
+      "piles.length <= h <= 109",
+      "1 <= piles[i] <= 109"
+    ],
+    "problem_statement": "Koko loves to eat bananas. There arenpiles of bananas, theithpile haspiles[i]bananas. The guards have gone and will come back inhhours.\n\nKoko can decide her bananas-per-hour eating speed ofk. Each hour, she chooses some pile of bananas and eatskbananas from that pile. If the pile has less thankbananas, she eats all of them instead and will not eat any more bananas during this hour.\n\nKoko likes to eat slowly but still wants to finish eating all the bananas before the guards return.\n\nReturnthe minimum integerksuch that she can eat all the bananas withinhhours.\n\n",
+    "difficulty": "medium",
+    "title": "Koko Eating Bananas",
+    "example_input": "piles = [3,6,7,11], h = 8",
+    "example_output": "4"
+  }
+}

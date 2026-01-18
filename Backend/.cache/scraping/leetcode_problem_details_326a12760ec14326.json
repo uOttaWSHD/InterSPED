@@ -1,0 +1,24 @@
+{
+  "company": "leetcode",
+  "source": "problem_details",
+  "url": "Container With Most Water",
+  "cached_at": "2026-01-18T02:59:54.580501",
+  "data": {
+    "url": "https://leetcode.ca/2015-12-11-11-Container-With-Most-Water/",
+    "leetcode_number": null,
+    "examples": [
+      "Input:height = [1,8,6,2,5,4,8,3,7]Output:49Explanation:The above vertical lines are represented by array [1,8,6,2,5,4,8,3,7]. In this case, the max area of water (blue section) the container can contain is 49.",
+      "Input:height = [1,1]Output:1"
+    ],
+    "constraints": [
+      "n == height.length",
+      "2 <= n <= 105",
+      "0 <= height[i] <= 104"
+    ],
+    "problem_statement": "You are given an integer arrayheightof lengthn. There arenvertical lines drawn such that the two endpoints of theithline are(i, 0)and(i, height[i]).\n\nFind two lines that together with the x-axis form a container, such that the container contains the most water.\n\nReturnthe maximum amount of water a container can store.\n\nNoticethat you may not slant the container.\n\n",
+    "difficulty": "medium",
+    "title": "Container With Most Water",
+    "example_input": "height = [1,8,6,2,5,4,8,3,7]",
+    "example_output": "49"
+  }
+}

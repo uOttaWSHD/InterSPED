@@ -1,0 +1,22 @@
+{
+  "company": "leetcode",
+  "source": "problem_details",
+  "url": "Maximum Subarray",
+  "cached_at": "2026-01-18T03:00:06.733618",
+  "data": {
+    "url": "https://leetcode.ca/2025-01-24-3411-Maximum-Subarray-With-Equal-Products/",
+    "leetcode_number": null,
+    "examples": [
+      "classSolution{publicintmaxLength(int[]nums){intmx=0,ml=1;for(intx:nums){mx=Math.max(mx,x);ml=lcm(ml,x);}intmaxP=ml*mx;intn=nums.length;intans=0;for(inti=0;i<n;++i){intp=1,g=0,l=1;for(intj=i;j<n;++j){p*=nums[j];g=gcd(g,nums[j]);l=lcm(l,nums[j]);if(p==g*l){ans=Math.max(ans,j-i+1);}if(p>maxP){break;}}}returnans;}privateintgcd(inta,intb){while(b!=0){inttemp=b;b=a%b;a=temp;}returna;}privateintlcm(inta,intb){returna/gcd(a,b)*b;}}",
+      "classSolution{publicintmaxLength(int[]nums){intmx=0,ml=1;for(intx:nums){mx=Math.max(mx,x);ml=lcm(ml,x);}intmaxP=ml*mx;intn=nums.length;intans=0;for(inti=0;i<n;++i){intp=1,g=0,l=1;for(intj=i;j<n;++j){p*=nums[j];g=gcd(g,nums[j]);l=lcm(l,nums[j]);if(p==g*l){ans=Math.max(ans,j-i+1);}if(p>maxP){break;}}}returnans;}privateintgcd(inta,intb){while(b!=0){inttemp=b;b=a%b;a=temp;}returna;}privateintlcm(inta,intb){returna/gcd(a,b)*b;}}",
+      "classSolution{publicintmaxLength(int[]nums){intmx=0,ml=1;for(intx:nums){mx=Math.max(mx,x);ml=lcm(ml,x);}intmaxP=ml*mx;intn=nums.length;intans=0;for(inti=0;i<n;++i){intp=1,g=0,l=1;for(intj=i;j<n;++j){p*=nums[j];g=gcd(g,nums[j]);l=lcm(l,nums[j]);if(p==g*l){ans=Math.max(ans,j-i+1);}if(p>maxP){break;}}}returnans;}privateintgcd(inta,intb){while(b!=0){inttemp=b;b=a%b;a=temp;}returna;}privateintlcm(inta,intb){returna/gcd(a,b)*b;}}"
+    ],
+    "constraints": [
+      "2 <= nums.length <= 100",
+      "1 <= nums[i] <= 10"
+    ],
+    "problem_statement": "You are given an array ofpositiveintegersnums.\n\nAn arrayarris calledproduct equivalentifprod(arr) == lcm(arr) * gcd(arr), where:\n\nReturn the length of thelongestproduct equivalentsubarrayofnums.\n\n",
+    "difficulty": "medium",
+    "title": "Maximum Subarray With Equal Products"
+  }
+}

@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional, List
 
 
@@ -72,13 +72,13 @@ class InterviewProcess(BaseModel):
 
 
 class TechnicalRequirements(BaseModel):
-    programming_languages: Optional[list[str]] = None
-    frameworks_tools: Optional[list[str]] = None
-    concepts: Optional[list[str]] = None
+    programming_languages: Optional[list[str]] = Field(default_factory=list)
+    frameworks_tools: Optional[list[str]] = Field(default_factory=list)
+    concepts: Optional[list[str]] = Field(default_factory=list)
     experience_level: Optional[str] = None
-    must_have_skills: Optional[list[str]] = None
-    nice_to_have_skills: Optional[list[str]] = None
-    domain_knowledge: Optional[list[str]] = None
+    must_have_skills: Optional[list[str]] = Field(default_factory=list)
+    nice_to_have_skills: Optional[list[str]] = Field(default_factory=list)
+    domain_knowledge: Optional[list[str]] = Field(default_factory=list)
 
 
 class InterviewInsights(BaseModel):

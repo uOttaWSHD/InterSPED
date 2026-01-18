@@ -12,12 +12,12 @@ shared_config:
 
   - models:
     planning: &planning_model
-      model: ${LLM_SERVICE_PLANNING_MODEL_NAME}
+      model: ${LLM_SERVICE_PLANNING_MODEL_NAME, mixtral-8x7b-32768}
       api_base: ${LLM_SERVICE_ENDPOINT}
       api_key: ${LLM_SERVICE_API_KEY}
 
     general: &general_model
-      model: ${LLM_SERVICE_GENERAL_MODEL_NAME}
+      model: ${LLM_SERVICE_GENERAL_MODEL_NAME, llama-3.1-8b-instant}
       api_base: ${LLM_SERVICE_ENDPOINT}
       api_key: ${LLM_SERVICE_API_KEY}
 

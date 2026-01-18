@@ -1,0 +1,23 @@
+{
+  "company": "leetcode",
+  "source": "problem_details",
+  "url": "Edit Distance",
+  "cached_at": "2026-01-18T03:00:15.963182",
+  "data": {
+    "url": "https://leetcode.ca/2016-05-09-161-One-Edit-Distance/",
+    "leetcode_number": null,
+    "examples": [
+      "Input:s = \"ab\", t = \"acb\"Output:trueExplanation:We can insert 'c' into s\u00a0to get\u00a0t.",
+      "Input:s = \"\", t = \"\"Output:falseExplanation:We cannot get t from s by only one step."
+    ],
+    "constraints": [
+      "0 <= s.length, t.length <= 104",
+      "sandtconsist of lowercase letters, uppercase letters, and digits."
+    ],
+    "problem_statement": "",
+    "difficulty": "medium",
+    "title": "One Edit Distance",
+    "example_input": "s = \"ab\", t = \"acb\"",
+    "example_output": "true"
+  }
+}

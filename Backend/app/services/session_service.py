@@ -10,7 +10,7 @@ def create_session(
     context_id: str,
     company_data: dict,
     response_text: str,
-    max_turns: int = 3,
+    max_turns: int = 15,
 ):
     sessions[session_id] = {
         "context_id": context_id,

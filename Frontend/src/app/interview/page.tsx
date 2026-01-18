@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import InterviewLobby from "@/components/interview/InterviewLobby";
 import AnalysisPage from "@/components/interview/AnalysisPage";
@@ -18,7 +18,7 @@ export default function InterviewPage() {
     sessionId?: string;
   } | null>(null);
 
-  const handleStartAnalysis = (data: { companyName: string; jobUrl: string; initialResponse?: string; sessionId?: string }) => {
+  const handleStartAnalysis = useCallback((data: { companyName: string; jobUrl: string; initialResponse?: string; sessionId?: string }) => {
     setSessionData(data);
     if (data.initialResponse) {
       // Debug mode or pre-loaded response
@@ -26,21 +26,29 @@ export default function InterviewPage() {
     } else {
       setView("analyzing");
     }
-  };
+  }, []);
 
-  const handleAnalysisComplete = (initialResponse?: string, sessionId?: string) => {
-    setSessionData((prev) => prev ? { ...prev, initialResponse, sessionId } : null);
+  const handleAnalysisComplete = useCallback((initialResponse?: string, sessionId?: string) => {
+    console.log("[InterviewPage] Analysis complete", { initialResponse, sessionId });
+    setSessionData((prev) => {
+        if (!prev) {
+            console.error("[InterviewPage] Session data missing during complete");
+            return null;
+        }
+        return { ...prev, initialResponse, sessionId };
+    });
     setView("interview");
-  };
+  }, []);
 
-  const handleAnalysisFail = () => {
+  const handleAnalysisFail = useCallback(() => {
+    console.warn("[InterviewPage] Analysis failed");
     // Go back to lobby on failure
     setView("lobby");
-  };
+  }, []);
 
-  const handleEndInterview = () => {
+  const handleEndInterview = useCallback(() => {
     router.push("/dashboard");
-  };
+  }, [router]);
 
   if (view === "analyzing" && sessionData) {
     return (

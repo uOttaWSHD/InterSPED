@@ -1,0 +1,24 @@
+{
+  "company": "leetcode",
+  "source": "problem_details",
+  "url": "Chalkboard XOR Game",
+  "cached_at": "2026-01-18T03:00:18.874212",
+  "data": {
+    "url": "https://leetcode.ca/2018-02-17-810-Chalkboard-XOR-Game/",
+    "leetcode_number": null,
+    "examples": [
+      "Input:nums = [1,1,2]Output:falseExplanation:Alice has two choices: erase 1 or erase 2. \nIf she erases 1, the nums array becomes [1, 2]. The bitwise XOR of all the elements of the chalkboard is 1 XOR 2 = 3. Now Bob can remove any element he wants, because Alice will be the one to erase the last element and she will lose. \nIf Alice erases 2 first, now nums become [1, 1]. The bitwise XOR of all the elements of the chalkboard is 1 XOR 1 = 0. Alice will lose.",
+      "Input:nums = [0,1]Output:true",
+      "Input:nums = [1,2,3]Output:true"
+    ],
+    "constraints": [
+      "1 <= nums.length <= 1000",
+      "0 <= nums[i] < 216"
+    ],
+    "problem_statement": "You are given an array of integersnumsrepresents the numbers written on a chalkboard.\n\nAlice and Bob take turns erasing exactly one number from the chalkboard, with Alice starting first. If erasing a number causes the bitwise XOR of all the elements of the chalkboard to become0, then that player loses. The bitwise XOR of one element is that element itself, and the bitwise XOR of no elements is0.\n\nAlso, if any player starts their turn with the bitwise XOR of all the elements of the chalkboard equal to0, then that player wins.\n\nReturntrueif and only if Alice wins the game, assuming both players play optimally.\n\n",
+    "difficulty": "medium",
+    "title": "Chalkboard XOR Game",
+    "example_input": "nums = [1,1,2]",
+    "example_output": "false"
+  }
+}

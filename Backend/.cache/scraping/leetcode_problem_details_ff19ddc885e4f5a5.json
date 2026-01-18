@@ -1,0 +1,27 @@
+{
+  "company": "leetcode",
+  "source": "problem_details",
+  "url": "Count the Number of Powerful Integers",
+  "cached_at": "2026-01-18T03:00:01.934024",
+  "data": {
+    "url": "https://leetcode.ca/2024-01-14-2999-Count-the-Number-of-Powerful-Integers/",
+    "leetcode_number": null,
+    "examples": [
+      "Input:start = 1, finish = 6000, limit = 4, s = \"124\"Output:5Explanation:The powerful integers in the range [1..6000] are 124, 1124, 2124, 3124, and, 4124. All these integers have each digit <= 4, and \"124\" as a suffix. Note that 5124 is not a powerful integer because the first digit is 5 which is greater than 4.\nIt can be shown that there are only 5 powerful integers in this range.",
+      "Input:start = 15, finish = 215, limit = 6, s = \"10\"Output:2Explanation:The powerful integers in the range [15..215] are 110 and 210. All these integers have each digit <= 6, and \"10\" as a suffix.\nIt can be shown that there are only 2 powerful integers in this range.",
+      "Input:start = 1000, finish = 2000, limit = 4, s = \"3000\"Output:0Explanation:All integers in the range [1000..2000] are smaller than 3000, hence \"3000\" cannot be a suffix of any integer in this range."
+    ],
+    "constraints": [
+      "1 <= start <= finish <= 1015",
+      "1 <= limit <= 9",
+      "1 <= s.length <= floor(log10(finish)) + 1",
+      "sonly consists of numeric digits which are at mostlimit.",
+      "sdoes not have leading zeros."
+    ],
+    "problem_statement": "You are given three integersstart,finish, andlimit. You are also given a0-indexedstringsrepresenting apositiveinteger.\n\nApositiveintegerxis calledpowerfulif it ends withs(in other words,sis asuffixofx) and each digit inxis at mostlimit.\n\nReturnthetotalnumber of powerful integers in the range[start..finish].\n\nA stringxis a suffix of a stringyif and only ifxis a substring ofythat starts from some index (including0) inyand extends to the indexy.length - 1. For example,25is a suffix of5125whereas512is not.\n\n",
+    "difficulty": "medium",
+    "title": "Count the Number of Powerful Integers",
+    "example_input": "start = 1, finish = 6000, limit = 4, s = \"124\"",
+    "example_output": "5"
+  }
+}

@@ -1,5 +1,8 @@
 # Delivery Agent - Provides feedback on interview answers
 
+log:
+  stdout_log_level: INFO
+
 !include ../shared_config.yaml
 
 apps:
@@ -33,7 +36,7 @@ apps:
 
       session_service:
         type: memory
-        default_behavior: "PERSISTENT"  # Remembers history
+        default_behavior: "PERSISTENT"
 
       artifact_service: *default_artifact_service
       artifact_handling_mode: "ignore"

@@ -51,10 +51,9 @@ def start_sam():
         sam_process = subprocess.Popen(
             command,
             cwd=SOLACE_AGENT_DIR,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            text=True,
-            preexec_fn=os.setsid,  # Create new process group for clean shutdown
+            stdout=subprocess.DEVNULL,  # Avoid hanging due to full pipe buffer
+            stderr=subprocess.DEVNULL,
+            preexec_fn=os.setsid,
         )
     except FileNotFoundError:
         print("Command 'sam' not found. Trying 'uv run sam'...")
@@ -62,9 +61,8 @@ def start_sam():
         sam_process = subprocess.Popen(
             command,
             cwd=SOLACE_AGENT_DIR,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            text=True,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
             preexec_fn=os.setsid,
         )
 
@@ -213,10 +211,16 @@ def get_turn_instruction(turn: int, company_data: StartRequest) -> str:
 
     instructions = {
         1: f"ASK about: {behavioral_q or 'their experience with a challenging project'}. MAX 2 sentences.",
-        2: f"ASK about: {system_design_q or 'how they would design a scalable system'}. MAX 2 sentences.",
-        3: "SAY GOODBYE. Thank them for their time and say you'll be in touch. MAX 2 sentences.",
+        2: f"ASK about: {coding_q or 'their favorite programming language and why'}. MAX 2 sentences.",
+        3: f"ASK about: {system_design_q or 'how they would design a scalable system'}. MAX 2 sentences.",
     }
-    return instructions.get(turn, "SAY GOODBYE.")
+
+    if turn in instructions:
+        return instructions[turn]
+    elif turn >= 14:
+        return "SAY GOODBYE. Thank them for their time and say you'll be in touch. MAX 2 sentences."
+    else:
+        return "ASK a relevant follow-up question based on the candidate's last response. Keep it concise. MAX 2 sentences."
 
 
 async def send_to_solace(
@@ -269,6 +273,7 @@ async def send_to_solace(
                 "GET",
                 f"{GATEWAY_URL}/api/v1/sse/subscribe/{task_id}",
                 headers={"Accept": "text/event-stream"},
+                timeout=None,  # Don't timeout the stream itself
             ) as sse_response:
                 full_text = ""
                 async for line in sse_response.aiter_lines():
@@ -278,26 +283,57 @@ async def send_to_solace(
                     json_data = line[5:].strip()  # Remove "data:" prefix
                     try:
                         event_data = json.loads(json_data)
-                        state = (
-                            event_data.get("result", {}).get("status", {}).get("state")
-                        )
+                        result = event_data.get("result")
+                        if not isinstance(result, dict):
+                            continue
+
+                        status = result.get("status")
+                        if not isinstance(status, dict):
+                            continue
+
+                        state = status.get("state")
+
+                        # Try to accumulate text from any message parts we see
+                        message = status.get("message")
+                        if isinstance(message, dict):
+                            parts = message.get("parts", [])
+                            for part in parts:
+                                if (
+                                    isinstance(part, dict)
+                                    and part.get("kind") == "text"
+                                ):
+                                    new_text = part.get("text", "")
+                                    if len(new_text) > len(full_text):
+                                        full_text = new_text
 
                         if state == "completed":
-                            parts = (
-                                event_data.get("result", {})
-                                .get("status", {})
-                                .get("message", {})
-                                .get("parts", [])
-                            )
-                            for part in parts:
-                                if part.get("kind") == "text":
-                                    full_text = part.get("text", "")
-                                    break
+                            # If we still don't have text, try one last check in the result
+                            if not full_text:
+                                res_msg = result.get("message")
+                                if isinstance(res_msg, dict):
+                                    parts = res_msg.get("parts", [])
+                                    for part in parts:
+                                        if (
+                                            isinstance(part, dict)
+                                            and part.get("kind") == "text"
+                                        ):
+                                            full_text = part.get("text") or ""
                             break
+
+                        if state == "failed":
+                            return (
+                                None,
+                                new_context_id,
+                                f"SAM Task failed: {status.get('error')}",
+                            )
+
                     except json.JSONDecodeError:
                         continue
 
-                return full_text, new_context_id, None
+                if not full_text:
+                    print(f"DEBUG: No text found in SAM response for task {task_id}")
+
+                return full_text or "", new_context_id, None
 
         except Exception as e:
             return None, new_context_id, f"Error reading SSE stream: {e}"

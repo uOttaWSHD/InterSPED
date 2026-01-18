@@ -63,9 +63,16 @@ const AnalysisPage = ({ companyName, jobUrl, onComplete, onFail }: AnalysisPageP
         // Finish all steps
         setSteps(prev => prev.map(s => ({ ...s, status: "done" })));
 
+        console.log("[AnalysisPage] Analysis done. Calling onComplete in 600ms...", { isMounted });
+
         // Small pause then continue with initial response
         setTimeout(() => {
-          if (isMounted) onComplete(interviewData.response, interviewData.session_id);
+          if (isMounted) {
+            console.log("[AnalysisPage] Calling onComplete now");
+            onComplete(interviewData.response, interviewData.session_id);
+          } else {
+             console.warn("[AnalysisPage] Component unmounted, skipping onComplete");
+          }
         }, 600);
       } catch (e: any) {
         console.error("Analysis failed:", e);
@@ -74,7 +81,10 @@ const AnalysisPage = ({ companyName, jobUrl, onComplete, onFail }: AnalysisPageP
     };
 
     run();
-    return () => { isMounted = false; };
+    return () => { 
+        console.log("[AnalysisPage] Unmounting/Cleaning up");
+        isMounted = false; 
+    };
   }, [companyName, jobUrl, onComplete]);
 
   return (

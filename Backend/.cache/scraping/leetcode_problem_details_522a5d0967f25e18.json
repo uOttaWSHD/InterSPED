@@ -1,0 +1,17 @@
+{
+  "company": "leetcode",
+  "source": "problem_details",
+  "url": "Find Candidates for Data Scientist Position",
+  "cached_at": "2026-01-18T02:59:55.911787",
+  "data": {
+    "url": "https://leetcode.ca/2024-09-25-3278-Find-Candidates-for-Data-Scientist-Position-II/",
+    "leetcode_number": null,
+    "examples": [
+      "+--+--+-+\n\\| 101          \\| Python    \\| 5           \\|\n\\| 101          \\| Tableau   \\| 3           \\|\n\\| 101          \\| PostgreSQL\\| 4           \\|\n\\| 101          \\| TensorFlow\\| 2           \\|\n\\| 102          \\| Python    \\| 4           \\|\n\\| 102          \\| Tableau   \\| 5           \\|\n\\| 102          \\| PostgreSQL\\| 4           \\|\n\\| 102          \\| R         \\| 4           \\|\n\\| 103          \\| Python    \\| 3           \\|\n\\| 103          \\| Tableau   \\| 5           \\|\n\\| 103          \\| PostgreSQL\\| 5           \\|\n\\| 103          \\| Spark     \\| 4           \\|\n+--+--++\n\\| project_id  \\| skill     \\| importance \\|\n+-+--++"
+    ],
+    "constraints": [],
+    "problem_statement": "Table:Candidates\n\nLeetcode is staffing for multiple data science projects. Write a solution to find thebest candidateforeach projectbased on the following criteria:\n\nInclude only the top candidate (highest score) for each project. If there\u2019s atie, choose the candidate with thelowercandidate_id. If there isno suitable candidatefor a project,do not returnthat project.\n\nReturn a result table ordered byproject_idin ascending order.\n\nThe result format is in the following example.\n\n",
+    "difficulty": "medium",
+    "title": "Find Candidates for Data Scientist Position II"
+  }
+}

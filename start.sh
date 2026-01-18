@@ -11,9 +11,14 @@ echo -e "${BLUE}🚀 Starting the Antigravity Unified System...${NC}"
 
 # 0. Kill existing uvicorn and SAM processes to free up ports
 echo -e "${BLUE}🧹 Cleaning up existing backend processes...${NC}"
-pkill -f uvicorn
-pkill -f sam
-sleep 1
+pkill -f uvicorn 2>/dev/null
+pkill -f "solace" 2>/dev/null
+pkill -f "sam" 2>/dev/null
+# Kill anything on ports 3000, 8000, 8001
+fuser -k 3000/tcp 2>/dev/null
+fuser -k 8000/tcp 2>/dev/null
+fuser -k 8001/tcp 2>/dev/null
+sleep 2
 
 # 1. Sync BetterAuth Schema (Local)
 echo -e "${BLUE}🔐 Syncing BetterAuth Database Schema...${NC}"
@@ -47,11 +52,16 @@ cd ..
 # 4. Define cleanup function
 cleanup() {
     echo -e "\n${BLUE}🛑 Shutting down all services...${NC}"
-    kill $BACKEND_PID
-    kill $FRONTEND_PID
+    kill $BACKEND_PID 2>/dev/null
+    kill $FRONTEND_PID 2>/dev/null
     # Specifically kill uvicorn and SAM processes just in case
-    pkill -f uvicorn
-    pkill -f sam
+    pkill -f uvicorn 2>/dev/null
+    pkill -f "solace" 2>/dev/null
+    pkill -f "sam" 2>/dev/null
+    # Free up ports
+    fuser -k 3000/tcp 2>/dev/null
+    fuser -k 8000/tcp 2>/dev/null
+    fuser -k 8001/tcp 2>/dev/null
     exit
 }
 
@@ -78,7 +88,8 @@ cd ..
 
 echo -e "${GREEN}✅ All services are launching!${NC}"
 echo -e "🔗 Frontend: http://localhost:3000"
-echo -e "🔗 Backend API: http://localhost:8000"
+echo -e "🔗 Backend API: http://localhost:8001"
+echo -e "🔗 SAM Gateway: http://localhost:8000"
 echo -e "Press Ctrl+C to stop everything."
 
 # Wait for background processes

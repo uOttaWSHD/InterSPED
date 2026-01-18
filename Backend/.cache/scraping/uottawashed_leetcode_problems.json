@@ -1,0 +1,123 @@
+{
+  "company": "uOttaWashed",
+  "source": "leetcode_problems",
+  "url": null,
+  "cached_at": "2026-01-18T02:59:47.750083",
+  "data": [
+    {
+      "title": "Find Candidates for Data Scientist Position",
+      "difficulty": "easy",
+      "link": "https://leetcode.com/problems/find-candidates-for-data-scientist-position"
+    },
+    {
+      "title": "Maximize Items",
+      "difficulty": "hard",
+      "link": "https://leetcode.com/problems/maximize-items"
+    },
+    {
+      "title": "Maximum Points Inside the Square",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/maximum-points-inside-the-square"
+    },
+    {
+      "title": "Count the Number of Powerful Integers",
+      "difficulty": "hard",
+      "link": "https://leetcode.com/problems/count-the-number-of-powerful-integers"
+    },
+    {
+      "title": "Minimize Length of Array Using Operations",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/minimize-length-of-array-using-operations"
+    },
+    {
+      "title": "Best Time to Buy and Sell Stock",
+      "difficulty": "easy",
+      "link": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock"
+    },
+    {
+      "title": "Trapping Rain Water",
+      "difficulty": "hard",
+      "link": "https://leetcode.com/problems/trapping-rain-water"
+    },
+    {
+      "title": "Maximum Subarray",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/maximum-subarray"
+    },
+    {
+      "title": "3Sum",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/3sum"
+    },
+    {
+      "title": "Minimum Time to Repair Cars",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/minimum-time-to-repair-cars"
+    },
+    {
+      "title": "Container With Most Water",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/container-with-most-water"
+    },
+    {
+      "title": "Group Anagrams",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/group-anagrams"
+    },
+    {
+      "title": "Isomorphic Strings",
+      "difficulty": "easy",
+      "link": "https://leetcode.com/problems/isomorphic-strings"
+    },
+    {
+      "title": "Edit Distance",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/edit-distance"
+    },
+    {
+      "title": "Maximum Product Subarray",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/maximum-product-subarray"
+    },
+    {
+      "title": "Chalkboard XOR Game",
+      "difficulty": "hard",
+      "link": "https://leetcode.com/problems/chalkboard-xor-game"
+    },
+    {
+      "title": "Number of Islands",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/number-of-islands"
+    },
+    {
+      "title": "Beautiful Arrangement",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/beautiful-arrangement"
+    },
+    {
+      "title": "Jump Game",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/jump-game"
+    },
+    {
+      "title": "Jump Game II",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/jump-game-ii"
+    },
+    {
+      "title": "Next Permutation",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/next-permutation"
+    },
+    {
+      "title": "Minimum Cost to Make Array Equal",
+      "difficulty": "hard",
+      "link": "https://leetcode.com/problems/minimum-cost-to-make-array-equal"
+    },
+    {
+      "title": "Koko Eating Bananas",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/koko-eating-bananas"
+    }
+  ]
+}

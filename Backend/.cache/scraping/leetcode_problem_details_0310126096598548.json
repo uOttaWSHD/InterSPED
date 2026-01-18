@@ -1,0 +1,25 @@
+{
+  "company": "leetcode",
+  "source": "problem_details",
+  "url": "Jump Game II",
+  "cached_at": "2026-01-18T02:59:54.580700",
+  "data": {
+    "url": "https://leetcode.ca/2019-06-28-1306-Jump-Game-III/",
+    "leetcode_number": null,
+    "examples": [
+      "Input:arr = [4,2,3,0,3,1,2], start = 5Output:trueExplanation:All possible ways to reach at index 3 with value 0 are: \nindex 5 -> index 4 -> index 1 -> index 3 \nindex 5 -> index 6 -> index 4 -> index 1 -> index 3",
+      "Input:arr = [4,2,3,0,3,1,2], start = 0Output:trueExplanation:One possible way to reach at index 3 with value 0 is: \nindex 0 -> index 4 -> index 1 -> index 3",
+      "Input:arr = [3,0,2,1,2], start = 2Output:falseExplanation:There is no way to reach at index 1 with value 0."
+    ],
+    "constraints": [
+      "1 <= arr.length <= 5 * 104",
+      "0 <= arr[i] <\u00a0arr.length",
+      "0 <= start < arr.length"
+    ],
+    "problem_statement": "Given an array of non-negative integersarr, you are initially positioned atstartindex of the array. When you are at indexi, you can jump\u00a0toi + arr[i]ori - arr[i], check if you can reachanyindex with value 0.\n\nNotice that you can not jump outside of the array at any time.\n\n",
+    "difficulty": "medium",
+    "title": "Jump Game III",
+    "example_input": "arr = [4,2,3,0,3,1,2], start = 5",
+    "example_output": "true"
+  }
+}

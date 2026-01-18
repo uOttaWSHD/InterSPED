@@ -4,7 +4,7 @@ import UserVideo from "./UserVideo";
 import ControlBar from "./ControlBar";
 import CodeEditor from "./CodeEditor";
 import InterviewTimer from "./InterviewTimer";
-import { Bot, RotateCcw, MessageSquare, Mic, MicOff } from "lucide-react";
+import { Bot, RotateCcw, MessageSquare, Mic, MicOff, Bug, Wifi, WifiOff } from "lucide-react";
 import { useVoiceInterview } from "@/hooks/use-voice-interview";
 
 interface InterviewRoomProps {
@@ -77,9 +77,27 @@ const InterviewRoom = ({ onEndInterview, initialResponse, sessionId }: Interview
   const [lastAudioUrl, setLastAudioUrl] = useState<string | null>(null);
   const [transcript, setTranscript] = useState<string>(initialResponse || "");
   const [showTranscript, setShowTranscript] = useState(true);
+  const [showDebug, setShowDebug] = useState(true); // Debug panel visible by default
   const [audioStarted, setAudioStarted] = useState(false);
+  const [conversationHistory, setConversationHistory] = useState<Array<{role: 'user' | 'ai', text: string, timestamp: Date}>>([]);
   const hasSpokenInitialRef = useRef(false);
+  const hasStartedInterviewRef = useRef(false); // Guard against multiple connection attempts
   const audioRef = useRef<HTMLAudioElement>(null);
+  const debugPanelRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll debug panel
+  useEffect(() => {
+    if (debugPanelRef.current) {
+      debugPanelRef.current.scrollTop = debugPanelRef.current.scrollHeight;
+    }
+  }, [conversationHistory, transcript]);
+
+  // Add initial AI response to history
+  useEffect(() => {
+    if (initialResponse && conversationHistory.length === 0) {
+      setConversationHistory([{ role: 'ai', text: initialResponse, timestamp: new Date() }]);
+    }
+  }, [initialResponse]);
 
   const {
     isConnected,
@@ -90,16 +108,27 @@ const InterviewRoom = ({ onEndInterview, initialResponse, sessionId }: Interview
     stopInterview,
   } = useVoiceInterview({
     sessionId: sessionId || null,
-    onTranscript: (text) => setTranscript(text),
+    onTranscript: (text) => {
+      console.log("[InterviewRoom] New transcript:", text);
+      setTranscript(text);
+      // Add user message to conversation history
+      setConversationHistory(prev => [...prev, { role: 'user', text, timestamp: new Date() }]);
+    },
     onAISpeaking: (speaking) => setIsAISpeaking(speaking),
-    onAudioReceived: async (b64) => {
+    onAudioReceived: async (b64, aiText) => {
       console.log("[InterviewRoom] Audio received via WebSocket");
-      try {
-        const audioBlob = await fetch(`data:audio/mpeg;base64,${b64}`).then(r => r.blob());
-        const url = URL.createObjectURL(audioBlob);
-        setLastAudioUrl(url);
-      } catch (err) {
-        console.error("[InterviewRoom] Failed to process received audio", err);
+      // Add AI response to conversation history
+      if (aiText) {
+        setConversationHistory(prev => [...prev, { role: 'ai', text: aiText, timestamp: new Date() }]);
+      }
+      if (b64) {
+        try {
+          const audioBlob = await fetch(`data:audio/mpeg;base64,${b64}`).then(r => r.blob());
+          const url = URL.createObjectURL(audioBlob);
+          setLastAudioUrl(url);
+        } catch (err) {
+          console.error("[InterviewRoom] Failed to process received audio", err);
+        }
       }
     },
     audioElement: audioRef.current,
@@ -116,9 +145,8 @@ const InterviewRoom = ({ onEndInterview, initialResponse, sessionId }: Interview
     }
 
     setAudioStarted(true);
-    if (sessionId) {
-      startInterview();
-    }
+    // Note: startInterview() will be called by the useEffect when audioStarted becomes true
+    
     if (initialResponse && !hasSpokenInitialRef.current) {
       hasSpokenInitialRef.current = true;
       speakWithElevenLabs(initialResponse);
@@ -126,12 +154,14 @@ const InterviewRoom = ({ onEndInterview, initialResponse, sessionId }: Interview
   };
 
   // Start voice interview when session is ready AND audio is started
+  // Use ref guard to prevent multiple connection attempts
   useEffect(() => {
-    if (sessionId && !isConnected && audioStarted) {
+    if (sessionId && !isConnected && audioStarted && !hasStartedInterviewRef.current) {
+      hasStartedInterviewRef.current = true;
       console.log("Starting voice interview with session:", sessionId);
       startInterview();
     }
-  }, [sessionId, isConnected, startInterview, audioStarted]);
+  }, [sessionId, isConnected, audioStarted]);
 
   // Function to replay the last audio
   const replayLastAudio = async () => {
@@ -279,6 +309,14 @@ const InterviewRoom = ({ onEndInterview, initialResponse, sessionId }: Interview
 
         <div className="flex items-center gap-2">
           <button
+            onClick={() => setShowDebug(!showDebug)}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors ${showDebug ? 'bg-orange-500/20 text-orange-400' : 'bg-white/5 text-muted-foreground'}`}
+            title="Toggle Debug Panel"
+          >
+            <Bug className="w-4 h-4" />
+            <span className="text-xs font-medium">Debug</span>
+          </button>
+          <button
             onClick={() => setShowTranscript(!showTranscript)}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors ${showTranscript ? 'bg-primary/20 text-primary' : 'bg-white/5 text-muted-foreground'}`}
             title="Toggle Transcript"
@@ -297,15 +335,86 @@ const InterviewRoom = ({ onEndInterview, initialResponse, sessionId }: Interview
               <span className="text-xs font-medium text-blue-500">Replay</span>
             </button>
           )}
+          {/* Connection Status */}
+          <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg ${isConnected ? 'bg-green-500/10' : 'bg-red-500/10'}`}>
+            {isConnected ? <Wifi className="w-4 h-4 text-green-500" /> : <WifiOff className="w-4 h-4 text-red-500" />}
+            <span className={`text-xs font-medium ${isConnected ? 'text-green-500' : 'text-red-500'}`}>
+              {isConnected ? 'Connected' : 'Disconnected'}
+            </span>
+          </div>
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[hsl(var(--interview-success))]/10">
-            <div className="w-2 h-2 rounded-full bg-[hsl(var(--interview-success))] animate-pulse" />
-            <span className="text-xs font-medium text-[hsl(var(--interview-success))]">Recording</span>
+            <div className={`w-2 h-2 rounded-full ${isListening ? 'bg-[hsl(var(--interview-success))] animate-pulse' : 'bg-gray-500'}`} />
+            <span className="text-xs font-medium text-[hsl(var(--interview-success))]">
+              {isListening ? 'Listening' : 'Paused'}
+            </span>
           </div>
         </div>
       </div>
 
       {/* Main Content */}
       <div className="flex-1 flex overflow-hidden">
+        {/* Debug Panel - Left Side */}
+        {showDebug && (
+          <div className="w-80 border-r border-border bg-[hsl(var(--interview-elevated))] flex flex-col">
+            <div className="p-3 border-b border-border">
+              <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                <Bug className="w-4 h-4 text-orange-400" />
+                Debug Console
+              </h3>
+              <div className="mt-2 flex gap-2 text-xs">
+                <span className={`px-2 py-0.5 rounded ${isConnected ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+                  WS: {isConnected ? 'OK' : 'DISC'}
+                </span>
+                <span className={`px-2 py-0.5 rounded ${isListening ? 'bg-blue-500/20 text-blue-400' : 'bg-gray-500/20 text-gray-400'}`}>
+                  Mic: {isListening ? 'ON' : 'OFF'}
+                </span>
+                <span className={`px-2 py-0.5 rounded ${isAISpeaking ? 'bg-purple-500/20 text-purple-400' : 'bg-gray-500/20 text-gray-400'}`}>
+                  AI: {isAISpeaking ? 'Speaking' : 'Idle'}
+                </span>
+              </div>
+            </div>
+            
+            {/* Live Partial Transcript */}
+            <div className="p-3 border-b border-border">
+              <h4 className="text-xs font-medium text-muted-foreground mb-1">Live Input (partial):</h4>
+              <div className="p-2 rounded bg-black/30 min-h-[40px]">
+                <p className="text-xs text-yellow-400 font-mono">
+                  {partialTranscript || <span className="text-gray-500 italic">Waiting for speech...</span>}
+                </p>
+              </div>
+            </div>
+            
+            {/* Conversation History */}
+            <div className="flex-1 overflow-hidden flex flex-col">
+              <div className="p-3 border-b border-border">
+                <h4 className="text-xs font-medium text-muted-foreground">Conversation History:</h4>
+              </div>
+              <div 
+                ref={debugPanelRef}
+                className="flex-1 overflow-y-auto p-3 space-y-3"
+              >
+                {conversationHistory.length === 0 ? (
+                  <p className="text-xs text-gray-500 italic">No messages yet...</p>
+                ) : (
+                  conversationHistory.map((msg, i) => (
+                    <div key={i} className={`p-2 rounded text-xs ${msg.role === 'user' ? 'bg-blue-500/10 border-l-2 border-blue-500' : 'bg-purple-500/10 border-l-2 border-purple-500'}`}>
+                      <div className="flex justify-between items-center mb-1">
+                        <span className={`font-semibold ${msg.role === 'user' ? 'text-blue-400' : 'text-purple-400'}`}>
+                          {msg.role === 'user' ? 'You' : 'AI'}
+                        </span>
+                        <span className="text-gray-500 text-[10px]">
+                          {msg.timestamp.toLocaleTimeString()}
+                        </span>
+                      </div>
+                      <p className="text-foreground/80 whitespace-pre-wrap">{msg.text}</p>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+        
         {/* Video/Code Area */}
         <div className="flex-1 flex flex-col relative">
           {isCodeSharing ? (

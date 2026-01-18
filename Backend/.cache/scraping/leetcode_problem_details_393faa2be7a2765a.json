@@ -1,0 +1,24 @@
+{
+  "company": "leetcode",
+  "source": "problem_details",
+  "url": "Minimum Cost to Make Array Equal",
+  "cached_at": "2026-01-18T02:59:54.822671",
+  "data": {
+    "url": "https://leetcode.ca/2024-01-14-2967-Minimum-Cost-to-Make-Array-Equalindromic/",
+    "leetcode_number": null,
+    "examples": [
+      "Input:nums = [1,2,3,4,5]Output:6Explanation:We can make the array equalindromic by changing all elements to 3 which is a palindromic number. The cost of changing the array to [3,3,3,3,3] using 4 special moves is given by |1 - 3| + |2 - 3| + |4 - 3| + |5 - 3| = 6.\nIt can be shown that changing all elements to any palindromic number other than 3 cannot be achieved at a lower cost.",
+      "Input:nums = [10,12,13,14,15]Output:11Explanation:We can make the array equalindromic by changing all elements to 11 which is a palindromic number. The cost of changing the array to [11,11,11,11,11] using 5 special moves is given by |10 - 11| + |12 - 11| + |13 - 11| + |14 - 11| + |15 - 11| = 11.\nIt can be shown that changing all elements to any palindromic number other than 11 cannot be achieved at a lower cost.",
+      "Input:nums = [22,33,22,33,22]Output:22Explanation:We can make the array equalindromic by changing all elements to 22 which is a palindromic number. The cost of changing the array to [22,22,22,22,22] using 2 special moves is given by |33 - 22| + |33 - 22| = 22.\nIt can be shown that changing all elements to any palindromic number other than 22 cannot be achieved at a lower cost."
+    ],
+    "constraints": [
+      "1 <= n <= 105",
+      "1 <= nums[i] <= 109"
+    ],
+    "problem_statement": "You are given a0-indexedinteger arraynumshaving lengthn.\n\nYou are allowed to perform a special moveanynumber of times (including zero) onnums. In onespecialmoveyou perform the following stepsin order:\n\nApalindromic numberis a positive integer that remains the same when its digits are reversed. For example,121,2552and65756are palindromic numbers whereas24,46,235are not palindromic numbers.\n\nAn array is consideredequalindromicif all the elements in the array are equal to an integery, whereyis apalindromic numberless than109.\n\nReturnan integer denoting theminimumpossible total cost to makenumsequalindromicby performing any number of special moves.\n\n",
+    "difficulty": "medium",
+    "title": "Minimum Cost to Make Array Equalindromic",
+    "example_input": "nums = [1,2,3,4,5]",
+    "example_output": "6"
+  }
+}

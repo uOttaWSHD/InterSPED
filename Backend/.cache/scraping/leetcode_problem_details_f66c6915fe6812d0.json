@@ -1,0 +1,21 @@
+{
+  "company": "leetcode",
+  "source": "problem_details",
+  "url": "Jump Game",
+  "cached_at": "2026-01-18T02:59:54.590200",
+  "data": {
+    "url": "https://leetcode.ca/2025-09-30-3660-Jump-Game-IX/",
+    "leetcode_number": null,
+    "examples": [
+      "classSolution{publicint[]maxValue(int[]nums){intn=nums.length;int[]ans=newint[n];int[]preMax=newint[n];preMax[0]=nums[0];for(inti=1;i<n;++i){preMax[i]=Math.max(preMax[i-1],nums[i]);}intsufMin=1<<30;for(inti=n-1;i>=0;--i){ans[i]=preMax[i]>sufMin?ans[i+1]:preMax[i];sufMin=Math.min(sufMin,nums[i]);}returnans;}}",
+      "classSolution{publicint[]maxValue(int[]nums){intn=nums.length;int[]ans=newint[n];int[]preMax=newint[n];preMax[0]=nums[0];for(inti=1;i<n;++i){preMax[i]=Math.max(preMax[i-1],nums[i]);}intsufMin=1<<30;for(inti=n-1;i>=0;--i){ans[i]=preMax[i]>sufMin?ans[i+1]:preMax[i];sufMin=Math.min(sufMin,nums[i]);}returnans;}}"
+    ],
+    "constraints": [
+      "1 <= nums.length <= 105",
+      "1 <= nums[i] <= 109\u200b\u200b\u200b\u200b\u200b\u200b\u200b"
+    ],
+    "problem_statement": "You are given an integer arraynums.\n\nFrom any indexi, you can jump to another indexjunder the following rules:\n\nFor each indexi, find themaximumvalueinnumsthat can be reached by followinganysequence of valid jumps starting ati.\n\nReturn an arrayanswhereans[i]is themaximumvaluereachable starting from indexi.\n\n",
+    "difficulty": "medium",
+    "title": "Jump Game IX"
+  }
+}
