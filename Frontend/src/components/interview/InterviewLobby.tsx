@@ -262,7 +262,7 @@ const InterviewLobby = ({ onStartInterview }: InterviewLobbyProps) => {
             onStartInterview({ 
               companyName: "DEBUG", 
               jobUrl: "https://debug.local", 
-              initialResponse: null  // null to skip ElevenLabs TTS
+              initialResponse: undefined  // undefined to skip ElevenLabs TTS
             });
           }}
           className="w-full h-12 mt-2 text-base font-semibold bg-muted text-foreground hover:bg-muted/80 border border-border"
