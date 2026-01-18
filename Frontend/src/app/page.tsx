@@ -11,21 +11,10 @@ import {
   BarChart3
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
 
 export default function Landing() {
-  const { login, isAuthenticated } = useAuth();
   const router = useRouter();
-
-  const handleCTA = () => {
-    if (isAuthenticated) {
-      router.push("/dashboard");
-    } else {
-      login();
-    }
-  };
-
   return (
     <div className="min-h-screen bg-[hsl(var(--background))] overflow-x-hidden">
       {/* Navbar */}
@@ -40,8 +29,8 @@ export default function Landing() {
           <div className="hidden md:flex items-center gap-8 text-sm font-medium text-muted-foreground">
             <a href="#features" className="hover:text-primary transition-colors">Features</a>
             <a href="#about" className="hover:text-primary transition-colors">For Students</a>
-            <Button variant="ghost" onClick={handleCTA}>
-              {isAuthenticated ? "Dashboard" : "Login"}
+            <Button variant="ghost" onClick={() => router.push("/dashboard")}>
+              Dashboard
             </Button>
           </div>
         </div>
@@ -67,10 +56,10 @@ export default function Landing() {
               Ace the <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">Technical Round</span>
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
-              Stop guessing if you're ready. Practice LeetCode-style technicals and behavioral loops with Intersped's real-time AI feedback.
+              Stop guessing if you&apos;re ready. Practice LeetCode-style technicals and behavioral loops with Intersped&apos;s real-time AI feedback.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button size="lg" className="h-14 px-8 text-lg font-semibold glow-primary" onClick={handleCTA}>
+              <Button size="lg" className="h-14 px-8 text-lg font-semibold glow-primary" onClick={() => router.push("/dashboard")}>
                 Get Started with Discord
                 <ChevronRight className="ml-2 w-5 h-5" />
               </Button>
@@ -146,7 +135,7 @@ export default function Landing() {
              <p className="text-lg text-muted-foreground mb-10 max-w-xl mx-auto">
                Join hundreds of CS students practicing with Intersped. Your next offer letter is one mock interview away.
              </p>
-             <Button size="lg" className="h-14 px-12 text-lg font-bold" onClick={handleCTA}>
+             <Button size="lg" className="h-14 px-12 text-lg font-bold" onClick={() => router.push("/dashboard")}>
                Sign Up Now
              </Button>
           </div>

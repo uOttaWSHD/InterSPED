@@ -11,31 +11,13 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/hooks/use-auth";
-import { useEffect } from "react";
 
 export default function Dashboard() {
-  const { user, logout, isLoading } = useAuth();
   const router = useRouter();
 
-  useEffect(() => {
-    if (!isLoading && !user) {
-        router.push("/");
-    }
-  }, [user, isLoading, router]);
-
-  const handleLogout = async () => {
-    await logout();
+  const handleLogout = () => {
     router.push("/");
   };
-
-  if (isLoading || !user) {
-      return (
-        <div className="min-h-screen bg-background flex items-center justify-center">
-            <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-        </div>
-      );
-  }
 
   return (
     <div className="min-h-screen bg-[hsl(var(--background))] flex">
@@ -85,7 +67,7 @@ export default function Dashboard() {
       <main className="flex-1 p-8">
         <header className="flex items-center justify-between mb-12">
           <div>
-            <h1 className="text-3xl font-bold mb-2">Welcome back, {user.username}</h1>
+            <h1 className="text-3xl font-bold mb-2">Welcome back, User</h1>
             <p className="text-muted-foreground text-sm">You have no interviews scheduled today.</p>
           </div>
           <div className="flex items-center gap-4">
