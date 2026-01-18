@@ -1,17 +1,51 @@
-name: jobscraper
+name: antigravity-unified
 services:
-- name: jobscraper-api
-  github:
-    branch: main
-    deploy_on_push: true
-    repo: uOttaWSHD/Submission
-  source_dir: JobScraper
-  dockerfile_path: Dockerfile
-  http_port: 3000
-  instance_count: 1
-  instance_size_slug: basic-xs
-  envs:
-  - key: YELLOWCAKE_API_KEY
-    value: ${YELLOWCAKE_API_KEY}
-  - key: GROQ_API_KEY
-    value: ${GROQ_API_KEY}
+  - name: backend
+    github:
+      branch: main
+      deploy_on_push: true
+      repo: uOttaWSHD/Submission
+    source_dir: Backend
+    dockerfile_path: Dockerfile
+    http_port: 8000
+    instance_count: 1
+    instance_size_slug: basic-xs
+    envs:
+      - key: YELLOWCAKE_API_KEY
+        value: ${YELLOWCAKE_API_KEY}
+      - key: GROQ_API_KEY
+        value: ${GROQ_API_KEY}
+      - key: ELEVENLABS_API_KEY
+        value: ${ELEVENLABS_API_KEY}
+      - key: LLM_SERVICE_API_KEY
+        value: ${LLM_SERVICE_API_KEY}
+      - key: LLM_SERVICE_ENDPOINT
+        value: ${LLM_SERVICE_ENDPOINT}
+      - key: LLM_SERVICE_PLANNING_MODEL_NAME
+        value: ${LLM_SERVICE_PLANNING_MODEL_NAME}
+      - key: LLM_SERVICE_GENERAL_MODEL_NAME
+        value: ${LLM_SERVICE_GENERAL_MODEL_NAME}
+
+  - name: frontend
+    github:
+      branch: main
+      deploy_on_push: true
+      repo: uOttaWSHD/Submission
+    source_dir: Frontend
+    dockerfile_path: Dockerfile
+    http_port: 3000
+    instance_count: 1
+    instance_size_slug: basic-xs
+    # Run migrations before starting the app
+    run_command: npx better-auth migrate --yes && node server.js
+    envs:
+      - key: NEXT_PUBLIC_API_URL
+        value: ${NEXT_PUBLIC_API_URL}
+      - key: BETTER_AUTH_SECRET
+        value: ${BETTER_AUTH_SECRET}
+      - key: DISCORD_CLIENT_ID
+        value: ${DISCORD_CLIENT_ID}
+      - key: DISCORD_CLIENT_SECRET
+        value: ${DISCORD_CLIENT_SECRET}
+      - key: NEXT_PUBLIC_APP_URL
+        value: ${NEXT_PUBLIC_APP_URL}

@@ -1,0 +1,32 @@
+[project]
+name = "unified-backend"
+version = "0.1.0"
+description = "Unified backend for uOttahack submission"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "python-dotenv",
+    "pydantic-settings",
+    "httpx",
+    "solace-agent-mesh==1.13.3",
+    "PyGithub==2.8.1",
+    "beautifulsoup4",
+    "dspy-ai",
+    "faiss-cpu",
+    "langchain",
+    "langchain-community",
+    "langchain-groq",
+    "langchain-openai",
+    "langgraph",
+    "lxml",
+    "playwright",
+    "elevenlabs",
+    "numpy",
+    "resampy",
+    "websockets",
+    "aiofiles",
+    "orjson",
+    "quart" 
+]
+# Kept quart just in case, but aim to remove it.

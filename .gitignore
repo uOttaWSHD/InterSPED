@@ -2,4 +2,8 @@
 .venv
 build
 __pycache__
-frontend/node_modules
+node_modules
+intersped.db
+*.pyc
+.next
+

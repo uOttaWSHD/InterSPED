@@ -1,0 +1,25 @@
+{
+  "company": "leetcode",
+  "source": "problem_details",
+  "url": "Valid Parentheses",
+  "cached_at": "2026-01-18T01:00:45.626835",
+  "data": {
+    "url": "https://leetcode.ca/2022-02-13-2267-Check-if-There-Is-a-Valid-Parentheses-String-Path/",
+    "leetcode_number": null,
+    "examples": [
+      "Input:grid = [[\"(\",\"(\",\"(\"],[\")\",\"(\",\")\"],[\"(\",\"(\",\")\"],[\"(\",\"(\",\")\"]]Output:trueExplanation:The above diagram shows two possible paths that form valid parentheses strings.\nThe first path shown results in the valid parentheses string \"()(())\".\nThe second path shown results in the valid parentheses string \"((()))\".\nNote that there may be other valid parentheses string paths.",
+      "Input:grid = [[\")\",\")\"],[\"(\",\"(\"]]Output:falseExplanation:The two possible paths form the parentheses strings \"))(\" and \")((\". Since neither of them are valid parentheses strings, we return false."
+    ],
+    "constraints": [
+      "m == grid.length",
+      "n == grid[i].length",
+      "1 <= m, n <= 100",
+      "grid[i][j]is either'('or')'."
+    ],
+    "problem_statement": "A parentheses string is anon-emptystring consisting only of'('and')'. It isvalidifanyof the following conditions istrue:\n\nYou are given anm x nmatrix of parenthesesgrid. Avalid parentheses string pathin the grid is a path satisfyingallof the following conditions:\n\nReturntrueif there exists avalid parentheses string pathin the grid.Otherwise, returnfalse.\n\n",
+    "difficulty": "medium",
+    "title": "Check if There Is a Valid Parentheses String Path",
+    "example_input": "grid = [[\"(\",\"(\",\"(\"],[\")\",\"(\",\")\"],[\"(\",\"(\",\")\"],[\"(\",\"(\",\")\"]]",
+    "example_output": "true"
+  }
+}

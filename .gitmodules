@@ -1,3 +1,3 @@
 [submodule "JobScraper/data/leetcode_problems"]
-	path = JobScraper/data/leetcode_problems
+	path = Backend/app/services/job_scraper/data/leetcode_problems
 	url = https://github.com/liquidslr/leetcode-company-wise-problems/

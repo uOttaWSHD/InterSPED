@@ -1,0 +1,23 @@
+{
+  "company": "Bank of Canada",
+  "source": "leetcode_problems",
+  "url": null,
+  "cached_at": "2026-01-18T01:00:43.426039",
+  "data": [
+    {
+      "title": "Valid Parentheses",
+      "difficulty": "easy",
+      "link": "https://leetcode.com/problems/valid-parentheses"
+    },
+    {
+      "title": "Best Time to Buy and Sell Stock",
+      "difficulty": "easy",
+      "link": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock"
+    },
+    {
+      "title": "Valid Palindrome",
+      "difficulty": "easy",
+      "link": "https://leetcode.com/problems/valid-palindrome"
+    }
+  ]
+}
