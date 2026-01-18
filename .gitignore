@@ -3,3 +3,6 @@
 build
 __pycache__
 frontend/node_modules
+*.log
+*.mov
+*.db

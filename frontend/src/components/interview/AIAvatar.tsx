@@ -12,16 +12,24 @@ const AIAvatar = ({ isSpeaking = false, size = "large" }: AIAvatarProps) => {
     const video = videoRef.current;
     if (!video) return;
 
-    // Set up the video element to loop
+    // Set up the video element
     video.loop = true;
     video.muted = true;
-    video.autoplay = true;
     
-    // Play the video
-    video.play().catch(error => {
-      console.error("Error playing video:", error);
-    });
-  }, []);
+    // Control video playback based on isSpeaking prop
+    if (isSpeaking) {
+      video.currentTime = 0; // Start from beginning
+      video.play().catch(error => {
+        console.error("Error playing video:", error);
+      });
+    } else {
+      video.pause();
+      // Reset to last frame after pausing
+      requestAnimationFrame(() => {
+        video.currentTime = video.duration || 0;
+      });
+    }
+  }, [isSpeaking]);
 
   const sizeClasses = size === "large" 
     ? "w-64 h-64 md:w-80 md:h-80" 

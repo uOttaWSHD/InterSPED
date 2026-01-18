@@ -5,7 +5,7 @@ import ControlBar from "./ControlBar";
 import QuestionPanel from "./QuestionPanel";
 import CodeEditor from "./CodeEditor";
 import InterviewTimer from "./InterviewTimer";
-import { Bot, RotateCcw } from "lucide-react";
+import { Bot } from "lucide-react";
 
 // ElevenLabs API configuration
 const ELEVENLABS_API_KEY = "sk_e49c018a8789bb8fbeb2161c9aca48a5fd667cabaf3dd9e0";
@@ -82,42 +82,9 @@ const InterviewRoom = ({ onEndInterview, initialResponse }: InterviewRoomProps) 
   const hasSpokenInitialRef = useRef(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  // Test function to check if audio works
-  const testAudio = () => {
-    if (!audioRef.current) return;
-    
-    const audio = audioRef.current;
-    // Use a data URL for a simple beep tone
-    audio.src = "data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIGGi785eeSwgMUrDj07xsIQQ4";
-    audio.volume = 1.0;
-    audio.muted = false;
-    audio.play().then(() => {
-      console.log("Test audio played successfully");
-      alert("Test audio played - did you hear it?");
-    }).catch(e => {
-      console.error("Test audio failed:", e);
-      alert("Test audio failed: " + e.message);
-    });
-  };
 
-  // Function to replay the last audio
-  const replayLastAudio = async () => {
-    if (!lastAudioUrl || !audioRef.current) return;
-    
-    console.log("Replaying last audio");
-    setIsAISpeaking(true);
-    const audio = audioRef.current;
-    audio.src = lastAudioUrl;
-    audio.volume = 1.0;
-    audio.muted = false;
-    
-    try {
-      await audio.play();
-    } catch (error) {
-      console.error("Replay error:", error);
-      setIsAISpeaking(false);
-    }
-  };
+
+
 
   // Function to speak text using ElevenLabs TTS
   const speakWithElevenLabs = async (text: string) => {
@@ -262,29 +229,9 @@ const InterviewRoom = ({ onEndInterview, initialResponse }: InterviewRoomProps) 
 
         <InterviewTimer isRunning={true} />
 
-        <div className="flex items-center gap-2">
-          <button
-            onClick={testAudio}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-yellow-500/10 hover:bg-yellow-500/20 transition-colors"
-            title="Test audio output"
-          >
-            <span className="text-xs font-medium text-yellow-600">🔊 Test Audio</span>
-          </button>
-          {lastAudioUrl && (
-            <button
-              onClick={replayLastAudio}
-              disabled={isAISpeaking}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 disabled:opacity-50 transition-colors"
-              title="Replay last audio"
-            >
-              <RotateCcw className="w-4 h-4 text-blue-500" />
-              <span className="text-xs font-medium text-blue-500">Replay</span>
-            </button>
-          )}
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[hsl(var(--interview-success))]/10">
-            <div className="w-2 h-2 rounded-full bg-[hsl(var(--interview-success))] animate-pulse" />
-            <span className="text-xs font-medium text-[hsl(var(--interview-success))]">Recording</span>
-          </div>
+        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[hsl(var(--interview-success))]/10">
+          <div className="w-2 h-2 rounded-full bg-[hsl(var(--interview-success))] animate-pulse" />
+          <span className="text-xs font-medium text-[hsl(var(--interview-success))]">Recording</span>
         </div>
       </div>
 
