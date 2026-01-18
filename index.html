@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+    <body>
+        <h2>Mic → Quart WebSocket</h2>
+        <button onclick="start()">Start Streaming</button>
+
+        <script>
+            async function start() {
+                // get microphone
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                const audioContext = new AudioContext();
+                const source = audioContext.createMediaStreamSource(stream);
+
+                const ws = new WebSocket(
+                    `ws://localhost:3000/receive?sampleRate=${audioContext.sampleRate}`,
+                );
+
+                const processor = audioContext.createScriptProcessor(4096, 1, 1);
+                source.connect(processor);
+                processor.connect(audioContext.destination);
+
+                processor.onaudioprocess = (e) => {
+                    const data = e.inputBuffer.getChannelData(0); // Float32Array
+                    // Convert to int16 PCM
+                    const int16 = new Int16Array(data.length);
+                    for (let i = 0; i < data.length; i++) {
+                        int16[i] = Math.max(-1, Math.min(1, data[i])) * 32767;
+                    }
+                    // Send Base64
+                    ws.send(btoa(String.fromCharCode(...new Uint8Array(int16.buffer))));
+                };
+
+                ws.onmessage = (msg) => {
+                    console.log("Server:", msg.data);
+                };
+
+                ws.onopen = () => console.log("WebSocket connected!");
+                ws.onclose = () => console.log("WebSocket closed");
+            }
+        </script>
+    </body>
+</html>
