@@ -6,7 +6,7 @@
 
 - **Company-Specific Scraping**: Automatically gathers insights on company mission, culture, and interview processes using the agentic **JobScraper** powered by Yellowcake.
 - **Real-Time Voice Interaction**: Seamless, low-latency voice interviews using **ElevenLabs** for industry-leading Speech-to-Text (STT) and Text-to-Speech (TTS).
-- **Dynamic AI Personas**: Powered by **Solace Agent Mesh (SAM)**, the AI interviewer ("John") adapts its personality and technical focus based on the scraped company data.
+- **Dynamic AI Personas**: Powered by **Solace Agent Mesh (SAM)**, the AI interviewer ("Rachel") adapts its personality and technical focus based on the scraped company data.
 - **Barge-In Support**: Natural conversation flow where users can interrupt the AI, just like in a real interview.
 - **Technical & Behavioral Depth**: Covers everything from system design and coding challenges to cultural fit and behavioral questions.
 - **Integrated Environment**: Built-in code editor and dashboard to track your progress and interview history.

@@ -11,7 +11,7 @@ CONTEXT_ID=""
 # Interview context JSON
 INTERVIEW_CONTEXT='{
   "company": "RBC",
-  "opening": "Hello, my name is John and I am a software engineer at RBC. Can you start by telling me a little bit about your background and experience?",
+  "opening": "Hello, my name is Rachel and I am a software engineer at RBC. Can you start by telling me a little bit about your background and experience?",
   "questions": [
     "Tell me about a time when you had to debug a complex issue in a large-scale system. How did you approach it and what was the outcome?",
     "Design a system to handle high-volume transactions in a banking environment. How would you ensure scalability, security, and reliability?"

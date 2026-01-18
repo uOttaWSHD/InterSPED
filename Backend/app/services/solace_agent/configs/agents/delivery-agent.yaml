@@ -44,7 +44,10 @@ apps:
       enable_artifact_content_instruction: false
       data_tools_config: *default_data_tools_config
 
-      tools: []
+      tools:
+        - name: new_solace_service
+          description: "Handles additional Solace service on port 8001"
+          endpoint: "http://localhost:8001"
 
       agent_card:
         title: "Mock Interview"

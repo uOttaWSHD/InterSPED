@@ -16,4 +16,6 @@ COPY --chown=solaceai:solaceai src/ /app/src/
 
 WORKDIR /app
 
-CMD ["run", "/app/configs"]
+# Adding a new service for Solace
+EXPOSE 8001
+CMD ["uv", "run", "uvicorn", "solace_agent.new_service:app", "--host", "0.0.0.0", "--port", "8001"]

@@ -14,7 +14,7 @@
 
 ## Improved SAM & JobScraper Integration
 - **Context Injection**: Significantly expanded the `build_system_context` function in `solace_service.py`. It now feeds the **full scraper results** (Company mission, culture, specific coding problems, system design topics, and technical requirements) into the SAM Orchestrator.
-- **Dynamic Persona**: The AI interviewer ("John") now has access to the exact technical stack and red flags identified by the scraper for the specific company.
+- **Dynamic Persona**: The AI interviewer ("Rachel") now has access to the exact technical stack and red flags identified by the scraper for the specific company.
 - **Agent Refinement**: Updated `DeliveryAgent` configuration to be more adaptive to the dynamic instructions passed from the technical workflow.
 
 ## Developer Visibility

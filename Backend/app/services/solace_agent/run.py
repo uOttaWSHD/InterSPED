@@ -230,7 +230,7 @@ async def start_interview(company_data: StartRequest):
     message = f"""[SYSTEM CONTEXT]
 {system_context}
 
-[START INTERVIEW - Introduce yourself as John from {company_name} and ask about their background]"""
+[START INTERVIEW - Introduce yourself as Rachel from {company_name} and ask about their background]"""
 
     # Send to Solace
     response_text, context_id, error = await shared_send_to_solace(
@@ -242,7 +242,7 @@ async def start_interview(company_data: StartRequest):
 
     if not response_text:
         # Fallback opening
-        response_text = f"Hello, my name is John and I'm a senior engineer at {company_name}. Thanks for joining me today. Can you start by telling me a little about your background and experience?"
+        response_text = f"Hello, my name is Rachel and I'm a senior engineer at {company_name}. Thanks for joining me today. Can you start by telling me a little about your background and experience?"
 
     # Store session with company data for later turns
     sessions[session_id] = {

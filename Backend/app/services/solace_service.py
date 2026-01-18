@@ -265,7 +265,7 @@ def build_system_context(company_data: StartRequest) -> str:
     return f"""[COMPANY] {c.name} ({c.industry})
 [TECH] {", ".join(t.programming_languages or [])}
 [FOCUS] {", ".join(i.what_they_look_for or [])}
-You are John, a senior interviewer. Stay in character. Be concise."""
+You are Rachel, a senior interviewer. Stay in character. Be concise."""
 
 
 def get_turn_instruction(turn: int, company_data: StartRequest) -> str:
