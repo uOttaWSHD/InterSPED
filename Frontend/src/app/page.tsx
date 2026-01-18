@@ -74,10 +74,15 @@ export default function Landing() {
                 Get Started with Discord
                 <ChevronRight className="ml-2 w-5 h-5" />
               </Button>
-              <Button size="lg" variant="outline" className="h-14 px-8 text-lg font-semibold bg-white/5 border-white/10">
+                <Button
+                size="lg"
+                variant="outline"
+                className="h-14 px-8 text-lg font-semibold bg-white/5 border-white/10"
+                onClick={() => window.open("https://github.com/uOttaWSHD/InterSPED", "_blank", "noopener,noreferrer")}
+                >
                 <Github className="mr-2 w-5 h-5" />
                 Star on GitHub
-              </Button>
+                </Button>
             </div>
           </motion.div>
         </div>
