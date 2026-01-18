@@ -24,7 +24,7 @@ router = APIRouter()
 @router.post("/start", response_model=StartResponse)
 async def start_interview(company_data: StartRequest):
     """Start a new interview session with company context"""
-    session_id = f"session_{int(time.time() * 1000)}"
+    session_id = company_data.session_id or f"session_{int(time.time() * 1000)}"
 
     # Get company name for the greeting
     company_name = "the company"
@@ -40,7 +40,9 @@ async def start_interview(company_data: StartRequest):
 [START INTERVIEW - Introduce yourself as John from {company_name} and ask about their background]"""
 
     # Send to Solace
-    response_text, context_id, error = await send_to_solace(message)
+    response_text, context_id, error = await send_to_solace(
+        message, session_id=session_id
+    )
 
     if error:
         raise HTTPException(status_code=500, detail=error)
@@ -106,7 +108,7 @@ ACKNOWLEDGE what they said, then: {turn_instruction}"""
 
     # Send to Solace
     response_text, new_context_id, error = await send_to_solace(
-        message, context_id=session["context_id"]
+        message, context_id=session["context_id"], session_id=session_id
     )
 
     if error:
@@ -156,7 +158,10 @@ Based on this transcript, give a brief spoken summary. Be honest about the candi
 
     # Send to SummaryAgent
     response_text, _, error = await send_to_solace(
-        message, context_id=session["context_id"], agent_name="SummaryAgent"
+        message,
+        context_id=session["context_id"],
+        agent_name="SummaryAgent",
+        session_id=session_id,
     )
 
     if error:

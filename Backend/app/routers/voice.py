@@ -19,13 +19,14 @@ from app.services.solace_service import (
 from app.models.interview import StartRequest
 import os
 
+from app.utils.key_manager import get_key
+
 router = APIRouter()
 
-TOKEN = os.getenv("ELEVENLABS_API_KEY", "")
-
-# Debug: Log if token is loaded
-if TOKEN:
-    print(f"[voice.py] ElevenLabs API Key loaded: {TOKEN[:10]}...{TOKEN[-4:]}")
+# Debug: Log if keys are available
+available_keys = get_key("ELEVENLABS_API_KEY")
+if available_keys:
+    print(f"[voice.py] ElevenLabs API keys found")
 else:
     print("[voice.py] WARNING: ELEVENLABS_API_KEY not found in environment!")
 
@@ -36,7 +37,9 @@ async def tts_endpoint(text: str):
     if not text:
         raise HTTPException(status_code=400, detail="Text is required")
     try:
-        b64_audio = await generate_tts(text)
+        b64_audio = await generate_tts(
+            text
+        )  # No session id for generic TTS endpoint usually, or we can use a dummy
         audio_data = base64.b64decode(b64_audio)
         return Response(content=audio_data, media_type="audio/mpeg")
     except Exception as e:
@@ -59,9 +62,10 @@ async def voice_websocket(websocket: WebSocket):
     try:
         # ElevenLabs Scribe STT parameters
         # Based on official docs: commit_strategy="manual" ensures we only commit when the user mutes
+        session_token = get_key("ELEVENLABS_API_KEY", session_id)
         els = await ElevenLabsSTTStream.open_ws(
             {
-                "token": TOKEN,
+                "token": session_token,
                 "audio_format": "pcm_16000",
                 "commit_strategy": "manual",
                 # "vad_silence_threshold_secs": 2.0,  <-- Disabled to remove "waiting for silence"
@@ -136,7 +140,8 @@ async def voice_websocket(websocket: WebSocket):
                 is_completed = True
                 try:
                     end_text = "The interview is now complete. Thank you for your time."
-                    b64_audio = await generate_tts(end_text)
+                    b64_audio = await generate_tts(end_text, session_id=session_id)
+
                     await websocket.send_text(
                         orjson.dumps(
                             {
@@ -312,7 +317,7 @@ User said: {transcript}
 
             # Send to Solace (This is the long-running "thinking" part)
             response_text, new_context_id, error = await send_to_solace(
-                message, context_id=context_id
+                message, context_id=context_id, session_id=session_id
             )
 
             # Check for interruption again after "thinking"
@@ -323,7 +328,7 @@ User said: {transcript}
                 return
 
             if error:
-                print(f"Solace Error: {error}")
+                print(f"❌ [Voice Turn] Solace Error: {error}")
                 response_text = (
                     "I'm sorry, I'm having trouble connecting to my brain right now."
                 )
@@ -348,7 +353,7 @@ User said: {transcript}
 
             # Generate TTS
             try:
-                b64_audio = await generate_tts(response_text)
+                b64_audio = await generate_tts(response_text, session_id=session_id)
 
                 # Check for interruption before sending audio
                 if interrupt_event.is_set():
@@ -382,8 +387,8 @@ User said: {transcript}
         except asyncio.CancelledError:
             print(f"DEBUG: Processing task cancelled for: '{transcript[:20]}...'")
             raise
-        except Exception as e:
-            print(f"Error in process_user_turn: {e}")
+        except Exception:
+            print(f"❌ Error in process_user_turn:")
             import traceback
 
             traceback.print_exc()

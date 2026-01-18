@@ -39,6 +39,10 @@ class CompanySearchRequest(BaseModel):
         description="Optional job position/role for more specific interview prep",
         examples=["Software Engineer", "Product Manager", "Data Scientist"],
     )
+    session_id: Optional[str] = Field(
+        None,
+        description="Optional session ID for key rotation",
+    )
 
 
 # ============================================================================

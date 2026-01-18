@@ -1,5 +1,6 @@
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 import time
+from app.utils.key_manager import get_key
 
 # Global sessions storage
 sessions: Dict[str, Any] = {}
@@ -12,6 +13,12 @@ def create_session(
     response_text: str,
     max_turns: int = 15,
 ):
+    # Deterministically assign keys for this session
+    elevenlabs_key = get_key("ELEVENLABS_API_KEY", session_id)
+    llm_key = get_key("LLM_SERVICE_API_KEY", session_id) or get_key(
+        "GROQ_API_KEY", session_id
+    )
+
     sessions[session_id] = {
         "context_id": context_id,
         "turn_count": 0,
@@ -19,6 +26,7 @@ def create_session(
         "max_turns": max_turns,
         "company_data": company_data,
         "last_interaction": time.time(),
+        "assigned_keys": {"elevenlabs": elevenlabs_key, "llm": llm_key},
     }
     return sessions[session_id]
 

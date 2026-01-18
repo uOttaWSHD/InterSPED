@@ -6,7 +6,7 @@ Orchestrates parallel scraping and agentic analysis.
 from __future__ import annotations
 import json
 import asyncio
-from typing import AsyncGenerator, Any, TypedDict, List
+from typing import AsyncGenerator, Any, TypedDict, List, Optional
 
 from langgraph.graph import StateGraph, END
 from .config import settings
@@ -65,10 +65,13 @@ class InterviewPrepState(TypedDict):
 
 
 class ScraperService:
-    def __init__(self) -> None:
+    def __init__(self, session_id: Optional[str] = None, attempt: int = 0) -> None:
+        self.session_id = session_id
         model = settings.llm_model
-        api_key = settings.llm_api_key
-        print(f"🚀 Initializing ScraperService (Model: {model})")
+        api_key = settings.get_llm_api_key(session_id, attempt)
+        print(
+            f"🚀 Initializing ScraperService (Model: {model}, Session: {session_id}, Attempt: {attempt})"
+        )
 
         # Initialize LLM
         if "llama" in model.lower() or "mixtral" in model.lower():

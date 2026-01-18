@@ -68,14 +68,19 @@ cleanup() {
 # Trap SIGINT (Ctrl+C)
 trap cleanup SIGINT
 
-# 5. Start Backend
-echo -e "${GREEN}python Starting FastAPI Backend (Port 8001)...${NC}"
+# 4.5. Parse arguments
+DISABLE_KEY_ROTATION="false"
+for arg in "$@"; do
+    if [ "$arg" == "--no-rotate" ]; then
+        DISABLE_KEY_ROTATION="true"
+        echo -e "${BLUE}ℹ️  API key rotation is DISABLED.${NC}"
+    fi
+done
+
+# 5. Start Unified Backend (API + SAM)
+echo -e "${GREEN}🐍 Starting Unified Backend & Solace Agent Mesh (Port 8001 & 8000)...${NC}"
 cd Backend
-if command -v uv &> /dev/null; then
-    uv run uvicorn app.main:app --port 8001 --reload &
-else
-    python3 -m uvicorn app.main:app --port 8001 --reload &
-fi
+uv run python run_all.py &
 BACKEND_PID=$!
 cd ..
 

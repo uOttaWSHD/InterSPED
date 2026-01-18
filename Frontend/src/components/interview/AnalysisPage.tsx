@@ -26,6 +26,7 @@ const AnalysisPage = ({ companyName, jobUrl, onComplete, onFail }: AnalysisPageP
 
     const run = async () => {
       try {
+        const sessionId = `session_${Date.now()}`;
         // Start API call immediately
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/scrape`, {
           signal: abortController.signal,
@@ -34,11 +35,17 @@ const AnalysisPage = ({ companyName, jobUrl, onComplete, onFail }: AnalysisPageP
             "Accept": "application/json",
             "Content-Type": "application/json" 
           },
-          body: JSON.stringify({ company_name: companyName, job_posting_url: jobUrl }),
+          body: JSON.stringify({ 
+            company_name: companyName, 
+            job_posting_url: jobUrl,
+            session_id: sessionId
+          }),
         });
 
         const data = await res.json();
-        console.log("Scrape data:", data);
+        // Ensure the session_id is passed to the interview start call
+        data.session_id = sessionId;
+        console.log("Scrape data with sessionId:", data);
 
         // Update steps: Scrape, Extract, Summarize are done
         setSteps(prev => prev.map(s => {

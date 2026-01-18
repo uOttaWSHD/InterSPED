@@ -3,7 +3,7 @@ from __future__ import annotations
 import asyncio
 import base64
 import orjson
-from typing import TYPE_CHECKING, Any, Self
+from typing import TYPE_CHECKING, Any, Self, Optional
 from urllib.parse import quote
 import os
 import numpy as np
@@ -13,14 +13,21 @@ from websockets.asyncio.client import connect
 if TYPE_CHECKING:
     from websockets.asyncio.client import ClientConnection
 
+from app.utils.key_manager import get_key
+
 # We assume env vars are loaded by main app
-TOKEN = os.getenv(
-    "ELEVENLABS_API_KEY", ""
-)  # changed to explicit name, but original used TOKEN
+DEFAULT_TOKEN = get_key("ELEVENLABS_API_KEY")
 VOICE_ID = os.getenv("ELEVENLABS_VOICE_ID", "UgBBYS2sOqTuMpoF3BR0")
 SAMPLE_RATE_TARGET = 16000
 
-client = ElevenLabs(api_key=TOKEN)
+
+def get_elevenlabs_client(session_id: Optional[str] = None):
+    token = get_key("ELEVENLABS_API_KEY", session_id)
+    return ElevenLabs(api_key=token)
+
+
+# For backward compatibility if needed, but we should prefer session-based
+client = get_elevenlabs_client()
 
 
 def query(params: dict[str, Any]) -> str:
@@ -84,7 +91,7 @@ class ElevenLabsSTTStream:
     async def wait_for_chunks(self):
         """Continuously send audio chunks from the queue to ElevenLabs"""
         chunks_sent = 0
-        print("DEBUG: wait_for_chunks started")
+        print("DEBUG: ElevenLabs STT wait_for_chunks started")
 
         # PRIME THE CONNECTION: Send 250ms of silence immediately to prevent early timeout
         # and ensure the session is active.
@@ -99,7 +106,7 @@ class ElevenLabsSTTStream:
             await self._socket.send(orjson.dumps(m_prime).decode("utf-8"))
             print("DEBUG: Sent priming silence to ElevenLabs")
         except Exception as e:
-            print(f"DEBUG: Failed to prime connection: {e}")
+            print(f"❌ [ElevenLabs STT] Failed to prime connection: {e}")
 
         while not self._closed and not self._socket.close_code:
             try:
@@ -157,13 +164,13 @@ class ElevenLabsSTTStream:
 
             except Exception as e:
                 if not self._closed:
-                    print(f"DEBUG: Error sending audio chunk to ElevenLabs: {e}")
+                    print(f"❌ [ElevenLabs STT] Error sending audio chunk: {e}")
                     import traceback
 
                     traceback.print_exc()
                 if self._socket.close_code:
                     print(
-                        f"DEBUG: ElevenLabs socket closed with code {self._socket.close_code}"
+                        f"❌ [ElevenLabs STT] Socket closed with code {self._socket.close_code}"
                     )
                     break
 
@@ -216,13 +223,20 @@ def get_llm_response(text: str) -> str:
     return f"I see. You mentioned '{text}'. Can you elaborate on how that's relevant to this role?"
 
 
-async def generate_tts(text: str) -> str:
-    """Generates TTS audio and returns base64 string"""
-    print(f"DEBUG: Generating TTS for: {text}")
+import traceback
+
+
+async def generate_tts(text: str, session_id: Optional[str] = None) -> str:
+    """Generates TTS audio and returns base64 string with detailed error logging"""
+    print(
+        f"🔊 [ElevenLabs TTS] Generating for: '{text[:50]}...' (Session: {session_id})"
+    )
     try:
+        # Get session-specific client
+        current_client = get_elevenlabs_client(session_id)
         # Run in thread pool to avoid blocking async loop
         audio_iter = await asyncio.to_thread(
-            client.text_to_speech.convert,
+            current_client.text_to_speech.convert,
             text=text,
             voice_id=VOICE_ID,
             model_id="eleven_multilingual_v2",
@@ -230,9 +244,14 @@ async def generate_tts(text: str) -> str:
         )
 
         audio_data = b"".join(audio_iter)
-        print(f"DEBUG: TTS Generated successfully, length: {len(audio_data)} bytes")
+        if not audio_data:
+            print("❌ [ElevenLabs TTS] FAILED: Received empty audio data")
+            raise Exception("Empty audio data from ElevenLabs")
+
+        print(f"✅ [ElevenLabs TTS] Success: {len(audio_data)} bytes")
         b64_audio = base64.b64encode(audio_data).decode("utf-8")
         return b64_audio
-    except Exception as e:
-        print(f"DEBUG: TTS Generation Failed: {e}")
-        raise e
+    except Exception:
+        print("❌ [ElevenLabs TTS] EXCEPTION:")
+        traceback.print_exc()
+        raise

@@ -5,6 +5,7 @@ Interacts with Solace Agent Mesh to conduct mock interviews
 Starts SAM automatically on startup
 """
 
+import sys
 import os
 import json
 import time
@@ -18,100 +19,26 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
 
-# Configuration
-GATEWAY_URL = os.environ.get("GATEWAY_URL", "http://localhost:8080")
-AGENT_NAME = "OrchestratorAgent"
-PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
+# Add the project root to sys.path
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.abspath(os.path.join(current_dir, "..", "..", ".."))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
 
-# SAM process reference
-sam_process: Optional[subprocess.Popen] = None
-
-
-async def wait_for_sam_ready(timeout: int = 60) -> bool:
-    """Wait for SAM gateway to be ready"""
-    start_time = time.time()
-    async with httpx.AsyncClient() as client:
-        while time.time() - start_time < timeout:
-            try:
-                response = await client.get(f"{GATEWAY_URL}/health", timeout=2.0)
-                if response.status_code == 200:
-                    return True
-            except Exception:
-                pass
-            await asyncio.sleep(1)
-    return False
-
-
-def start_sam():
-    """Start SAM as a subprocess"""
-    global sam_process
-
-    print("🚀 Starting Solace Agent Mesh...")
-
-    # Start SAM using uv run
-    sam_process = subprocess.Popen(
-        ["uv", "run", "sam", "run", "configs/"],
-        cwd=PROJECT_DIR,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-        text=True,
-        preexec_fn=os.setsid,  # Create new process group for clean shutdown
-    )
-
-    return sam_process
-
-
-def stop_sam():
-    """Stop SAM subprocess"""
-    global sam_process
-
-    if sam_process:
-        print("🛑 Stopping Solace Agent Mesh...")
-        try:
-            # Kill the entire process group
-            os.killpg(os.getpgid(sam_process.pid), signal.SIGTERM)
-            sam_process.wait(timeout=10)
-        except Exception as e:
-            print(f"Error stopping SAM: {e}")
-            try:
-                os.killpg(os.getpgid(sam_process.pid), signal.SIGKILL)
-            except Exception:
-                pass
-        sam_process = None
-
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    """Manage SAM lifecycle with FastAPI"""
-    # Startup
-    start_sam()
-
-    print("⏳ Waiting for SAM gateway to be ready...")
-    if await wait_for_sam_ready():
-        print("✅ SAM gateway is ready!")
-    else:
-        print("⚠️  SAM gateway may not be fully ready, continuing anyway...")
-
-    yield
-
-    # Shutdown
-    stop_sam()
-
-
-app = FastAPI(title="Interview Simulator API", lifespan=lifespan)
-
-# CORS
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+from app.services.solace_service import (
+    start_sam,
+    stop_sam,
+    wait_for_sam_ready,
+    start_sam_with_rotation,
+    send_to_solace as shared_send_to_solace,
+    build_system_context,
+    get_turn_instruction,
 )
 
 # Configuration
 GATEWAY_URL = os.environ.get("GATEWAY_URL", "http://localhost:8000")
 AGENT_NAME = "OrchestratorAgent"
+PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Session storage (in production, use Redis or a database)
 sessions: dict = {}
@@ -265,189 +192,26 @@ class StatusResponse(BaseModel):
     interview_complete: bool
 
 
-def build_system_context(company_data: StartRequest) -> str:
-    """Build dynamic system prompt from company data"""
-    overview = company_data.company_overview or CompanyOverview()
-    insights = company_data.interview_insights or InterviewInsights()
-    tech_reqs = insights.technical_requirements or TechnicalRequirements()
-
-    company_name = overview.name or "the company"
-    industry = overview.industry or "technology"
-
-    # Build tech stack string
-    tech_stack = (
-        ", ".join(tech_reqs.programming_languages[:5])
-        if tech_reqs.programming_languages
-        else "various technologies"
-    )
-    frameworks = (
-        ", ".join(tech_reqs.frameworks_tools[:5]) if tech_reqs.frameworks_tools else ""
-    )
-
-    # Build focus areas from what they look for
-    focus_areas = (
-        ", ".join(insights.what_they_look_for[:5])
-        if insights.what_they_look_for
-        else "technical skills, problem-solving"
-    )
-
-    # Get sample questions to guide the interview
-    behavioral_qs = (
-        [q.question for q in insights.common_questions[:2]]
-        if insights.common_questions
-        else []
-    )
-    system_design_qs = (
-        [q.question for q in insights.system_design_questions[:2]]
-        if insights.system_design_questions
-        else []
-    )
-    coding_problems = (
-        [
-            f"{p.title}: {p.problem_statement[:100]}"
-            for p in insights.coding_problems[:2]
-        ]
-        if insights.coding_problems
-        else []
-    )
-
-    # Build context string
-    context = f"""Company: {company_name}
-Industry: {industry}
-Culture: {overview.culture or "Professional and innovative"}
-Tech Stack: {tech_stack}
-Frameworks/Tools: {frameworks}
-Focus Areas: {focus_areas}
-Experience Level: {tech_reqs.experience_level or "varies"}
-
-Company Values: {", ".join(insights.company_values_in_interviews[:3]) if insights.company_values_in_interviews else "excellence, teamwork, innovation"}
-
-Sample Behavioral Questions to Draw From:
-{chr(10).join(f"- {q}" for q in behavioral_qs) if behavioral_qs else "- Tell me about yourself"}
-
-Sample System Design Topics:
-{chr(10).join(f"- {q}" for q in system_design_qs) if system_design_qs else "- Design a scalable system"}
-
-Sample Coding Topics:
-{chr(10).join(f"- {p}" for p in coding_problems) if coding_problems else "- Data structures and algorithms"}
-
-Red Flags to Probe For:
-{", ".join(insights.red_flags_to_avoid[:3]) if insights.red_flags_to_avoid else "lack of preparation, poor communication"}
-
-You are John, a senior engineer interviewing a candidate for a role at {company_name}. Be natural and conversational."""
-
-    return context
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Manage SAM lifecycle with FastAPI"""
+    # Startup
+    await start_sam_with_rotation()
+    yield
+    # Shutdown
+    stop_sam()
 
 
-def get_turn_instruction(turn: int, company_data: StartRequest) -> str:
-    """Get instruction for specific turn based on company data"""
-    insights = company_data.interview_insights or InterviewInsights()
+app = FastAPI(title="Interview Simulator API", lifespan=lifespan)
 
-    # Try to get actual questions from the data
-    behavioral_q = (
-        insights.common_questions[0].question if insights.common_questions else None
-    )
-    system_design_q = (
-        insights.system_design_questions[0].question
-        if insights.system_design_questions
-        else None
-    )
-    coding_q = (
-        f"a coding question about {insights.coding_problems[0].title}"
-        if insights.coding_problems
-        else None
-    )
-
-    instructions = {
-        1: f"ASK about: {behavioral_q or 'their experience with a challenging project'}. MAX 2 sentences.",
-        2: f"ASK about: {system_design_q or 'how they would design a scalable system'}. MAX 2 sentences.",
-        3: "SAY GOODBYE. Thank them for their time and say you'll be in touch. MAX 2 sentences.",
-    }
-    return instructions.get(turn, "SAY GOODBYE.")
-
-
-async def send_to_solace(
-    message: str, context_id: Optional[str] = None, agent_name: str = AGENT_NAME
-) -> tuple[Optional[str], Optional[str], Optional[str]]:
-    """Send message to Solace Agent Mesh and get response"""
-    request_id = int(time.time() * 1000)
-    msg_id = f"msg_{request_id}"
-
-    # Build payload
-    payload = {
-        "jsonrpc": "2.0",
-        "id": request_id,
-        "method": "message/stream",
-        "params": {
-            "message": {
-                "messageId": msg_id,
-                "kind": "message",
-                "role": "user",
-                "metadata": {"agent_name": agent_name},
-                "parts": [{"kind": "text", "text": message}],
-            }
-        },
-    }
-
-    if context_id:
-        payload["params"]["contextId"] = context_id
-
-    async with httpx.AsyncClient(timeout=60.0) as client:
-        # Step 1: Submit the message and get task ID
-        try:
-            submit_response = await client.post(
-                f"{GATEWAY_URL}/api/v1/message:stream",
-                json=payload,
-                headers={"Content-Type": "application/json"},
-            )
-            submit_data = submit_response.json()
-        except Exception as e:
-            return None, context_id, f"Error submitting message: {e}"
-
-        task_id = submit_data.get("result", {}).get("id")
-        new_context_id = submit_data.get("result", {}).get("contextId", context_id)
-
-        if not task_id:
-            return None, new_context_id, "Could not get task ID"
-
-        # Step 2: Subscribe to SSE events for this task
-        try:
-            async with client.stream(
-                "GET",
-                f"{GATEWAY_URL}/api/v1/sse/subscribe/{task_id}",
-                headers={"Accept": "text/event-stream"},
-            ) as sse_response:
-                full_text = ""
-                async for line in sse_response.aiter_lines():
-                    if not line or not line.startswith("data:"):
-                        continue
-
-                    json_data = line[5:].strip()  # Remove "data:" prefix
-                    try:
-                        event_data = json.loads(json_data)
-                        state = (
-                            event_data.get("result", {}).get("status", {}).get("state")
-                        )
-
-                        if state == "completed":
-                            parts = (
-                                event_data.get("result", {})
-                                .get("status", {})
-                                .get("message", {})
-                                .get("parts", [])
-                            )
-                            for part in parts:
-                                if part.get("kind") == "text":
-                                    full_text = part.get("text", "")
-                                    break
-                            break
-                    except json.JSONDecodeError:
-                        continue
-
-                return full_text, new_context_id, None
-
-        except Exception as e:
-            return None, new_context_id, f"Error reading SSE stream: {e}"
+# CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.post("/api/interview/start", response_model=StartResponse)
@@ -469,7 +233,9 @@ async def start_interview(company_data: StartRequest):
 [START INTERVIEW - Introduce yourself as John from {company_name} and ask about their background]"""
 
     # Send to Solace
-    response_text, context_id, error = await send_to_solace(message)
+    response_text, context_id, error = await shared_send_to_solace(
+        message, session_id=session_id
+    )
 
     if error:
         raise HTTPException(status_code=500, detail=error)
@@ -538,8 +304,8 @@ INSTRUCTIONS:
 - Keep response concise."""
 
     # Send to Solace
-    response_text, new_context_id, error = await send_to_solace(
-        message, context_id=session["context_id"]
+    response_text, new_context_id, error = await shared_send_to_solace(
+        message, context_id=session["context_id"], session_id=session_id
     )
 
     if error:
@@ -588,8 +354,11 @@ async def get_interview_summary(data: SummaryRequest):
 Based on this transcript, give a brief spoken summary. Be honest about the candidate's actual performance."""
 
     # Send to SummaryAgent
-    response_text, _, error = await send_to_solace(
-        message, context_id=session["context_id"], agent_name="SummaryAgent"
+    response_text, _, error = await shared_send_to_solace(
+        message,
+        context_id=session["context_id"],
+        agent_name="SummaryAgent",
+        session_id=session_id,
     )
 
     if error:
@@ -620,7 +389,7 @@ async def get_status(session_id: str = Query(..., description="The session ID"))
 
 
 @app.get("/health")
-async def health_check():
+async def health_check_endpoint():
     """Health check endpoint"""
     return {"status": "ok"}
 

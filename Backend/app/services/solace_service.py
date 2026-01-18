@@ -5,7 +5,9 @@ import time
 import httpx
 import asyncio
 import json
-from typing import Optional, Tuple
+import sys
+import traceback
+from typing import Optional, Tuple, List
 from app.models.interview import (
     StartRequest,
     CompanyOverview,
@@ -13,14 +15,16 @@ from app.models.interview import (
     TechnicalRequirements,
 )
 
+from app.utils.key_manager import get_key, get_key_count, parse_keys
+
 # Configuration
 GATEWAY_URL = os.environ.get("GATEWAY_URL", "http://localhost:8000")
 AGENT_NAME = "OrchestratorAgent"
-# Path to the solace-agent directory where configs are located
 SOLACE_AGENT_DIR = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "solace_agent")
 )
 
+# Global process reference
 sam_process: Optional[subprocess.Popen] = None
 
 
@@ -32,6 +36,7 @@ async def wait_for_sam_ready(timeout: int = 60) -> bool:
             try:
                 response = await client.get(f"{GATEWAY_URL}/health", timeout=2.0)
                 if response.status_code == 200:
+                    print("✅ SAM Gateway is healthy")
                     return True
             except Exception:
                 pass
@@ -39,47 +44,15 @@ async def wait_for_sam_ready(timeout: int = 60) -> bool:
     return False
 
 
-def start_sam():
-    """Start SAM as a subprocess"""
-    global sam_process
-
-    print(f"🚀 Starting Solace Agent Mesh from {SOLACE_AGENT_DIR}...")
-
-    command = ["sam", "run", "configs/"]
-
-    try:
-        sam_process = subprocess.Popen(
-            command,
-            cwd=SOLACE_AGENT_DIR,
-            stdout=subprocess.DEVNULL,  # Avoid hanging due to full pipe buffer
-            stderr=subprocess.DEVNULL,
-            preexec_fn=os.setsid,
-        )
-    except FileNotFoundError:
-        print("Command 'sam' not found. Trying 'uv run sam'...")
-        command = ["uv", "run", "sam", "run", "configs/"]
-        sam_process = subprocess.Popen(
-            command,
-            cwd=SOLACE_AGENT_DIR,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-            preexec_fn=os.setsid,
-        )
-
-    return sam_process
-
-
 def stop_sam():
     """Stop SAM subprocess"""
     global sam_process
-
     if sam_process:
         print("🛑 Stopping Solace Agent Mesh...")
         try:
             os.killpg(os.getpgid(sam_process.pid), signal.SIGTERM)
-            sam_process.wait(timeout=10)
-        except Exception as e:
-            print(f"Error stopping SAM: {e}")
+            sam_process.wait(timeout=5)
+        except Exception:
             try:
                 os.killpg(os.getpgid(sam_process.pid), signal.SIGKILL)
             except Exception:
@@ -87,163 +60,122 @@ def stop_sam():
         sam_process = None
 
 
-def build_system_context(company_data: StartRequest) -> str:
-    """Build dynamic system prompt from company data"""
-    overview = company_data.company_overview or CompanyOverview()
-    insights = company_data.interview_insights or InterviewInsights()
-    tech_reqs = insights.technical_requirements or TechnicalRequirements()
+def start_sam(api_key: Optional[str] = None):
+    """Start SAM as a subprocess with correct environment"""
+    global sam_process
 
-    company_name = overview.name or "the company"
-    industry = overview.industry or "technology"
+    # Don't start if already running, unless we are forcing a restart (e.g. for key rotation)
+    if sam_process and sam_process.poll() is None:
+        return sam_process
 
-    # Build tech stack string
-    tech_stack = (
-        ", ".join(tech_reqs.programming_languages or [])
-        if tech_reqs.programming_languages
-        else "various technologies"
-    )
-    frameworks = (
-        ", ".join(tech_reqs.frameworks_tools or [])
-        if tech_reqs.frameworks_tools
-        else "standard tools"
-    )
+    print(f"🚀 Starting Solace Agent Mesh...")
 
-    # Build focus areas
-    focus_areas = (
-        ", ".join(insights.what_they_look_for or [])
-        if insights.what_they_look_for
-        else "technical skills, problem-solving"
-    )
+    env = os.environ.copy()
 
-    # Coding Problems
-    coding_problems_str = ""
-    if insights.coding_problems:
-        coding_problems_str = "\n".join(
-            [
-                f"- {p.title} (Difficulty: {p.difficulty}): {p.problem_statement}\n  Optimal Complexity: {p.optimal_time_complexity}, {p.optimal_space_complexity}"
-                for p in insights.coding_problems
-                if p
-            ]
+    # Ensure we use the verified working Cerebras config by default
+    # but allow override via api_key for rotation
+    effective_key = api_key
+    if not effective_key:
+        raw_keys = env.get("LLM_SERVICE_API_KEY", "")
+        if raw_keys:
+            effective_key = raw_keys.split(",")[0].strip()
+
+    if effective_key:
+        env["LLM_SERVICE_API_KEY"] = effective_key
+        if effective_key.startswith("gsk_"):
+            env["LLM_SERVICE_ENDPOINT"] = "https://api.groq.com/openai/v1"
+            env["LLM_SERVICE_PLANNING_MODEL_NAME"] = "llama-3.3-70b-versatile"
+            env["LLM_SERVICE_GENERAL_MODEL_NAME"] = "llama-3.1-8b-instant"
+        elif effective_key.startswith("csk-"):
+            env["LLM_SERVICE_ENDPOINT"] = "https://api.cerebras.ai/v1"
+            env["LLM_SERVICE_PLANNING_MODEL_NAME"] = "llama3.3-70b"
+            env["LLM_SERVICE_GENERAL_MODEL_NAME"] = "llama3.3-70b"
+
+    # Set other required vars if missing
+    env.setdefault("NAMESPACE", "sam/")
+    env.setdefault("SOLACE_DEV_MODE", "true")
+    env.setdefault("GATEWAY_URL", "http://localhost:8000")
+    env.setdefault("FASTAPI_PORT", "8000")
+
+    try:
+        # Launch SAM in the background, inheriting stdout/stderr for visibility
+        sam_process = subprocess.Popen(
+            ["uv", "run", "sam", "run", "configs/"],
+            cwd=SOLACE_AGENT_DIR,
+            stdout=sys.stdout,
+            stderr=sys.stderr,
+            preexec_fn=os.setsid,
+            env=env,
         )
+    except Exception as e:
+        print(f"❌ Failed to start SAM: {e}")
+        traceback.print_exc()
 
-    # System Design
-    system_design_str = ""
-    if insights.system_design_questions:
-        system_design_str = "\n".join(
-            [
-                f"- {q.question}: Focus on {', '.join(q.key_components or []) if q.key_components else 'general components'}"
-                for q in insights.system_design_questions
-                if q
-            ]
-        )
-
-    # Behavioral
-    behavioral_str = ""
-    if insights.common_questions:
-        behavioral_str = "\n".join(
-            [
-                f"- {q.question} (Category: {q.category})"
-                for q in insights.common_questions
-                if q
-            ]
-        )
-
-    # Build context string
-    context = f"""[COMPANY PROFILE]
-Name: {company_name}
-Industry: {industry}
-Size: {overview.size}
-Headquarters: {overview.headquarters}
-Mission: {overview.mission}
-Culture: {overview.culture or "Professional"}
-
-[TECHNICAL REQUIREMENTS]
-Experience Level: {tech_reqs.experience_level}
-Programming Languages: {tech_stack}
-Frameworks/Tools: {frameworks}
-Concepts: {tech_reqs.concepts}
-Must-have Skills: {", ".join(tech_reqs.must_have_skills or []) if tech_reqs.must_have_skills else "N/A"}
-
-[INTERVIEW STRATEGY]
-Focus Areas: {focus_areas}
-What they look for: {", ".join(insights.what_they_look_for or []) if insights.what_they_look_for else "N/A"}
-Red Flags: {", ".join(insights.red_flags_to_avoid or []) if insights.red_flags_to_avoid else "N/A"}
-Company Values: {", ".join(insights.company_values_in_interviews or []) if insights.company_values_in_interviews else "N/A"}
+    return sam_process
 
 
-[POTENTIAL QUESTIONS]
-Coding:
-{coding_problems_str or "General algorithmic questions"}
+async def start_sam_with_rotation():
+    """Starts SAM only if it is not already running"""
+    if await wait_for_sam_ready(timeout=2):
+        print("✅ SAM is already running and ready")
+        return True
 
-System Design:
-{system_design_str or "Scalability and architecture"}
-
-Behavioral:
-{behavioral_str or "Situational and experience-based"}
-
-[INSTRUCTIONS]
-You are John, a senior interviewer at {company_name}. 
-Use the above data to tailor your questions. If the candidate mentions {tech_stack}, dive deeper.
-Probe for the red flags mentioned.
-Stay in character. Be conversational but firm."""
-
-    return context
-
-
-def get_turn_instruction(turn: int, company_data: StartRequest) -> str:
-    """Get instruction for specific turn based on company data"""
-    insights = company_data.interview_insights or InterviewInsights()
-
-    # Try to get actual questions from the data
-    behavioral_q = (
-        insights.common_questions[0].question if insights.common_questions else None
-    )
-    system_design_q = (
-        insights.system_design_questions[0].question
-        if insights.system_design_questions
-        else None
-    )
-    coding_q = (
-        f"a coding question about {insights.coding_problems[0].title}"
-        if insights.coding_problems
-        else None
-    )
-
-    # Dynamic Phases based on turn count
-    # Turns 1-3: Intro & Behavioral
-    if turn <= 3:
-        target = behavioral_q or "their experience with a challenging project"
-        return f"PHASE: BEHAVIORAL. Goals: 1. Ensure introductions are complete. 2. Discuss {target}. Only move to the next goal when the previous is satisfied."
-
-    # Turns 4-10: Coding
-    elif turn <= 10:
-        target = coding_q or "their favorite programming language and why"
-        return f"PHASE: CODING CHALLENGE. Goal: Evaluate their skills in {target}. Guide them through the problem step-by-step. Do not rush."
-
-    # Turns 11+: System Design & Closing
-    elif turn < 14:
-        target = system_design_q or "how they would design a scalable system"
-        return f"PHASE: SYSTEM DESIGN. Goal: Discuss {target}. Focus on high-level architecture."
-
-    else:
-        return "PHASE: CLOSING. Wrap up the interview politely."
+    start_sam()
+    return await wait_for_sam_ready(timeout=45)
 
 
 async def send_to_solace(
+    message: str,
+    context_id: Optional[str] = None,
+    agent_name: str = AGENT_NAME,
+    session_id: Optional[str] = None,
+) -> Tuple[Optional[str], Optional[str], Optional[str]]:
+    """Send message to SAM. If it fails and rotation is enabled, try the next key."""
+
+    # Try once with current running SAM
+    result_text, new_ctx_id, error = await _send_to_solace_internal(
+        message, context_id, agent_name
+    )
+
+    # If it failed and rotation is NOT disabled, try rotating
+    if error and os.environ.get("DISABLE_KEY_ROTATION") != "true":
+        print(f"⚠️ SAM request failed: {error}. Attempting key rotation...")
+        keys = []
+        for env_name in ["LLM_SERVICE_API_KEY", "LLM_API_KEY", "GROQ_API_KEY"]:
+            for k in parse_keys(env_name):
+                if k not in keys:
+                    keys.append(k)
+
+        # Try up to 5 unique keys
+        for i in range(1, min(len(keys), 5)):
+            print(f"🔄 Rotating to key index {i}...")
+            stop_sam()
+            start_sam(keys[i])
+            if await wait_for_sam_ready(timeout=30):
+                await asyncio.sleep(2)  # Grace period
+                result_text, new_ctx_id, error = await _send_to_solace_internal(
+                    message, context_id, agent_name
+                )
+                if not error:
+                    return result_text, new_ctx_id, None
+            else:
+                print(f"❌ SAM failed to start with key {i}")
+
+    return result_text, new_ctx_id, error
+
+
+async def _send_to_solace_internal(
     message: str, context_id: Optional[str] = None, agent_name: str = AGENT_NAME
 ) -> Tuple[Optional[str], Optional[str], Optional[str]]:
-    """Send message to Solace Agent Mesh and get response"""
+    """Internal client logic to talk to SAM Gateway"""
     request_id = int(time.time() * 1000)
-    msg_id = f"msg_{request_id}"
-
-    # Build payload
     payload = {
         "jsonrpc": "2.0",
         "id": request_id,
         "method": "message/stream",
         "params": {
             "message": {
-                "messageId": msg_id,
+                "messageId": f"msg_{request_id}",
                 "kind": "message",
                 "role": "user",
                 "metadata": {"agent_name": agent_name},
@@ -251,96 +183,94 @@ async def send_to_solace(
             }
         },
     }
-
     if context_id:
         payload["params"]["contextId"] = context_id
 
-    async with httpx.AsyncClient(timeout=60.0) as client:
-        # Step 1: Submit the message and get task ID
-        try:
-            submit_response = await client.post(
-                f"{GATEWAY_URL}/api/v1/message:stream",
-                json=payload,
-                headers={"Content-Type": "application/json"},
+    try:
+        async with httpx.AsyncClient(timeout=60.0) as client:
+            resp = await client.post(
+                f"{GATEWAY_URL}/api/v1/message:stream", json=payload
             )
-            submit_data = submit_response.json()
-        except Exception as e:
-            return None, context_id, f"Error submitting message: {e}"
+            if resp.status_code != 200:
+                return (
+                    None,
+                    context_id,
+                    f"Gateway Error {resp.status_code}: {resp.text[:100]}",
+                )
 
-        task_id = submit_data.get("result", {}).get("id")
-        new_context_id = submit_data.get("result", {}).get("contextId", context_id)
+            task_id = resp.json().get("result", {}).get("id")
+            new_ctx_id = resp.json().get("result", {}).get("contextId", context_id)
+            if not task_id:
+                return None, new_ctx_id, "No task ID"
 
-        if not task_id:
-            return None, new_context_id, "Could not get task ID"
-
-        # Step 2: Subscribe to SSE events for this task
-        try:
-            print(f"Subscribing to SSE for task {task_id}...")
+            # SSE Subscribe
+            full_text = ""
             async with client.stream(
-                "GET",
-                f"{GATEWAY_URL}/api/v1/sse/subscribe/{task_id}",
-                headers={"Accept": "text/event-stream"},
-                timeout=30.0,  # Add timeout to prevent freezing
-            ) as sse_response:
-                full_text = ""
-                async for line in sse_response.aiter_lines():
-                    if not line or not line.startswith("data:"):
-                        continue
+                "GET", f"{GATEWAY_URL}/api/v1/sse/subscribe/{task_id}"
+            ) as sse:
+                async for line in sse.aiter_lines():
+                    if line.startswith("data:"):
+                        event = json.loads(line[5:])
+                        res = event.get("result", {})
 
-                    json_data = line[5:].strip()  # Remove "data:" prefix
-                    try:
-                        event_data = json.loads(json_data)
-                        result = event_data.get("result")
-                        if not isinstance(result, dict):
-                            continue
+                        # Bulletproof parsing of SAM SSE stream
+                        def extract_text(obj):
+                            if not isinstance(obj, dict):
+                                return None
+                            # Case 1: direct message.parts (final message)
+                            msg = obj.get("message")
+                            if isinstance(msg, dict):
+                                parts = msg.get("parts", [])
+                                for p in parts:
+                                    if p.get("kind") == "text" and p.get("text"):
+                                        return p["text"]
+                            # Case 2: status.message.parts (incremental)
+                            status = obj.get("status")
+                            if isinstance(status, dict):
+                                msg = status.get("message")
+                                if isinstance(msg, dict):
+                                    parts = msg.get("parts", [])
+                                    for p in parts:
+                                        if p.get("kind") == "text" and p.get("text"):
+                                            return p["text"]
+                            return None
 
-                        status = result.get("status")
-                        if not isinstance(status, dict):
-                            continue
+                        t = extract_text(res)
+                        if t and len(t) > len(full_text):
+                            full_text = t
 
-                        state = status.get("state")
+                        status = res.get("status")
+                        if isinstance(status, dict):
+                            state = status.get("state")
+                            if state == "completed":
+                                break
+                            if state == "failed":
+                                return (
+                                    None,
+                                    new_ctx_id,
+                                    f"Task failed: {status.get('error')}",
+                                )
 
-                        # Try to accumulate text from any message parts we see
-                        message = status.get("message")
-                        if isinstance(message, dict):
-                            parts = message.get("parts", [])
-                            for part in parts:
-                                if (
-                                    isinstance(part, dict)
-                                    and part.get("kind") == "text"
-                                ):
-                                    new_text = part.get("text", "")
-                                    if len(new_text) > len(full_text):
-                                        full_text = new_text
+            return full_text, new_ctx_id, None
+    except Exception as e:
+        return None, context_id, f"Request Exception: {str(e)}"
 
-                        if state == "completed":
-                            # If we still don't have text, try one last check in the result
-                            if not full_text:
-                                res_msg = result.get("message")
-                                if isinstance(res_msg, dict):
-                                    parts = res_msg.get("parts", [])
-                                    for part in parts:
-                                        if (
-                                            isinstance(part, dict)
-                                            and part.get("kind") == "text"
-                                        ):
-                                            full_text = part.get("text") or ""
-                            break
 
-                        if state == "failed":
-                            return (
-                                None,
-                                new_context_id,
-                                f"SAM Task failed: {status.get('error')}",
-                            )
+def build_system_context(company_data: StartRequest) -> str:
+    """Build system prompt"""
+    c = company_data.company_overview or CompanyOverview()
+    i = company_data.interview_insights or InterviewInsights()
+    t = i.technical_requirements or TechnicalRequirements()
 
-                    except json.JSONDecodeError:
-                        continue
+    return f"""[COMPANY] {c.name} ({c.industry})
+[TECH] {", ".join(t.programming_languages or [])}
+[FOCUS] {", ".join(i.what_they_look_for or [])}
+You are John, a senior interviewer. Stay in character. Be concise."""
 
-                if not full_text:
-                    print(f"DEBUG: No text found in SAM response for task {task_id}")
 
-                return full_text or "", new_context_id, None
-
-        except Exception as e:
-            return None, new_context_id, f"Error reading SSE stream: {e}"
+def get_turn_instruction(turn: int, company_data: StartRequest) -> str:
+    if turn <= 3:
+        return "PHASE: BEHAVIORAL. Ask about their background."
+    if turn <= 10:
+        return "PHASE: TECHNICAL. Ask a coding question."
+    return "PHASE: CLOSING. Wrap up."
