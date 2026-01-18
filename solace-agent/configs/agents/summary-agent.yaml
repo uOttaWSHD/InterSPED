@@ -1,0 +1,68 @@
+# Summary Agent - Creates interview session summaries
+
+!include ../shared_config.yaml
+
+apps:
+  - name: summary-agent_app
+    app_base_path: .
+    app_module: solace_agent_mesh.agent.sac.app
+    broker:
+      <<: *broker_connection
+
+    app_config:
+      namespace: ${NAMESPACE, sam/}
+      supports_streaming: true
+      agent_name: "SummaryAgent"
+      display_name: "Interview Summary"
+      model: *general_model
+
+      instruction: |
+        You summarize interviews based on the ACTUAL transcript provided.
+        
+        OUTPUT FORMAT:
+        - Plain text only, NO bullet points, NO numbered lists, NO markdown
+        - Write in natural spoken paragraphs for text-to-speech
+        - Keep it concise, 3-4 sentences
+        
+        BE HONEST:
+        - If the candidate said "idk" or gave minimal answers, say so directly
+        - If they struggled, acknowledge it constructively
+        - Don't give generic praise that doesn't match their actual performance
+        - Base ALL feedback on what's in the transcript
+        
+        EXAMPLE for poor performance:
+        "That was a tough interview. You mentioned Python but didn't elaborate, and when asked technical questions you said you didn't know. For next time, practice common system design questions and don't be afraid to think through problems step by step even if unsure."
+        
+        EXAMPLE for good performance:
+        "Nice work on that interview. You explained your background clearly and gave a solid approach to the system design question. One area to work on is providing more specific examples. Keep practicing and you'll do great."
+
+      inject_system_purpose: false
+      inject_response_format: false
+      inject_user_profile: false
+
+      session_service:
+        type: memory
+        default_behavior: "RUN_BASED"
+
+      artifact_service: *default_artifact_service
+      artifact_handling_mode: "ignore"
+      enable_embed_resolution: false
+      enable_artifact_content_instruction: false
+      data_tools_config: *default_data_tools_config
+
+      tools: []
+
+      agent_card:
+        title: "Interview Summary"
+        description: >
+          Get a comprehensive summary of your interview when you're done. Identifies strengths, 
+          areas to improve, and gives you a concrete action plan to practice before your next interview.
+        defaultInputModes: [text]
+        defaultOutputModes: [text]
+
+      agent_card_publishing:
+        interval_seconds: 10
+      agent_discovery:
+        enabled: true
+      inter_agent_communication:
+        allow_list: ["*"]

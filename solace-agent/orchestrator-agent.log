@@ -1,0 +1,114 @@
+2026-01-17 12:22:53,415 | INFO | solace_ai_connector.solace_ai_connector | Starting Solace AI Event Connector
+2026-01-17 12:22:53,415 | INFO | solace_ai_connector.solace_ai_connector | Creating app orchestrator-agent_app
+2026-01-17 12:22:53,416 | INFO | common.utils.asyncio_macos_fix | On macOS. Applying asyncio child watcher fix for Python 3.12.0
+2026-01-17 12:22:53,416 | INFO | common.utils.asyncio_macos_fix | Successfully applied asyncio fix. get_child_watcher is now patched to use ThreadedChildWatcher.
+2026-01-17 12:22:53,416 | INFO | common.utils.asyncio_macos_fix | On macOS. Applying asyncio child watcher fix for Python 3.12.0
+2026-01-17 12:22:53,416 | INFO | common.utils.asyncio_macos_fix | Successfully applied asyncio fix. get_child_watcher is now patched to use ThreadedChildWatcher.
+2026-01-17 12:22:53,520 | INFO | solace_agent_mesh.agent.sac.app | Configuring A2A_ADK_App for Agent: 'OrchestratorAgent' in Namespace: 'default'
+2026-01-17 12:22:53,520 | INFO | solace_agent_mesh.agent.sac.app | Automatically generated subscriptions for Agent 'OrchestratorAgent': [{'topic': 'default/a2a/v1/agent/request/OrchestratorAgent'}, {'topic': 'default/a2a/v1/discovery/>'}, {'topic': 'default/a2a/v1/agent/response/OrchestratorAgent/>'}, {'topic': 'default/a2a/v1/agent/status/OrchestratorAgent/>'}, {'topic': 'default/sam/events/session/>'}]
+2026-01-17 12:22:53,521 | INFO | solace_ai_connector.components.component_base | [orchestrator-agent_app_broker_input] [solace_ai_connector.orchestrator-agent_app_implicit_flow.orchestrator-agent_app_broker_input]  Multi-session request/response is enabled.
+2026-01-17 12:22:53,521 | INFO | solace_ai_connector.components.component_base | [orchestrator-agent_app_broker_input] [solace_ai_connector.orchestrator-agent_app_implicit_flow.orchestrator-agent_app_broker_input]  Using parent app's broker configuration as default for multi-session request/response.
+2026-01-17 12:22:53,522 | INFO | solace_ai_connector.components.component_base | [<unnamed>] [solace_ai_connector.orchestrator-agent_app_implicit_flow.<unnamed>]  Multi-session request/response is enabled.
+2026-01-17 12:22:53,522 | INFO | solace_ai_connector.components.component_base | [<unnamed>] [solace_ai_connector.orchestrator-agent_app_implicit_flow.<unnamed>]  Using parent app's broker configuration as default for multi-session request/response.
+2026-01-17 12:22:53,522 | INFO | solace_agent_mesh.common.sac.sam_component_base | [solace_ai_connector.orchestrator-agent_app_implicit_flow.<unnamed>]  Initializing SamComponentBase...
+2026-01-17 12:22:53,522 | INFO | solace_agent_mesh.common.sac.sam_component_base | [solace_ai_connector.orchestrator-agent_app_implicit_flow.<unnamed>]  Initialized SamComponentBase
+2026-01-17 12:22:53,522 | INFO | solace_agent_mesh.agent.sac.component | [solace_ai_connector.orchestrator-agent_app_implicit_flow.<unnamed>]  Initializing agent: OrchestratorAgent (A2A ADK Host Component)...
+2026-01-17 12:22:53,522 | INFO | solace_agent_mesh.agent.sac.component | [solace_ai_connector.orchestrator-agent_app_implicit_flow.<unnamed>]  Default session behavior set to: PERSISTENT
+2026-01-17 12:22:53,522 | INFO | solace_agent_mesh.agent.sac.component | [solace_ai_connector.orchestrator-agent_app_implicit_flow.<unnamed>]  Artifact Handling Mode: reference
+2026-01-17 12:22:53,522 | WARNING | solace_agent_mesh.agent.sac.component | [solace_ai_connector.orchestrator-agent_app_implicit_flow.<unnamed>]  Artifact handling mode 'reference' selected, but this component does not currently host an endpoint to serve artifacts. Clients may not be able to retrieve referenced artifacts.
+2026-01-17 12:22:53,522 | INFO | solace_agent_mesh.agent.sac.component | [solace_ai_connector.orchestrator-agent_app_implicit_flow.<unnamed>]  Initializing synchronous ADK services...
+2026-01-17 12:22:53,522 | INFO | solace_agent_mesh.agent.adk.services | [solace_ai_connector.orchestrator-agent_app_implicit_flow.<unnamed>]  Initializing Session Service of type: sql
+2026-01-17 12:22:53,532 | INFO | google_adk.google.adk.sessions.database_session_service | Local timezone: America/Toronto
+2026-01-17 12:22:53,534 | INFO | solace_agent_mesh.agent.adk.schema_migration | [solace_ai_connector.orchestrator-agent_app_implicit_flow.<unnamed>]  Running Alembic migrations for ADK schema compatibility...
+2026-01-17 12:22:53,535 | INFO | alembic.runtime.migration | Context impl SQLiteImpl.
+2026-01-17 12:22:53,535 | INFO | alembic.runtime.migration | Will assume non-transactional DDL.
+2026-01-17 12:22:53,537 | INFO | solace_agent_mesh.agent.adk.schema_migration | [solace_ai_connector.orchestrator-agent_app_implicit_flow.<unnamed>]  Database schema migration complete
+2026-01-17 12:22:53,537 | INFO | solace_agent_mesh.agent.adk.services | [solace_ai_connector.orchestrator-agent_app_implicit_flow.<unnamed>]  Initializing Artifact Service of type: filesystem
+2026-01-17 12:22:53,537 | INFO | solace_agent_mesh.agent.adk.artifacts.filesystem_artifact_service | Initialized FilesystemArtifactService. Base path: /tmp/samv2
+2026-01-17 12:22:53,537 | INFO | solace_agent_mesh.agent.adk.services | [solace_ai_connector.orchestrator-agent_app_implicit_flow.<unnamed>]  Wrapping artifact service with dynamic ScopedArtifactServiceWrapper.
+2026-01-17 12:22:53,537 | INFO | solace_agent_mesh.agent.adk.services | [solace_ai_connector.orchestrator-agent_app_implicit_flow.<unnamed>]  Initializing Memory Service of type: memory
+2026-01-17 12:22:53,537 | INFO | solace_agent_mesh.agent.adk.services | [solace_ai_connector.orchestrator-agent_app_implicit_flow.<unnamed>]  No credential service configured, skipping initialization
+2026-01-17 12:22:53,537 | INFO | solace_agent_mesh.agent.sac.component | [solace_ai_connector.orchestrator-agent_app_implicit_flow.<unnamed>]  Initialized Synchronous ADK services.
+2026-01-17 12:22:53,537 | INFO | solace_agent_mesh.agent.sac.component | [solace_ai_connector.orchestrator-agent_app_implicit_flow.<unnamed>]  Scheduling agent health check every 10 seconds.
+2026-01-17 12:22:53,537 | INFO | solace_agent_mesh.agent.sac.component | [solace_ai_connector.orchestrator-agent_app_implicit_flow.<unnamed>]  Initialized agent: OrchestratorAgent
+2026-01-17 12:22:53,538 | INFO | solace_ai_connector.components.component_base | [orchestrator-agent_app_broker_output] [solace_ai_connector.orchestrator-agent_app_implicit_flow.orchestrator-agent_app_broker_output]  Multi-session request/response is enabled.
+2026-01-17 12:22:53,538 | INFO | solace_ai_connector.components.component_base | [orchestrator-agent_app_broker_output] [solace_ai_connector.orchestrator-agent_app_implicit_flow.orchestrator-agent_app_broker_output]  Using parent app's broker configuration as default for multi-session request/response.
+2026-01-17 12:22:53,538 | INFO | solace_ai_connector.solace_ai_connector | Creating app a2a_webui_app
+2026-01-17 12:22:53,594 | WARNING | solace_agent_mesh.gateway.base.app | [a2a_webui_app] Configuration key 'gateway_artifact_content_limit_bytes' (value: 10000000) is deprecated. Please use 'gateway_max_artifact_resolve_size_bytes'. Using value from old key.
+2026-01-17 12:22:53,594 | INFO | solace_agent_mesh.gateway.base.app | Generated Solace subscriptions for gateway 'webui-gateway': [{'topic': 'default/a2a/v1/discovery/>'}, {'topic': 'default/a2a/v1/gateway/response/webui-gateway/>'}, {'topic': 'default/a2a/v1/gateway/status/webui-gateway/>'}]
+2026-01-17 12:22:53,595 | INFO | solace_agent_mesh.common.sac.sam_component_base | [solace_ai_connector.a2a_webui_app_implicit_flow.<unnamed>]  Initializing SamComponentBase...
+2026-01-17 12:22:53,595 | INFO | solace_agent_mesh.common.sac.sam_component_base | [solace_ai_connector.a2a_webui_app_implicit_flow.<unnamed>]  Initialized SamComponentBase
+2026-01-17 12:22:53,595 | INFO | solace_agent_mesh.gateway.base.component | [solace_ai_connector.a2a_webui_app_implicit_flow.<unnamed>]  Initializing Base Gateway Component...
+2026-01-17 12:22:53,595 | INFO | solace_agent_mesh.gateway.base.component | [solace_ai_connector.a2a_webui_app_implicit_flow.<unnamed>]  Retrieved common configs: Namespace=default, GatewayID=webui-gateway
+2026-01-17 12:22:53,595 | INFO | solace_agent_mesh.core_a2a.service | [CoreA2AService-WebUI] Initialized with namespace: default
+2026-01-17 12:22:53,595 | INFO | solace_agent_mesh.agent.adk.services | [solace_ai_connector.a2a_webui_app_implicit_flow.<unnamed>]  Initializing Artifact Service of type: filesystem
+2026-01-17 12:22:53,595 | INFO | solace_agent_mesh.agent.adk.artifacts.filesystem_artifact_service | Initialized FilesystemArtifactService. Base path: /tmp/samv2
+2026-01-17 12:22:53,595 | INFO | solace_agent_mesh.agent.adk.services | [solace_ai_connector.a2a_webui_app_implicit_flow.<unnamed>]  Wrapping artifact service with dynamic ScopedArtifactServiceWrapper.
+2026-01-17 12:22:53,595 | INFO | solace_agent_mesh.common.services.identity_service | [IdentityFactory] No 'identity_service' configuration found. Skipping creation.
+2026-01-17 12:22:53,595 | INFO | solace_agent_mesh.gateway.base.component | [solace_ai_connector.a2a_webui_app_implicit_flow.<unnamed>]  Middleware system initialized (using default configuration resolver).
+2026-01-17 12:22:53,595 | INFO | solace_agent_mesh.gateway.base.component | [solace_ai_connector.a2a_webui_app_implicit_flow.<unnamed>]  Initialized Base Gateway Component.
+2026-01-17 12:22:53,595 | INFO | solace_agent_mesh.gateway.http_sse.component | [solace_ai_connector.a2a_webui_app_implicit_flow.<unnamed>]  Initializing Web UI Backend Component...
+2026-01-17 12:22:53,595 | INFO | solace_agent_mesh.gateway.http_sse.component | [solace_ai_connector.a2a_webui_app_implicit_flow.<unnamed>]  WebUI-specific configuration retrieved (Host: 0.0.0.0, Port: 8000).
+2026-01-17 12:22:53,595 | INFO | solace_agent_mesh.gateway.http_sse.component | [solace_ai_connector.a2a_webui_app_implicit_flow.<unnamed>]  Scheduling agent health check every 10 seconds.
+2026-01-17 12:22:53,595 | INFO | solace_agent_mesh.gateway.http_sse.session_manager | Initialized SessionManager
+2026-01-17 12:22:53,596 | INFO | solace_agent_mesh.common.sam_events.event_service | [SamEventService] Initialized for component <unnamed>_gateway in namespace default
+2026-01-17 12:22:53,597 | INFO | solace_agent_mesh.gateway.http_sse.component | [solace_ai_connector.a2a_webui_app_implicit_flow.<unnamed>]  Data retention is enabled. Initializing service and timer...
+2026-01-17 12:22:53,597 | INFO | solace_agent_mesh.gateway.http_sse.services.data_retention_service | [DataRetentionService] Initialized with task_retention=90 days, feedback_retention=90 days, cleanup_interval=24 hours, batch_size=1000
+2026-01-17 12:22:53,597 | INFO | solace_agent_mesh.gateway.http_sse.component | [solace_ai_connector.a2a_webui_app_implicit_flow.<unnamed>]  Data retention timer created with ID 'data_retention_cleanup_webui-gateway' and interval 24 hours.
+2026-01-17 12:22:53,597 | INFO | solace_agent_mesh.gateway.http_sse.component | [solace_ai_connector.a2a_webui_app_implicit_flow.<unnamed>]  Running database migrations...
+2026-01-17 12:22:53,692 | INFO | solace_agent_mesh.gateway.http_sse.routers.visualization | Initialized Router for A2A Message Visualization.
+2026-01-17 12:22:53,754 | INFO | solace_agent_mesh.gateway.http_sse.dependencies | Configuring SQLite database (single-connection mode)
+2026-01-17 12:22:53,755 | INFO | solace_agent_mesh.gateway.http_sse.dependencies | Database initialized successfully
+2026-01-17 12:22:53,755 | INFO | solace_agent_mesh.gateway.http_sse.main | [WebUI Gateway] Running database migrations...
+2026-01-17 12:22:53,755 | INFO | solace_agent_mesh.gateway.http_sse.main | [WebUI Gateway] Starting community migrations...
+2026-01-17 12:22:53,757 | INFO | solace_agent_mesh.gateway.http_sse.main | [WebUI Gateway] Checking for schema updates
+2026-01-17 12:22:53,758 | INFO | alembic.runtime.migration | Context impl SQLiteImpl.
+2026-01-17 12:22:53,758 | INFO | alembic.runtime.migration | Will assume non-transactional DDL.
+2026-01-17 12:22:53,763 | INFO | solace_agent_mesh.gateway.http_sse.main | [WebUI Gateway] Community migrations completed
+2026-01-17 12:22:53,763 | INFO | solace_agent_mesh.gateway.http_sse.component | [solace_ai_connector.a2a_webui_app_implicit_flow.<unnamed>]  Database migrations completed
+2026-01-17 12:22:53,763 | INFO | solace_agent_mesh.gateway.http_sse.component | [solace_ai_connector.a2a_webui_app_implicit_flow.<unnamed>]  Web UI Backend Component initialized.
+2026-01-17 12:22:53,763 | INFO | solace_agent_mesh.gateway.base.app | BaseGatewayApp 'a2a_webui_app' initialized successfully.
+2026-01-17 12:22:53,763 | INFO | solace_ai_connector.solace_ai_connector | Creating app delivery-agent_app
+2026-01-17 12:22:53,764 | ERROR | solace_agent_mesh.agent.sac.app | Invalid Agent configuration:
+
+---- Configuration validation failed for delivery-agent_app ----
+
+   Agent Name: DeliveryAgent
+
+ERROR 1:
+   Missing required field: 'namespace'
+   Location: app_config.namespace
+   Description: Absolute topic prefix for A2A communication (e.g., 'myorg/dev').
+
+---- Please update your YAML configuration ----
+
+2026-01-17 12:22:53,765 | WARNING | solace_ai_connector.main | Stopping Solace AI Connector
+2026-01-17 12:22:53,766 | INFO | solace_ai_connector.solace_ai_connector | Stopping Solace AI Event Connector
+2026-01-17 12:22:53,966 | INFO | solace_ai_connector.solace_ai_connector | Cleaning up Solace AI Event Connector
+2026-01-17 12:22:53,966 | INFO | solace_ai_connector.flow.app | Cleaning up app: orchestrator-agent_app
+2026-01-17 12:22:53,966 | INFO | solace_ai_connector.flow.flow | Cleaning up flow: orchestrator-agent_app_implicit_flow
+2026-01-17 12:22:53,966 | INFO | solace_ai_connector.flow.multi_session_request_response_manager | Shutting down MultiSessionRequestResponseManager.
+2026-01-17 12:22:53,966 | INFO | solace_ai_connector.flow.multi_session_request_response_manager | MultiSessionRequestResponseManager shut down complete.
+2026-01-17 12:22:53,966 | INFO | solace_agent_mesh.agent.sac.component | [solace_ai_connector.orchestrator-agent_app_implicit_flow.<unnamed>]  Cleaning up A2A ADK Host Component.
+2026-01-17 12:22:53,966 | INFO | solace_agent_mesh.common.sac.sam_component_base | [solace_ai_connector.orchestrator-agent_app_implicit_flow.<unnamed>]  Starting cleanup for SamComponentBase...
+2026-01-17 12:22:53,966 | INFO | solace_ai_connector.flow.multi_session_request_response_manager | Shutting down MultiSessionRequestResponseManager.
+2026-01-17 12:22:53,966 | INFO | solace_ai_connector.flow.multi_session_request_response_manager | MultiSessionRequestResponseManager shut down complete.
+2026-01-17 12:22:53,966 | INFO | solace_agent_mesh.common.sac.sam_component_base | [solace_ai_connector.orchestrator-agent_app_implicit_flow.<unnamed>]  SamComponentBase cleanup finished.
+2026-01-17 12:22:53,966 | INFO | solace_agent_mesh.agent.sac.component | [solace_ai_connector.orchestrator-agent_app_implicit_flow.<unnamed>]  Component cleanup finished.
+2026-01-17 12:22:53,966 | INFO | solace_ai_connector.flow.multi_session_request_response_manager | Shutting down MultiSessionRequestResponseManager.
+2026-01-17 12:22:53,966 | INFO | solace_ai_connector.flow.multi_session_request_response_manager | MultiSessionRequestResponseManager shut down complete.
+2026-01-17 12:22:53,967 | INFO | solace_ai_connector.flow.app | Cleaning up app: a2a_webui_app
+2026-01-17 12:22:53,967 | INFO | solace_ai_connector.flow.flow | Cleaning up flow: a2a_webui_app_implicit_flow
+2026-01-17 12:22:53,967 | INFO | solace_agent_mesh.gateway.http_sse.component | [solace_ai_connector.a2a_webui_app_implicit_flow.<unnamed>]  Cleaning up Web UI Backend Component...
+2026-01-17 12:22:53,967 | INFO | solace_agent_mesh.gateway.http_sse.component | [solace_ai_connector.a2a_webui_app_implicit_flow.<unnamed>]  Cancelled data retention cleanup timer.
+2026-01-17 12:22:53,967 | INFO | solace_agent_mesh.gateway.http_sse.component | [solace_ai_connector.a2a_webui_app_implicit_flow.<unnamed>]  Data retention service cleaned up.
+2026-01-17 12:22:53,967 | INFO | solace_agent_mesh.gateway.http_sse.component | [solace_ai_connector.a2a_webui_app_implicit_flow.<unnamed>]  Cleaning up visualization resources...
+2026-01-17 12:22:53,967 | INFO | solace_agent_mesh.gateway.http_sse.component | [solace_ai_connector.a2a_webui_app_implicit_flow.<unnamed>]  Visualization resources cleaned up.
+2026-01-17 12:22:53,967 | INFO | solace_agent_mesh.common.sac.sam_component_base | [solace_ai_connector.a2a_webui_app_implicit_flow.<unnamed>]  Starting cleanup for SamComponentBase...
+2026-01-17 12:22:53,967 | INFO | solace_agent_mesh.gateway.base.component | [solace_ai_connector.a2a_webui_app_implicit_flow.<unnamed>]  Calling _stop_listener()...
+2026-01-17 12:22:53,967 | INFO | solace_agent_mesh.gateway.http_sse.component | [solace_ai_connector.a2a_webui_app_implicit_flow.<unnamed>]  _stop_listener called. Signaling Uvicorn server to exit.
+2026-01-17 12:22:53,967 | INFO | solace_agent_mesh.gateway.base.component | [solace_ai_connector.a2a_webui_app_implicit_flow.<unnamed>]  Signaling _message_processor_loop to stop by putting sentinel on queue...
+2026-01-17 12:22:53,967 | INFO | solace_agent_mesh.common.sac.sam_component_base | [solace_ai_connector.a2a_webui_app_implicit_flow.<unnamed>]  SamComponentBase cleanup finished.
+2026-01-17 12:22:53,967 | INFO | solace_agent_mesh.gateway.http_sse.component | [solace_ai_connector.a2a_webui_app_implicit_flow.<unnamed>]  Web UI Backend Component cleanup finished.
+2026-01-17 12:22:53,967 | INFO | solace_ai_connector.solace_ai_connector | Cleanup completed
+2026-01-17 12:22:53,967 | WARNING | solace_ai_connector.main | Solace AI Connector exited successfully!
