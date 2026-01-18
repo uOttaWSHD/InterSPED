@@ -11,6 +11,8 @@ services:
     instance_count: 1
     instance_size_slug: basic-xs
     envs:
+      - key: PYTHON_VERSION
+        value: "3.11"
       - key: YELLOWCAKE_API_KEY
         value: ${YELLOWCAKE_API_KEY}
       - key: GROQ_API_KEY

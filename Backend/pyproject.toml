@@ -2,7 +2,7 @@
 name = "unified-backend"
 version = "0.1.0"
 description = "Unified backend for uOttahack submission"
-requires-python = "==3.11"
+requires-python = ">=3.11"
 dependencies = [
     "fastapi",
     "uvicorn[standard]",
