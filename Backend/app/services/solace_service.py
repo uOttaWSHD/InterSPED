@@ -209,18 +209,24 @@ def get_turn_instruction(turn: int, company_data: StartRequest) -> str:
         else None
     )
 
-    instructions = {
-        1: f"ASK about: {behavioral_q or 'their experience with a challenging project'}. MAX 2 sentences.",
-        2: f"ASK about: {coding_q or 'their favorite programming language and why'}. MAX 2 sentences.",
-        3: f"ASK about: {system_design_q or 'how they would design a scalable system'}. MAX 2 sentences.",
-    }
+    # Dynamic Phases based on turn count
+    # Turns 1-3: Intro & Behavioral
+    if turn <= 3:
+        target = behavioral_q or "their experience with a challenging project"
+        return f"PHASE: BEHAVIORAL. Goals: 1. Ensure introductions are complete. 2. Discuss {target}. Only move to the next goal when the previous is satisfied."
 
-    if turn in instructions:
-        return instructions[turn]
-    elif turn >= 14:
-        return "SAY GOODBYE. Thank them for their time and say you'll be in touch. MAX 2 sentences."
+    # Turns 4-10: Coding
+    elif turn <= 10:
+        target = coding_q or "their favorite programming language and why"
+        return f"PHASE: CODING CHALLENGE. Goal: Evaluate their skills in {target}. Guide them through the problem step-by-step. Do not rush."
+
+    # Turns 11+: System Design & Closing
+    elif turn < 14:
+        target = system_design_q or "how they would design a scalable system"
+        return f"PHASE: SYSTEM DESIGN. Goal: Discuss {target}. Focus on high-level architecture."
+
     else:
-        return "ASK a relevant follow-up question based on the candidate's last response. Keep it concise. MAX 2 sentences."
+        return "PHASE: CLOSING. Wrap up the interview politely."
 
 
 async def send_to_solace(
@@ -269,11 +275,12 @@ async def send_to_solace(
 
         # Step 2: Subscribe to SSE events for this task
         try:
+            print(f"Subscribing to SSE for task {task_id}...")
             async with client.stream(
                 "GET",
                 f"{GATEWAY_URL}/api/v1/sse/subscribe/{task_id}",
                 headers={"Accept": "text/event-stream"},
-                timeout=None,  # Don't timeout the stream itself
+                timeout=30.0,  # Add timeout to prevent freezing
             ) as sse_response:
                 full_text = ""
                 async for line in sse_response.aiter_lines():

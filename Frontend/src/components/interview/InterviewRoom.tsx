@@ -4,7 +4,7 @@ import UserVideo from "./UserVideo";
 import ControlBar from "./ControlBar";
 import CodeEditor from "./CodeEditor";
 import InterviewTimer from "./InterviewTimer";
-import { Bot, RotateCcw, MessageSquare, Mic, MicOff, Bug, Wifi, WifiOff } from "lucide-react";
+import { Bot, RotateCcw, MessageSquare, Bug, Wifi, WifiOff } from "lucide-react";
 import { useVoiceInterview } from "@/hooks/use-voice-interview";
 
 interface InterviewRoomProps {
@@ -13,78 +13,25 @@ interface InterviewRoomProps {
   sessionId?: string | null;
 }
 
-const sampleQuestions = [
-  {
-    id: 1,
-    title: "Two Sum",
-    difficulty: "Easy" as const,
-    description: `Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
-
-You may assume that each input would have exactly one solution, and you may not use the same element twice.
-
-You can return the answer in any order.`,
-    examples: [
-      `Input: nums = [2,7,11,15], target = 9
-Output: [0,1]
-Explanation: Because nums[0] + nums[1] == 9, we return [0, 1].`,
-      `Input: nums = [3,2,4], target = 6
-Output: [1,2]`,
-    ],
-  },
-  {
-    id: 2,
-    title: "Valid Parentheses",
-    difficulty: "Easy" as const,
-    description: `Given a string s containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.
-
-An input string is valid if:
-1. Open brackets must be closed by the same type of brackets.
-2. Open brackets must be closed in the correct order.
-3. Every close bracket has a corresponding open bracket of the same type.`,
-    examples: [
-      `Input: s = "()"
-Output: true`,
-      `Input: s = "()[]{}"
-Output: true`,
-      `Input: s = "(]"
-Output: false`,
-    ],
-  },
-  {
-    id: 3,
-    title: "Merge Two Sorted Lists",
-    difficulty: "Medium" as const,
-    description: `You are given the heads of two sorted linked lists list1 and list2.
-
-Merge the two lists into one sorted list. The list should be made by splicing together the nodes of the first two lists.
-
-Return the head of the merged linked list.`,
-    examples: [
-      `Input: list1 = [1,2,4], list2 = [1,3,4]
-Output: [1,1,2,3,4,4]`,
-      `Input: list1 = [], list2 = []
-Output: []`,
-    ],
-  },
-];
-
 const InterviewRoom = ({ onEndInterview, initialResponse, sessionId }: InterviewRoomProps) => {
   const [isMuted, setIsMuted] = useState(false);
   const [isVideoOn, setIsVideoOn] = useState(true);
   const [isCodeSharing, setIsCodeSharing] = useState(false);
-  const [isAISpeaking, setIsAISpeaking] = useState(false);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  // REMOVED: isAISpeaking state. Use isMuted as the single source of truth.
+  // isMuted = true => User Muted / AI Speaking
+  // isMuted = false => User Speaking / AI Silent
+  
   const [lastAudioUrl, setLastAudioUrl] = useState<string | null>(null);
   const [transcript, setTranscript] = useState<string>(initialResponse || "");
   const [showTranscript, setShowTranscript] = useState(true);
-  const [showDebug, setShowDebug] = useState(true); // Debug panel visible by default
-  const [audioStarted, setAudioStarted] = useState(false);
-  const [conversationHistory, setConversationHistory] = useState<Array<{role: 'user' | 'ai', text: string, timestamp: Date}>>([]);
-  const hasSpokenInitialRef = useRef(false);
-  const hasStartedInterviewRef = useRef(false); // Guard against multiple connection attempts
-  const audioRef = useRef<HTMLAudioElement>(null);
-  const debugPanelRef = useRef<HTMLDivElement>(null);
-
+    const [showDebug, setShowDebug] = useState(true); // Debug panel visible by default
+    const [audioStarted, setAudioStarted] = useState(false);
+    const [conversationHistory, setConversationHistory] = useState<Array<{role: 'user' | 'ai', text: string, timestamp: Date}>>([]);
+    const hasSpokenInitialRef = useRef(false);
+    const hasStartedInterviewRef = useRef(false); // Guard against multiple connection attempts
+    const audioRef = useRef<HTMLAudioElement>(null);
+    const debugPanelRef = useRef<HTMLDivElement>(null);
+  
   // Auto-scroll debug panel
   useEffect(() => {
     if (debugPanelRef.current) {
@@ -97,15 +44,17 @@ const InterviewRoom = ({ onEndInterview, initialResponse, sessionId }: Interview
     if (initialResponse && conversationHistory.length === 0) {
       setConversationHistory([{ role: 'ai', text: initialResponse, timestamp: new Date() }]);
     }
-  }, [initialResponse]);
+  }, [initialResponse, conversationHistory.length]);
+
+  // Auto-mute/unmute based on AI speaking state is now handled by onAISpeaking callback directly modifying isMuted
+  // No separate useEffect needed for syncing isAISpeaking -> isMuted
 
   const {
     isConnected,
     isListening,
-    transcript: liveTranscript,
     partialTranscript,
     startInterview,
-    stopInterview,
+    enqueueAudio,
   } = useVoiceInterview({
     sessionId: sessionId || null,
     onTranscript: (text) => {
@@ -114,7 +63,12 @@ const InterviewRoom = ({ onEndInterview, initialResponse, sessionId }: Interview
       // Add user message to conversation history
       setConversationHistory(prev => [...prev, { role: 'user', text, timestamp: new Date() }]);
     },
-    onAISpeaking: (speaking) => setIsAISpeaking(speaking),
+    onAISpeaking: (speaking) => {
+        // Strict Protocol:
+        // AI Starts Speaking -> Mute User (speaking = true)
+        // AI Stops Speaking -> Unmute User (speaking = false)
+        setIsMuted(speaking);
+    },
     onAudioReceived: async (b64, aiText) => {
       console.log("[InterviewRoom] Audio received via WebSocket");
       // Add AI response to conversation history
@@ -132,20 +86,12 @@ const InterviewRoom = ({ onEndInterview, initialResponse, sessionId }: Interview
       }
     },
     audioElement: audioRef.current,
+    isMuted,
   });
 
   const handleStartAudio = async () => {
     console.log("[InterviewRoom] User triggered audio start");
-    
-    // Unlock Audio on the page by playing a silent buffer
-    if (audioRef.current) {
-      audioRef.current.play().catch(() => {
-        // Expected to fail if no src, but it registers the interaction
-      });
-    }
-
     setAudioStarted(true);
-    // Note: startInterview() will be called by the useEffect when audioStarted becomes true
     
     if (initialResponse && !hasSpokenInitialRef.current) {
       hasSpokenInitialRef.current = true;
@@ -161,91 +107,30 @@ const InterviewRoom = ({ onEndInterview, initialResponse, sessionId }: Interview
       console.log("Starting voice interview with session:", sessionId);
       startInterview();
     }
-  }, [sessionId, isConnected, audioStarted]);
-
-  // Function to replay the last audio
-  const replayLastAudio = async () => {
-    if (!lastAudioUrl || !audioRef.current) return;
-    
-    console.log("Replaying last audio");
-    setIsAISpeaking(true);
-    const audio = audioRef.current;
-    audio.src = lastAudioUrl;
-    audio.volume = 1.0;
-    audio.muted = false;
-    
-    try {
-      await audio.play();
-    } catch (error) {
-      console.error("Replay error:", error);
-      setIsAISpeaking(false);
-    }
-  };
+  }, [sessionId, isConnected, audioStarted, startInterview]);
 
   // Function to speak text using ElevenLabs TTS proxy via backend
   const speakWithElevenLabs = async (text: string) => {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-    console.log("[InterviewRoom] TTS Proxy: Starting with text:", text, "URL:", apiUrl);
     setTranscript(text);
     try {
-      if (!audioRef.current) {
-        console.error("[InterviewRoom] Audio element ref not available");
-        return;
-      }
-
-      setIsAISpeaking(true);
-      
-      const response = await fetch(
-        `${apiUrl}/api/voice/tts?text=${encodeURIComponent(text)}`,
-        {
-          method: "GET",
-          headers: {
-            "Accept": "audio/mpeg",
-          },
-        }
-      );
-
-      console.log("[InterviewRoom] TTS Proxy: Response status:", response.status);
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("TTS Proxy error response:", errorText);
-        throw new Error(`TTS Proxy error: ${response.status}`);
-      }
-
-      const audioBlob = await response.blob();
-      console.log("TTS Proxy: Got audio blob, size:", audioBlob.size, "type:", audioBlob.type);
-      
-      const audioUrl = URL.createObjectURL(audioBlob);
-      setLastAudioUrl(audioUrl);  // Store for replay
-      const audio = audioRef.current;
-      
-      audio.src = audioUrl;
-      audio.volume = 1.0;
-      audio.muted = false;
-      
-      console.log("TTS Proxy: Audio element src set, volume:", audio.volume, "muted:", audio.muted);
-      
-      try {
-        await audio.play();
-        console.log("TTS Proxy: Audio play promise resolved");
-      } catch (playError) {
-        console.error("TTS Proxy: Play error:", playError);
-        setIsAISpeaking(false);
-      }
+      const response = await fetch(`${apiUrl}/api/voice/tts?text=${encodeURIComponent(text)}`);
+      if (!response.ok) throw new Error(`TTS Proxy error: ${response.status}`);
+      enqueueAudio(await response.blob());
     } catch (error) {
       console.error("TTS Proxy Error:", error);
-      setIsAISpeaking(false);
     }
+  };
+
+  // Function to replay the last audio
+  const replayLastAudio = async () => {
+    if (lastAudioUrl) enqueueAudio(lastAudioUrl);
   };
 
   // Cleanup on unmount
   useEffect(() => {
     return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.src = "";
-      }
+      if (audioRef.current) audioRef.current.pause();
     };
   }, []);
 
@@ -269,28 +154,7 @@ const InterviewRoom = ({ onEndInterview, initialResponse, sessionId }: Interview
         </div>
       )}
       {/* Hidden audio element for TTS */}
-      <audio
-        ref={audioRef}
-        crossOrigin="anonymous"
-        muted={false}
-        onEnded={() => {
-          console.log("Audio ended via onEnded");
-          setIsAISpeaking(false);
-        }}
-        onError={(e) => {
-          console.error("Audio error event:", e);
-          setIsAISpeaking(false);
-        }}
-        onPlaying={() => {
-          console.log("Audio started playing");
-        }}
-        onLoadedMetadata={() => {
-          console.log("Audio metadata loaded");
-        }}
-        onVolumeChange={() => {
-          console.log("Volume changed:", audioRef.current?.volume, "Muted:", audioRef.current?.muted);
-        }}
-      />
+      <audio ref={audioRef} />
       
       {/* Top Bar */}
       <div className="flex items-center justify-between px-4 md:px-6 py-3 bg-[hsl(var(--interview-elevated))] border-b border-border">
@@ -327,7 +191,7 @@ const InterviewRoom = ({ onEndInterview, initialResponse, sessionId }: Interview
           {lastAudioUrl && (
             <button
               onClick={replayLastAudio}
-              disabled={isAISpeaking}
+              disabled={isMuted} // Disable replay if AI is already speaking (which means isMuted=true)
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 disabled:opacity-50 transition-colors"
               title="Replay last audio"
             >
@@ -368,8 +232,8 @@ const InterviewRoom = ({ onEndInterview, initialResponse, sessionId }: Interview
                 <span className={`px-2 py-0.5 rounded ${isListening ? 'bg-blue-500/20 text-blue-400' : 'bg-gray-500/20 text-gray-400'}`}>
                   Mic: {isListening ? 'ON' : 'OFF'}
                 </span>
-                <span className={`px-2 py-0.5 rounded ${isAISpeaking ? 'bg-purple-500/20 text-purple-400' : 'bg-gray-500/20 text-gray-400'}`}>
-                  AI: {isAISpeaking ? 'Speaking' : 'Idle'}
+                <span className={`px-2 py-0.5 rounded ${isMuted ? 'bg-purple-500/20 text-purple-400' : 'bg-gray-500/20 text-gray-400'}`}>
+                  AI: {isMuted ? 'Speaking' : 'Idle'}
                 </span>
               </div>
             </div>
@@ -422,33 +286,23 @@ const InterviewRoom = ({ onEndInterview, initialResponse, sessionId }: Interview
             <div className="flex-1 flex overflow-hidden">
               {/* Code Editor */}
               <div className="flex-1 p-4">
-                <CodeEditor />
+              <CodeEditor />
               </div>
 
-              {/* Side panel with AI and question */}
+              {/* Side panel with AI and user video */}
               <div className="w-80 md:w-96 border-l border-border flex flex-col bg-[hsl(var(--interview-elevated))]">
-                {/* Small AI Avatar */}
-                <div className="p-4 flex flex-col items-center border-b border-border">
-                  <AIAvatar isSpeaking={isAISpeaking} size="small" />
-                  <p className="mt-2 text-xs text-muted-foreground">
-                    {isAISpeaking ? "AI is speaking..." : "AI is listening"}
-                  </p>
-                </div>
+              {/* Small AI Avatar */}
+              <div className="p-4 flex flex-col items-center border-b border-border">
+                <AIAvatar isSpeaking={isMuted} size="small" />
+                <p className="mt-2 text-xs text-muted-foreground">
+                {isMuted ? "AI is speaking..." : "AI is listening"}
+                </p>
+              </div>
 
-                {/* User video in code mode */}
-                <div className="p-4 flex justify-center border-b border-border">
-                  <UserVideo isVideoOn={isVideoOn} isMuted={isMuted} size="small" />
-                </div>
-
-                {/* Question in code mode */}
-                <div className="flex-1 overflow-y-auto p-4">
-                  <h4 className="text-sm font-semibold text-foreground mb-2">
-                    Q{sampleQuestions[currentQuestionIndex].id}: {sampleQuestions[currentQuestionIndex].title}
-                  </h4>
-                  <p className="text-xs text-muted-foreground leading-relaxed">
-                    {sampleQuestions[currentQuestionIndex].description.slice(0, 200)}...
-                  </p>
-                </div>
+              {/* User video in code mode */}
+              <div className="p-4 flex justify-center border-b border-border">
+                <UserVideo isVideoOn={isVideoOn} isMuted={isMuted} size="small" />
+              </div>
               </div>
             </div>
           ) : (
@@ -461,18 +315,18 @@ const InterviewRoom = ({ onEndInterview, initialResponse, sessionId }: Interview
 
               {/* AI Avatar - Center */}
               <div className="relative z-10 flex flex-col items-center">
-                <AIAvatar isSpeaking={isAISpeaking} size="large" />
+                <AIAvatar isSpeaking={isMuted} size="large" />
                 <div className="mt-6 text-center max-w-md">
                   <h2 className="text-xl font-semibold text-foreground">AI Interviewer</h2>
                   <p className="text-sm text-muted-foreground mt-1">
-                    {isAISpeaking ? "Speaking..." : "Listening to your response"}
+                    {isMuted ? "Speaking..." : "Listening to your response"}
                   </p>
                   
                   {/* Transcript Display */}
                   {showTranscript && (transcript || partialTranscript) && (
                     <div className="mt-6 p-4 rounded-xl bg-black/40 border border-white/10 backdrop-blur-md animate-in fade-in slide-in-from-bottom-2">
                       <p className="text-sm text-foreground/90 leading-relaxed italic">
-                        "{transcript}"
+                        &quot;{transcript}&quot;
                         {partialTranscript && (
                           <span className="text-muted-foreground ml-1">
                             {partialTranscript}...

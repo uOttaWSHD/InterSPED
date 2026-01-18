@@ -6,7 +6,13 @@ interface UseVoiceInterviewProps {
   onAISpeaking?: (speaking: boolean) => void;
   onAudioReceived?: (audioBase64: string, aiText?: string) => void;
   audioElement?: HTMLAudioElement | null;
+  isMuted?: boolean;
 }
+
+// Debug logging helper with variadic arguments
+const log = (message: string, ...args: any[]) => {
+  console.log(`[VoiceHook] ${message}`, ...args);
+};
 
 /**
  * Voice interview hook that handles:
@@ -21,12 +27,25 @@ export const useVoiceInterview = ({
   onAISpeaking,
   onAudioReceived,
   audioElement,
+  isMuted = false,
 }: UseVoiceInterviewProps) => {
   // Connection state
   const [isConnected, setIsConnected] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState("");
   const [partialTranscript, setPartialTranscript] = useState("");
+
+  // Refs for callbacks to ensure stability and avoid dependency cycles
+  const onTranscriptRef = useRef(onTranscript);
+  const onAISpeakingRef = useRef(onAISpeaking);
+  const onAudioReceivedRef = useRef(onAudioReceived);
+
+  // Update refs when props change
+  useEffect(() => {
+    onTranscriptRef.current = onTranscript;
+    onAISpeakingRef.current = onAISpeaking;
+    onAudioReceivedRef.current = onAudioReceived;
+  }, [onTranscript, onAISpeaking, onAudioReceived]);
 
   // Refs for audio processing (refs don't cause re-renders and are always current)
   const wsRef = useRef<WebSocket | null>(null);
@@ -35,19 +54,58 @@ export const useVoiceInterview = ({
   const streamRef = useRef<MediaStream | null>(null);
 
   // Audio playback state
-  const audioQueueRef = useRef<{ audio: string; text?: string }[]>([]);
+  const audioQueueRef = useRef<{ audio: string | Blob; text?: string }[]>([]);
   const isPlayingRef = useRef(false);
+  const isMutedRef = useRef(isMuted);
 
-  // Debug logging
-  const log = (message: string, data?: unknown) => {
-    console.log(`[VoiceHook] ${message}`, data ?? "");
-  };
+  // Sync ref with prop
+  useEffect(() => {
+    isMutedRef.current = isMuted;
+  }, [isMuted]);
+
+  // Handle Mute/Unmute Logic
+  useEffect(() => {
+    // 1. Hardware Mute Control
+    if (streamRef.current) {
+      streamRef.current.getAudioTracks().forEach((track) => {
+        track.enabled = !isMuted;
+      });
+    }
+
+    // 2. State-Driven Protocol Actions
+    if (isMuted) {
+      // User Muted -> User is done speaking -> Commit to AI
+      if (isConnected && wsRef.current?.readyState === WebSocket.OPEN) {
+        log("User Muted: sending manual commit signal");
+        wsRef.current.send(JSON.stringify({ type: "commit" }));
+      }
+    } else {
+      // User Unmuted -> User wants to speak -> Stop AI (Interruption)
+      if (isPlayingRef.current) {
+        log("User Unmuted: stopping AI playback (interruption)");
+        // Clear queue
+        audioQueueRef.current = [];
+        // Stop current audio
+        if (audioElement) {
+          audioElement.pause();
+          audioElement.currentTime = 0;
+        }
+        isPlayingRef.current = false;
+        // Notify that AI stopped speaking
+        onAISpeakingRef.current?.(false);
+      }
+    }
+    
+    log("Mute state processed:", isMuted);
+  }, [isMuted, isConnected, audioElement]);
 
   /**
    * Play the next audio item in the queue
    */
   const playNextInQueue = useCallback(async () => {
-    if (audioQueueRef.current.length === 0 || isPlayingRef.current) {
+    if (isPlayingRef.current) return;
+    if (audioQueueRef.current.length === 0) {
+      onAISpeakingRef.current?.(false);
       return;
     }
 
@@ -55,47 +113,47 @@ export const useVoiceInterview = ({
     if (!item) return;
 
     isPlayingRef.current = true;
-    onAISpeaking?.(true);
-    log("Playing AI audio, queue remaining:", audioQueueRef.current.length);
+    onAISpeakingRef.current?.(true);
 
     try {
-      const audioBlob = await fetch(`data:audio/mpeg;base64,${item.audio}`).then((r) => r.blob());
-      const url = URL.createObjectURL(audioBlob);
+      let url: string;
+      if (item.audio instanceof Blob) {
+        url = URL.createObjectURL(item.audio);
+      } else {
+        const audioStr = item.audio as string;
+        url = audioStr.startsWith("blob:") ? audioStr : `data:audio/mpeg;base64,${audioStr}`;
+      }
+
       const player = audioElement || new Audio();
       player.src = url;
 
       const cleanup = () => {
-        isPlayingRef.current = false;
-        onAISpeaking?.(false);
-        URL.revokeObjectURL(url);
+        if (url.startsWith("blob:")) URL.revokeObjectURL(url);
         player.removeEventListener("ended", onEnded);
         player.removeEventListener("error", onError);
-      };
-
-      const onEnded = () => {
-        log("AI audio finished");
-        cleanup();
-        // Play next item if any
+        isPlayingRef.current = false;
         playNextInQueue();
       };
 
-      const onError = (e: Event) => {
-        console.error("[VoiceHook] Audio error:", e);
-        cleanup();
-        playNextInQueue();
-      };
+      const onEnded = () => cleanup();
+      const onError = () => cleanup();
 
       player.addEventListener("ended", onEnded);
       player.addEventListener("error", onError);
       await player.play();
-      log("AI audio started playing");
     } catch (err) {
-      console.error("[VoiceHook] Failed to play audio:", err);
       isPlayingRef.current = false;
-      onAISpeaking?.(false);
       playNextInQueue();
     }
-  }, [audioElement, onAISpeaking]);
+  }, [audioElement]);
+
+  /**
+   * Manually enqueue audio for playback (e.g. TTS or Replays)
+   */
+  const enqueueAudio = useCallback((audio: string | Blob) => {
+    audioQueueRef.current.push({ audio: audio as string });
+    playNextInQueue();
+  }, [playNextInQueue]);
 
   /**
    * Start the voice interview - connect WebSocket and start mic capture
@@ -121,6 +179,12 @@ export const useVoiceInterview = ({
           autoGainControl: true,
         } 
       });
+      
+      // Apply initial mute state to tracks
+      stream.getAudioTracks().forEach((track) => {
+        track.enabled = !isMutedRef.current;
+      });
+      
       streamRef.current = stream;
 
       // 2. Create audio context at 16kHz (what ElevenLabs expects)
@@ -174,7 +238,7 @@ export const useVoiceInterview = ({
               log("Final transcript:", data.text);
               setTranscript(data.text);
               setPartialTranscript("");
-              onTranscript?.(data.text);
+              onTranscriptRef.current?.(data.text);
               break;
 
             case "partial":
@@ -184,14 +248,14 @@ export const useVoiceInterview = ({
             case "audio":
               log("Received AI audio, text:", data.text?.substring(0, 50) + "...");
               audioQueueRef.current.push({ audio: data.audio, text: data.text });
-              onAudioReceived?.(data.audio, data.text);
+              onAudioReceivedRef.current?.(data.audio, data.text);
               playNextInQueue();
               break;
 
             case "text":
               // Text-only (TTS failed)
               log("Received text-only response:", data.text);
-              onAudioReceived?.("", data.text);
+              onAudioReceivedRef.current?.("", data.text);
               break;
 
             case "interrupt":
@@ -204,7 +268,7 @@ export const useVoiceInterview = ({
                 audioElement.currentTime = 0;
               }
               isPlayingRef.current = false;
-              onAISpeaking?.(false);
+              onAISpeakingRef.current?.(false);
               break;
 
             default:
@@ -219,8 +283,9 @@ export const useVoiceInterview = ({
       let chunkCount = 0;
       processor.onaudioprocess = (e) => {
         // Only send if connected
-        // CHANGED: We now send audio even if isPlayingRef.current is true (Barge-in support)
-        if (ws.readyState !== WebSocket.OPEN) return;
+        // We allow sending audio even if AI is speaking (barge-in enabled)
+        // But obviously not if locally muted
+        if (ws.readyState !== WebSocket.OPEN || isMutedRef.current) return;
         
         const inputData = e.inputBuffer.getChannelData(0);
 
@@ -242,7 +307,7 @@ export const useVoiceInterview = ({
     } catch (err) {
       console.error("[VoiceHook] Failed to start:", err);
     }
-  }, [sessionId, onTranscript, onAudioReceived, playNextInQueue]);
+  }, [sessionId, playNextInQueue, audioElement]);
 
   /**
    * Stop the voice interview - cleanup all resources
@@ -296,5 +361,6 @@ export const useVoiceInterview = ({
     partialTranscript,
     startInterview,
     stopInterview,
+    enqueueAudio,
   };
 };

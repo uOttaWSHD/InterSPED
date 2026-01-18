@@ -1,8 +1,8 @@
 {
-  "scraping_hits": 697,
-  "scraping_misses": 129,
+  "scraping_hits": 1404,
+  "scraping_misses": 186,
   "llm_hits": 0,
   "llm_misses": 0,
-  "total_api_calls_saved": 697,
+  "total_api_calls_saved": 1404,
   "estimated_credits_saved": 0.0
 }

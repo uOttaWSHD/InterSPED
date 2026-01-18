@@ -1,0 +1,28 @@
+{
+  "company": "Bad Company",
+  "source": "leetcode_problems",
+  "url": null,
+  "cached_at": "2026-01-18T04:34:52.301051",
+  "data": [
+    {
+      "title": "Container With Most Water",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/container-with-most-water"
+    },
+    {
+      "title": "Pascal's Triangle",
+      "difficulty": "easy",
+      "link": "https://leetcode.com/problems/pascals-triangle"
+    },
+    {
+      "title": "Best Time to Buy and Sell Stock",
+      "difficulty": "easy",
+      "link": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock"
+    },
+    {
+      "title": "Longest Common Prefix",
+      "difficulty": "easy",
+      "link": "https://leetcode.com/problems/longest-common-prefix"
+    }
+  ]
+}

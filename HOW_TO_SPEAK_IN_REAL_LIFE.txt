@@ -1,0 +1,16 @@
+User unmutes
+All user input is taken and streamed (no, you do not record from a specific timestamp and just send the output periodically. you simply send what hasn't been sent before and that gets  appended  to what was there before)
+User mutes
+Now we know that the user input is final
+
+You do whatever speech to text you want at this point
+
+
+if the user speaks, the AI stops speaking and will reply immediately to the user.
+
+What else do you need to know??? This is very basic stuff that you're failing to implement.
+
+Here's a simple protocol. You must follow this to the letter.
+
+Whether the user is speaking or not is determined by whether the client's mute button is off or not. The client has full control over this. Mute button off means the client is speaking. Mute button on means the AI is speaking. When the AI is done speaking it will automatically unmute the user. When the user is done speaking he will know that he has to mute himself.
+Whatever signals you decide to spend based on that does not matter. What matter is that you wipe everything else out. any other signal that controls whether ai or user is speaking is false. 

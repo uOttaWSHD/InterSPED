@@ -13,7 +13,6 @@ const InterviewLobby = ({ onStartInterview }: InterviewLobbyProps) => {
   const [jobUrl, setJobUrl] = useState("");
   const [companyName, setCompanyName] = useState("");
   const videoRef = useRef<HTMLVideoElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const dataArrayRef = useRef<Uint8Array | null>(null);
@@ -54,7 +53,7 @@ const InterviewLobby = ({ onStartInterview }: InterviewLobbyProps) => {
         }
 
         // Setup audio analysis
-        const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+        const audioContext = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
         audioContextRef.current = audioContext;
 
         const analyser = audioContext.createAnalyser();
@@ -70,6 +69,7 @@ const InterviewLobby = ({ onStartInterview }: InterviewLobbyProps) => {
         // Animation loop for mic level
         const animationLoop = () => {
           if (analyserRef.current && dataArrayRef.current && !isMuted) {
+            // Use 'any' cast to bypass strict ArrayBuffer vs SharedArrayBuffer type mismatch in some TS environments
             analyserRef.current.getByteFrequencyData(dataArrayRef.current as any);
             const average = 
               dataArrayRef.current.reduce((a, b) => a + b) / 
@@ -285,7 +285,7 @@ const InterviewLobby = ({ onStartInterview }: InterviewLobbyProps) => {
               } else {
                 alert("Debug interview start failed.");
               }
-            } catch (e) {
+            } catch {
               alert("Debug interview start failed.");
             }
           }}

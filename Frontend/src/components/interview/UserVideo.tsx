@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { User, VideoOff } from "lucide-react";
+import { VideoOff } from "lucide-react";
 
 interface UserVideoProps {
   isVideoOn: boolean;

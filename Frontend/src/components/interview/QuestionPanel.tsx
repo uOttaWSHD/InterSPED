@@ -1,6 +1,5 @@
 import { ChevronRight, ChevronLeft, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
 
 interface Question {
   id: number;

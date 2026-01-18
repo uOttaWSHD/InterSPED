@@ -41,6 +41,7 @@ class ElevenLabsSTTStream:
         self._queue = asyncio.Queue()
         self._closed = False
         self._first_chunk_sent = False
+        self._first_message: dict[str, Any] | None = None
 
     @classmethod
     async def open_ws(cls, config: dict[str, Any]) -> Self:
@@ -85,18 +86,61 @@ class ElevenLabsSTTStream:
         chunks_sent = 0
         print("DEBUG: wait_for_chunks started")
 
+        # PRIME THE CONNECTION: Send 250ms of silence immediately to prevent early timeout
+        # and ensure the session is active.
+        try:
+            silence_prime = np.zeros(4000, dtype=np.int16)  # 250ms at 16kHz
+            m_prime = {
+                "message_type": "input_audio_chunk",
+                "audio_base_64": chunk_to_b64(silence_prime),
+                "commit": False,
+                "sample_rate": SAMPLE_RATE_TARGET,
+            }
+            await self._socket.send(orjson.dumps(m_prime).decode("utf-8"))
+            print("DEBUG: Sent priming silence to ElevenLabs")
+        except Exception as e:
+            print(f"DEBUG: Failed to prime connection: {e}")
+
         while not self._closed and not self._socket.close_code:
             try:
-                # Wait for audio with a timeout to allow checking close status
+                # Use wait_for with a generous timeout (2s) to implement Keep-Alive Heartbeat
+                # This ensures we don't block forever if the user is silent, preventing ELs timeout.
                 try:
-                    chunk = await asyncio.wait_for(self._queue.get(), timeout=0.1)
+                    chunk = await asyncio.wait_for(self._queue.get(), timeout=2.0)
                 except asyncio.TimeoutError:
+                    # HEARTBEAT: Send 100ms of silence to keep connection alive during user silence
+                    silence = np.zeros(1600, dtype=np.int16)
+                    m = {
+                        "message_type": "input_audio_chunk",
+                        "audio_base_64": chunk_to_b64(silence),
+                        "commit": False,
+                        "sample_rate": SAMPLE_RATE_TARGET,
+                    }
+                    await self._socket.send(orjson.dumps(m).decode("utf-8"))
                     continue
 
+                if isinstance(chunk, str):
+                    if chunk == "COMMIT":
+                        # Only send commit if we have actually sent audio (or primed).
+                        # Since we primed, we are safe to send commit.
+                        print(
+                            "DEBUG: Sending explicit COMMIT to ElevenLabs (with silence)"
+                        )
+                        # Send 100ms of silence
+                        silence = np.zeros(1600, dtype=np.int16)
+                        m = {
+                            "message_type": "input_audio_chunk",
+                            "audio_base_64": chunk_to_b64(silence),
+                            "commit": True,
+                            "sample_rate": SAMPLE_RATE_TARGET,
+                        }
+                        await self._socket.send(orjson.dumps(m).decode("utf-8"))
+                    continue
+
+                # Normal Audio Chunk
                 # Convert float32 [-1, 1] to int16
                 audio_pcm16 = (chunk * 32767).astype(np.int16)
 
-                # Build the message according to ElevenLabs spec
                 m = {
                     "message_type": "input_audio_chunk",
                     "audio_base_64": chunk_to_b64(audio_pcm16),
@@ -105,11 +149,10 @@ class ElevenLabsSTTStream:
                 }
 
                 await self._socket.send(orjson.dumps(m).decode("utf-8"))
-                self._first_chunk_sent = True
                 chunks_sent += 1
 
-                # Log every 100 chunks sent to ElevenLabs
-                if chunks_sent % 100 == 0:
+                # Log every 50 chunks (approx 5s)
+                if chunks_sent % 50 == 0:
                     print(f"DEBUG: Sent {chunks_sent} chunks to ElevenLabs")
 
             except Exception as e:
@@ -118,8 +161,6 @@ class ElevenLabsSTTStream:
                     import traceback
 
                     traceback.print_exc()
-                # Don't break - continue trying to send
-                # Only break if socket is actually closed
                 if self._socket.close_code:
                     print(
                         f"DEBUG: ElevenLabs socket closed with code {self._socket.close_code}"
@@ -134,6 +175,11 @@ class ElevenLabsSTTStream:
         """Queue audio data to be sent to ElevenLabs"""
         if not self._closed:
             await self._queue.put(pcm_data)
+
+    async def send_commit(self):
+        """Queue a commit signal to be sent to ElevenLabs"""
+        if not self._closed:
+            await self._queue.put("COMMIT")
 
     def __aiter__(self):
         return self

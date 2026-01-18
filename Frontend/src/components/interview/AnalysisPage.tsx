@@ -20,14 +20,15 @@ const AnalysisPage = ({ companyName, jobUrl, onComplete, onFail }: AnalysisPageP
     stepsTemplate.map((s, i) => ({ ...s, status: i === 0 ? "loading" : "pending" }))
   );
   const [error, setError] = useState<string | null>(null);
-
   useEffect(() => {
     let isMounted = true;
+    const abortController = new AbortController();
 
     const run = async () => {
       try {
         // Start API call immediately
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/scrape`, {
+          signal: abortController.signal,
           method: "POST",
           headers: { 
             "Accept": "application/json",
@@ -39,7 +40,15 @@ const AnalysisPage = ({ companyName, jobUrl, onComplete, onFail }: AnalysisPageP
         const data = await res.json();
         console.log("Scrape data:", data);
 
+        // Update steps: Scrape, Extract, Summarize are done
+        setSteps(prev => prev.map(s => {
+          if (["scrape", "extract", "summarize"].includes(s.key)) return { ...s, status: "done" };
+          if (s.key === "questions") return { ...s, status: "loading" }; // Start loading questions
+          return s;
+        }));
+
         const interviewRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/interview/start`, {
+          signal: abortController.signal,
           method: "POST",
           headers: { 
             "Accept": "application/json",
@@ -74,18 +83,21 @@ const AnalysisPage = ({ companyName, jobUrl, onComplete, onFail }: AnalysisPageP
              console.warn("[AnalysisPage] Component unmounted, skipping onComplete");
           }
         }, 600);
-      } catch (e: any) {
+      } catch (e: unknown) {
+        if ((e as Error).name === 'AbortError') return;
         console.error("Analysis failed:", e);
-        setError("Failed to analyze job posting. Please try again.");
+        if (isMounted) setError("Failed to analyze job posting. Please try again.");
       }
     };
 
-    run();
+    const timer = setTimeout(run, 100);
     return () => { 
         console.log("[AnalysisPage] Unmounting/Cleaning up");
+        clearTimeout(timer);
+        abortController.abort();
         isMounted = false; 
     };
-  }, [companyName, jobUrl, onComplete]);
+  }, [companyName, jobUrl, onComplete, onFail]);
 
   return (
     <div className="min-h-screen bg-[hsl(var(--interview-surface))] flex flex-col items-center justify-center p-6">

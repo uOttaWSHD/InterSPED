@@ -58,16 +58,16 @@ async def voice_websocket(websocket: WebSocket):
 
     try:
         # ElevenLabs Scribe STT parameters
-        # Based on official docs: vad_silence_threshold_secs (float), model_id is optional
+        # Based on official docs: commit_strategy="manual" ensures we only commit when the user mutes
         els = await ElevenLabsSTTStream.open_ws(
             {
                 "token": TOKEN,
-                "audio_format": "pcm_16000",  # Tell ElevenLabs we're sending 16kHz PCM
-                "commit_strategy": "vad",
-                "vad_silence_threshold_secs": 1.2,  # INCREASED from 1.0 to 1.2 for less cutting off
-                "vad_threshold": 0.35,  # INCREASED from 0.3 to 0.35 to ignore background noise
-                "min_speech_duration_ms": 150,  # INCREASED from 100 to 150 to ignore short bursts
-                "min_silence_duration_ms": 400,  # INCREASED from 300 to 400 for better segmentation
+                "audio_format": "pcm_16000",
+                "commit_strategy": "manual",
+                # "vad_silence_threshold_secs": 2.0,  <-- Disabled to remove "waiting for silence"
+                # "vad_threshold": 0.4,
+                # "min_speech_duration_ms": 250,
+                # "min_silence_duration_ms": 500,
             }
         )
         print("DEBUG: ElevenLabs STT connection opened successfully")
@@ -83,18 +83,130 @@ async def voice_websocket(websocket: WebSocket):
     last_transcript = None  # Deduplication
     is_completed = False  # Track if interview is complete
 
+    # Buffers for "Mic State" logic
+    buffered_transcript = ""  # Stores completed sentences while mic is still on
+    current_partial = ""  # Stores the current incomplete sentence
+
     # State management for handling interruptions
     current_processing_task: asyncio.Task | None = None
     interrupt_event = asyncio.Event()
 
+    # Synchronization for manual commit
+    # transcript_committed_event = asyncio.Event()  <-- Removing this blocking event
+
+    # Flag to track if we are waiting for a commit to complete
+    is_waiting_for_commit = False
+
+    async def handle_final_transcript(transcript: str):
+        nonlocal \
+            last_transcript, \
+            is_completed, \
+            current_processing_task, \
+            is_waiting_for_commit
+
+        # Reset commit flag since we are handling it
+        is_waiting_for_commit = False
+
+        clean_text = transcript.strip()
+        if not clean_text:
+            return
+
+        # Deduplication: Prevent technical double-sends, but allow repeats in new context
+        if clean_text == last_transcript:
+            print(f"DEBUG: Skipping duplicate transcript: '{clean_text[:20]}...'")
+            return
+
+        last_transcript = clean_text
+        print(f"User (Final Input): {clean_text}")
+
+        # Echo back to user
+        await websocket.send_text(
+            orjson.dumps({"type": "transcript", "text": clean_text}).decode("utf-8")
+        )
+
+        # Get session
+        session = session_service.get_session(session_id)
+        if not session:
+            print(f"Session {session_id} not found")
+            return
+
+        # Check turn limit
+        if session["turn_count"] >= session["max_turns"]:
+            if not is_completed:
+                is_completed = True
+                try:
+                    end_text = "The interview is now complete. Thank you for your time."
+                    b64_audio = await generate_tts(end_text)
+                    await websocket.send_text(
+                        orjson.dumps(
+                            {
+                                "type": "audio",
+                                "audio": b64_audio,
+                                "text": end_text,
+                            }
+                        ).decode("utf-8")
+                    )
+                except Exception:
+                    pass
+            return
+
+        # Increment turn
+        turn = session_service.increment_turn(session_id)
+        if turn is None:
+            return
+
+        company_data = StartRequest(**session["company_data"])
+
+        # Start new processing task
+        interrupt_event.clear()
+        current_processing_task = asyncio.create_task(
+            process_user_turn(clean_text, turn, company_data, session_id)
+        )
+
     async def read_from_ws():
-        nonlocal audio_chunk_count
+        nonlocal \
+            audio_chunk_count, \
+            current_partial, \
+            buffered_transcript, \
+            is_waiting_for_commit
         try:
             while True:
                 msg = await websocket.receive()
+
+                # Check for commit signal
                 if "text" in msg:
+                    try:
+                        text_data = msg["text"]
+                        # Try to parse as JSON first (for control messages)
+                        if text_data.startswith("{"):
+                            try:
+                                json_msg = orjson.loads(text_data)
+                                if json_msg.get("type") == "commit":
+                                    print(
+                                        "DEBUG: Received manual commit signal (Mic Muted)"
+                                    )
+
+                                    # Set the flag to indicate we expect a final transcript shortly
+                                    is_waiting_for_commit = True
+
+                                    # Tell ElevenLabs to commit immediately (this now sends silence+commit)
+                                    await els.send_commit()
+
+                                    # We do NOT wait here. We rely on receive_from_els to trigger handle_final_transcript
+                                    print(
+                                        "DEBUG: Commit sent. Waiting for async response..."
+                                    )
+                                    continue
+                            except Exception as e:
+                                print(f"JSON Parse Error: {e}")
+
+                    except Exception:
+                        pass
+
+                    # If not JSON, assume base64 audio
                     data = msg["text"]
                     audio_bytes = base64.b64decode(data)
+
                 elif "bytes" in msg:
                     audio_bytes = msg["bytes"]
                 else:
@@ -104,18 +216,33 @@ async def voice_websocket(websocket: WebSocket):
                 if len(pcm16) == 0:
                     continue
 
+                # INTERRUPTION LOGIC:
+                # If the user sends audio (speaks) while the AI is processing/speaking, cancel the AI.
+                if (
+                    current_processing_task
+                    and not current_processing_task.done()
+                    and not interrupt_event.is_set()
+                ):
+                    print("DEBUG: Interruption detected! User started speaking.")
+                    interrupt_event.set()
+                    current_processing_task.cancel()
+
+                    # Notify frontend to stop playback
+                    try:
+                        await websocket.send_text(
+                            orjson.dumps({"type": "interrupt"}).decode("utf-8")
+                        )
+                    except Exception as e:
+                        print(f"Failed to send interrupt signal: {e}")
+
                 audio_chunk_count += 1
-                # Log first few chunks, then every 100th
                 if audio_chunk_count <= 5 or audio_chunk_count % 100 == 0:
-                    # Calculate RMS energy for debugging
                     rms = np.sqrt(np.mean(pcm16.astype(np.float32) ** 2))
                     print(
                         f"DEBUG: Audio chunk #{audio_chunk_count}, samples: {len(pcm16)}, RMS: {rms:.1f}"
                     )
 
                 pcm_float = pcm16.astype(np.float32) / 32767.0
-
-                # Only resample if needed
                 if sample_rate_src != SAMPLE_RATE_TARGET:
                     pcm_16k = resampy.resample(
                         pcm_float, sample_rate_src, SAMPLE_RATE_TARGET
@@ -129,9 +256,12 @@ async def voice_websocket(websocket: WebSocket):
         except Exception as e:
             print(f"WS Read Error: {e}")
 
+    # ... process_user_turn defined below ...
+
     async def process_user_turn(
         transcript: str, turn: int, company_data: StartRequest, session_id: str
     ):
+        nonlocal last_transcript
         """
         Process a single turn: Send to Solace, Generate TTS, Send to User.
         This runs in a cancellable task to support interruption.
@@ -151,13 +281,32 @@ async def voice_websocket(websocket: WebSocket):
             session = session_service.get_session(session_id)
             context_id = session.get("context_id") if session else None
 
+            # Get recent history (last 2000 chars to fit in context)
+            full_history = session.get("transcript", "") if session else ""
+            recent_history = (
+                full_history[-2000:] if len(full_history) > 2000 else full_history
+            )
+
             message = f"""[SYSTEM CONTEXT]
 {system_context}
+
+[CONVERSATION HISTORY]
+...
+{recent_history}
 
 [Turn {turn}]
 User said: {transcript}
 
-ACKNOWLEDGE what they said briefly, then: {turn_instruction}"""
+[CURRENT PHASE & GOAL]
+{turn_instruction}
+
+[RESPONSE GUIDELINES]
+1. PRIORITIZE the user's immediate input (questions, checks, or concerns).
+2. CHECK HISTORY: Did the user answer the LAST question asked by the Interviewer?
+   - IF NO: Acknowledge their input, then GENTLY steer them back to the unanswered question. Do NOT jump to the [CURRENT PHASE & GOAL] yet.
+   - IF YES (or if it was just small talk): Proceed to [CURRENT PHASE & GOAL].
+3. Keep it conversational and professional.
+"""
 
             print(f"Sending message to Solace for turn {turn}...")
 
@@ -193,6 +342,9 @@ ACKNOWLEDGE what they said briefly, then: {turn_instruction}"""
             # Cleanup response text
             response_text = response_text.replace("[INTERVIEW_COMPLETE]", "").strip()
             print(f"AI: {response_text}")
+
+            # Reset deduplication state so user can repeat themselves in the next turn
+            last_transcript = None
 
             # Generate TTS
             try:
@@ -232,14 +384,25 @@ ACKNOWLEDGE what they said briefly, then: {turn_instruction}"""
             raise
         except Exception as e:
             print(f"Error in process_user_turn: {e}")
+            import traceback
+
+            traceback.print_exc()
+
+            # Inform user of error
+            try:
+                error_msg = "I'm having trouble connecting to my brain right now. Please try again."
+                await websocket.send_text(
+                    orjson.dumps({"type": "text", "text": error_msg}).decode("utf-8")
+                )
+            except:
+                pass
 
     async def receive_from_els():
-        nonlocal last_transcript, is_completed, current_processing_task
+        nonlocal current_partial, buffered_transcript
         try:
             async for msg in els:
                 data = orjson.loads(msg)
                 msg_type = data.get("message_type")
-                # print(f"ELS DEBUG: received {msg_type}")
 
                 # Handle session_started message
                 if msg_type == "session_started":
@@ -248,123 +411,87 @@ ACKNOWLEDGE what they said briefly, then: {turn_instruction}"""
                     )
                     continue
 
-                # Handle committed_transcript (final transcript with VAD)
+                    # Handle committed_transcript
                 if msg_type == "committed_transcript":
                     transcript = data.get("text", "").strip()
                     if transcript:
-                        # Deduplication
-                        if transcript == last_transcript:
-                            print(
-                                f"DEBUG: Skipping duplicate transcript: '{transcript[:20]}...'"
-                            )
-                            continue
+                        print(f"DEBUG: Buffering committed text: '{transcript}'")
+                        if buffered_transcript:
+                            buffered_transcript += " " + transcript
+                        else:
+                            buffered_transcript = transcript
+                        current_partial = ""  # Reset partial as it is now committed
 
-                        # INTERRUPTION LOGIC:
-                        # If we receive a new committed transcript, it means the user has finished a new sentence.
-                        # If the AI was currently processing a previous sentence (thinking) or speaking,
-                        # we want to STOP that and focus on the new input.
-
-                        if (
-                            current_processing_task
-                            and not current_processing_task.done()
-                        ):
-                            print(
-                                f"DEBUG: Interrupting previous task for new input: '{transcript[:20]}...'"
-                            )
-                            # 1. Cancel the backend processing task
-                            current_processing_task.cancel()
-                            interrupt_event.set()
-
-                            # 2. Send interrupt signal to Frontend to stop audio playback immediately
-                            await websocket.send_text(
-                                orjson.dumps({"type": "interrupt"}).decode("utf-8")
-                            )
-
-                            # Wait briefly for cancellation to propagate
-                            try:
-                                await current_processing_task
-                            except asyncio.CancelledError:
-                                pass
-
-                            # Reset event for new task
-                            interrupt_event.clear()
-
-                        last_transcript = transcript
-                        print(f"User (New Input): {transcript}")
-
-                        # Echo back to user
+                        # Send updated COMBINED partial to frontend
+                        combined_text = buffered_transcript
                         await websocket.send_text(
                             orjson.dumps(
-                                {"type": "transcript", "text": transcript}
+                                {"type": "partial", "text": combined_text}
                             ).decode("utf-8")
                         )
 
-                        # Get session
-                        session = session_service.get_session(session_id)
-                        if not session:
-                            print(f"Session {session_id} not found")
-                            continue
-
-                        # Check turn limit
-                        if session["turn_count"] >= session["max_turns"]:
-                            if not is_completed:
-                                print("Turn limit reached")
-                                is_completed = True
-                                # Send completion message
-                                try:
-                                    end_text = "The interview is now complete. Thank you for your time."
-                                    b64_audio = await generate_tts(end_text)
-                                    await websocket.send_text(
-                                        orjson.dumps(
-                                            {
-                                                "type": "audio",
-                                                "audio": b64_audio,
-                                                "text": end_text,
-                                            }
-                                        ).decode("utf-8")
-                                    )
-                                except Exception as e:
-                                    print(f"Failed to send completion audio: {e}")
-                            continue
-
-                        # Increment turn
-                        turn = session_service.increment_turn(session_id)
-                        if turn is None:
-                            continue
-
-                        company_data = StartRequest(**session["company_data"])
-
-                        # Start new processing task
-                        interrupt_event.clear()
-                        current_processing_task = asyncio.create_task(
-                            process_user_turn(
-                                transcript, turn, company_data, session_id
+                        # CRITICAL: If we were waiting for a commit (User Muted), process immediately
+                        if is_waiting_for_commit:
+                            print(
+                                f"DEBUG: Commit completed by event. Final text: {buffered_transcript}"
                             )
-                        )
+                            await handle_final_transcript(buffered_transcript)
+                            # Reset buffers
+                            buffered_transcript = ""
+                            current_partial = ""
 
-                # We can also detect "partial_transcript" to trigger interruptions EARLIER
-                # e.g., if user starts speaking (partial text appears), we can lower volume or pause AI.
+                # Handle partial_transcript
                 elif msg_type == "partial_transcript":
                     text = data.get("text", "")
                     if text:
-                        # Send partial to frontend
-                        await websocket.send_text(
-                            orjson.dumps({"type": "partial", "text": text}).decode(
-                                "utf-8"
-                            )
+                        current_partial = text
+
+                        # Send updated COMBINED partial to frontend
+                        # Combine buffered (previous sentences) + current partial (current sentence)
+                        combined_text = (
+                            f"{buffered_transcript} {current_partial}".strip()
                         )
 
-                        # OPTIONAL: Aggressive interruption on partials?
-                        # For now, let's stick to committed transcripts to avoid false positives.
+                        await websocket.send_text(
+                            orjson.dumps(
+                                {"type": "partial", "text": combined_text}
+                            ).decode("utf-8")
+                        )
 
         except Exception as e:
             print(f"ELS Receive Error: {e}")
+
             import traceback
 
             traceback.print_exc()
 
     try:
-        await asyncio.gather(read_from_ws(), receive_from_els(), els.wait_for_chunks())
+        # Run tasks. If wait_for_chunks exits (e.g. connection closed), we want to know.
+        # But we also want to keep reading from the client if possible?
+        # No, if ELs closes, we can't do anything useful.
+
+        chunk_task = asyncio.create_task(els.wait_for_chunks())
+        read_task = asyncio.create_task(read_from_ws())
+        recv_task = asyncio.create_task(receive_from_els())
+
+        done, pending = await asyncio.wait(
+            [chunk_task, read_task, recv_task], return_when=asyncio.FIRST_COMPLETED
+        )
+
+        print(f"DEBUG: Main loop finished. Done tasks: {[t.get_name() for t in done]}")
+
+        # If wait_for_chunks finished, it means ELs closed.
+        if chunk_task in done:
+            print("DEBUG: wait_for_chunks exited early. Cancelling other tasks.")
+
+        # Cancel any pending tasks to ensure clean shutdown
+        for task in pending:
+            task.cancel()
+            try:
+                await task
+            except asyncio.CancelledError:
+                pass
+
     except Exception as e:
         print(f"Handler Error: {e}")
     finally:

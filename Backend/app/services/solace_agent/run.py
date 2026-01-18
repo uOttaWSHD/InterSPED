@@ -45,9 +45,9 @@ async def wait_for_sam_ready(timeout: int = 60) -> bool:
 def start_sam():
     """Start SAM as a subprocess"""
     global sam_process
-    
+
     print("🚀 Starting Solace Agent Mesh...")
-    
+
     # Start SAM using uv run
     sam_process = subprocess.Popen(
         ["uv", "run", "sam", "run", "configs/"],
@@ -55,16 +55,16 @@ def start_sam():
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         text=True,
-        preexec_fn=os.setsid  # Create new process group for clean shutdown
+        preexec_fn=os.setsid,  # Create new process group for clean shutdown
     )
-    
+
     return sam_process
 
 
 def stop_sam():
     """Stop SAM subprocess"""
     global sam_process
-    
+
     if sam_process:
         print("🛑 Stopping Solace Agent Mesh...")
         try:
@@ -85,15 +85,15 @@ async def lifespan(app: FastAPI):
     """Manage SAM lifecycle with FastAPI"""
     # Startup
     start_sam()
-    
+
     print("⏳ Waiting for SAM gateway to be ready...")
     if await wait_for_sam_ready():
         print("✅ SAM gateway is ready!")
     else:
         print("⚠️  SAM gateway may not be fully ready, continuing anyway...")
-    
+
     yield
-    
+
     # Shutdown
     stop_sam()
 
@@ -270,72 +270,109 @@ def build_system_context(company_data: StartRequest) -> str:
     overview = company_data.company_overview or CompanyOverview()
     insights = company_data.interview_insights or InterviewInsights()
     tech_reqs = insights.technical_requirements or TechnicalRequirements()
-    
+
     company_name = overview.name or "the company"
     industry = overview.industry or "technology"
-    
+
     # Build tech stack string
-    tech_stack = ", ".join(tech_reqs.programming_languages[:5]) if tech_reqs.programming_languages else "various technologies"
-    frameworks = ", ".join(tech_reqs.frameworks_tools[:5]) if tech_reqs.frameworks_tools else ""
-    
+    tech_stack = (
+        ", ".join(tech_reqs.programming_languages[:5])
+        if tech_reqs.programming_languages
+        else "various technologies"
+    )
+    frameworks = (
+        ", ".join(tech_reqs.frameworks_tools[:5]) if tech_reqs.frameworks_tools else ""
+    )
+
     # Build focus areas from what they look for
-    focus_areas = ", ".join(insights.what_they_look_for[:5]) if insights.what_they_look_for else "technical skills, problem-solving"
-    
+    focus_areas = (
+        ", ".join(insights.what_they_look_for[:5])
+        if insights.what_they_look_for
+        else "technical skills, problem-solving"
+    )
+
     # Get sample questions to guide the interview
-    behavioral_qs = [q.question for q in insights.common_questions[:2]] if insights.common_questions else []
-    system_design_qs = [q.question for q in insights.system_design_questions[:2]] if insights.system_design_questions else []
-    coding_problems = [f"{p.title}: {p.problem_statement[:100]}" for p in insights.coding_problems[:2]] if insights.coding_problems else []
-    
+    behavioral_qs = (
+        [q.question for q in insights.common_questions[:2]]
+        if insights.common_questions
+        else []
+    )
+    system_design_qs = (
+        [q.question for q in insights.system_design_questions[:2]]
+        if insights.system_design_questions
+        else []
+    )
+    coding_problems = (
+        [
+            f"{p.title}: {p.problem_statement[:100]}"
+            for p in insights.coding_problems[:2]
+        ]
+        if insights.coding_problems
+        else []
+    )
+
     # Build context string
     context = f"""Company: {company_name}
 Industry: {industry}
-Culture: {overview.culture or 'Professional and innovative'}
+Culture: {overview.culture or "Professional and innovative"}
 Tech Stack: {tech_stack}
 Frameworks/Tools: {frameworks}
 Focus Areas: {focus_areas}
-Experience Level: {tech_reqs.experience_level or 'varies'}
+Experience Level: {tech_reqs.experience_level or "varies"}
 
-Company Values: {', '.join(insights.company_values_in_interviews[:3]) if insights.company_values_in_interviews else 'excellence, teamwork, innovation'}
+Company Values: {", ".join(insights.company_values_in_interviews[:3]) if insights.company_values_in_interviews else "excellence, teamwork, innovation"}
 
 Sample Behavioral Questions to Draw From:
-{chr(10).join(f'- {q}' for q in behavioral_qs) if behavioral_qs else '- Tell me about yourself'}
+{chr(10).join(f"- {q}" for q in behavioral_qs) if behavioral_qs else "- Tell me about yourself"}
 
 Sample System Design Topics:
-{chr(10).join(f'- {q}' for q in system_design_qs) if system_design_qs else '- Design a scalable system'}
+{chr(10).join(f"- {q}" for q in system_design_qs) if system_design_qs else "- Design a scalable system"}
 
 Sample Coding Topics:
-{chr(10).join(f'- {p}' for p in coding_problems) if coding_problems else '- Data structures and algorithms'}
+{chr(10).join(f"- {p}" for p in coding_problems) if coding_problems else "- Data structures and algorithms"}
 
 Red Flags to Probe For:
-{', '.join(insights.red_flags_to_avoid[:3]) if insights.red_flags_to_avoid else 'lack of preparation, poor communication'}
+{", ".join(insights.red_flags_to_avoid[:3]) if insights.red_flags_to_avoid else "lack of preparation, poor communication"}
 
 You are John, a senior engineer interviewing a candidate for a role at {company_name}. Be natural and conversational."""
-    
+
     return context
 
 
 def get_turn_instruction(turn: int, company_data: StartRequest) -> str:
     """Get instruction for specific turn based on company data"""
     insights = company_data.interview_insights or InterviewInsights()
-    
+
     # Try to get actual questions from the data
-    behavioral_q = insights.common_questions[0].question if insights.common_questions else None
-    system_design_q = insights.system_design_questions[0].question if insights.system_design_questions else None
-    coding_q = f"a coding question about {insights.coding_problems[0].title}" if insights.coding_problems else None
-    
+    behavioral_q = (
+        insights.common_questions[0].question if insights.common_questions else None
+    )
+    system_design_q = (
+        insights.system_design_questions[0].question
+        if insights.system_design_questions
+        else None
+    )
+    coding_q = (
+        f"a coding question about {insights.coding_problems[0].title}"
+        if insights.coding_problems
+        else None
+    )
+
     instructions = {
         1: f"ASK about: {behavioral_q or 'their experience with a challenging project'}. MAX 2 sentences.",
         2: f"ASK about: {system_design_q or 'how they would design a scalable system'}. MAX 2 sentences.",
-        3: "SAY GOODBYE. Thank them for their time and say you'll be in touch. MAX 2 sentences."
+        3: "SAY GOODBYE. Thank them for their time and say you'll be in touch. MAX 2 sentences.",
     }
     return instructions.get(turn, "SAY GOODBYE.")
 
 
-async def send_to_solace(message: str, context_id: Optional[str] = None, agent_name: str = AGENT_NAME) -> tuple[Optional[str], Optional[str], Optional[str]]:
+async def send_to_solace(
+    message: str, context_id: Optional[str] = None, agent_name: str = AGENT_NAME
+) -> tuple[Optional[str], Optional[str], Optional[str]]:
     """Send message to Solace Agent Mesh and get response"""
     request_id = int(time.time() * 1000)
     msg_id = f"msg_{request_id}"
-    
+
     # Build payload
     payload = {
         "jsonrpc": "2.0",
@@ -347,51 +384,58 @@ async def send_to_solace(message: str, context_id: Optional[str] = None, agent_n
                 "kind": "message",
                 "role": "user",
                 "metadata": {"agent_name": agent_name},
-                "parts": [{"kind": "text", "text": message}]
+                "parts": [{"kind": "text", "text": message}],
             }
-        }
+        },
     }
-    
+
     if context_id:
         payload["params"]["contextId"] = context_id
-    
+
     async with httpx.AsyncClient(timeout=60.0) as client:
         # Step 1: Submit the message and get task ID
         try:
             submit_response = await client.post(
                 f"{GATEWAY_URL}/api/v1/message:stream",
                 json=payload,
-                headers={"Content-Type": "application/json"}
+                headers={"Content-Type": "application/json"},
             )
             submit_data = submit_response.json()
         except Exception as e:
             return None, context_id, f"Error submitting message: {e}"
-        
+
         task_id = submit_data.get("result", {}).get("id")
         new_context_id = submit_data.get("result", {}).get("contextId", context_id)
-        
+
         if not task_id:
             return None, new_context_id, "Could not get task ID"
-        
+
         # Step 2: Subscribe to SSE events for this task
         try:
             async with client.stream(
                 "GET",
                 f"{GATEWAY_URL}/api/v1/sse/subscribe/{task_id}",
-                headers={"Accept": "text/event-stream"}
+                headers={"Accept": "text/event-stream"},
             ) as sse_response:
                 full_text = ""
                 async for line in sse_response.aiter_lines():
                     if not line or not line.startswith("data:"):
                         continue
-                    
+
                     json_data = line[5:].strip()  # Remove "data:" prefix
                     try:
                         event_data = json.loads(json_data)
-                        state = event_data.get("result", {}).get("status", {}).get("state")
-                        
+                        state = (
+                            event_data.get("result", {}).get("status", {}).get("state")
+                        )
+
                         if state == "completed":
-                            parts = event_data.get("result", {}).get("status", {}).get("message", {}).get("parts", [])
+                            parts = (
+                                event_data.get("result", {})
+                                .get("status", {})
+                                .get("message", {})
+                                .get("parts", [])
+                            )
                             for part in parts:
                                 if part.get("kind") == "text":
                                     full_text = part.get("text", "")
@@ -399,9 +443,9 @@ async def send_to_solace(message: str, context_id: Optional[str] = None, agent_n
                             break
                     except json.JSONDecodeError:
                         continue
-                
+
                 return full_text, new_context_id, None
-            
+
         except Exception as e:
             return None, new_context_id, f"Error reading SSE stream: {e}"
 
@@ -415,39 +459,36 @@ async def start_interview(company_data: StartRequest):
     company_name = "the company"
     if company_data.company_overview and company_data.company_overview.name:
         company_name = company_data.company_overview.name
-    
+
     # Build the initial message with company context
     system_context = build_system_context(company_data)
-    
+
     message = f"""[SYSTEM CONTEXT]
 {system_context}
 
 [START INTERVIEW - Introduce yourself as John from {company_name} and ask about their background]"""
-    
+
     # Send to Solace
     response_text, context_id, error = await send_to_solace(message)
-    
+
     if error:
         raise HTTPException(status_code=500, detail=error)
-    
+
     if not response_text:
         # Fallback opening
         response_text = f"Hello, my name is John and I'm a senior engineer at {company_name}. Thanks for joining me today. Can you start by telling me a little about your background and experience?"
-    
+
     # Store session with company data for later turns
     sessions[session_id] = {
         "context_id": context_id,
         "turn_count": 0,
         "transcript": f"Interviewer: {response_text}",
         "max_turns": 3,
-        "company_data": company_data.model_dump()  # Store for use in respond
+        "company_data": company_data.model_dump(),  # Store for use in respond
     }
-    
+
     return StartResponse(
-        session_id=session_id,
-        response=response_text,
-        turn=0,
-        interview_complete=False
+        session_id=session_id, response=response_text, turn=0, interview_complete=False
     )
 
 
@@ -456,67 +497,73 @@ async def respond_to_interview(data: RespondRequest):
     """Send a response to the interviewer"""
     session_id = data.session_id
     user_input = data.text.strip()
-    
+
     if session_id not in sessions:
-        raise HTTPException(status_code=404, detail="Invalid session_id. Start a new interview first.")
-    
+        raise HTTPException(
+            status_code=404, detail="Invalid session_id. Start a new interview first."
+        )
+
     if not user_input:
         raise HTTPException(status_code=400, detail="text is required")
-    
+
     session = sessions[session_id]
-    
+
     # Check if interview is already complete
     if session["turn_count"] >= session["max_turns"]:
         raise HTTPException(
-            status_code=400, 
-            detail="Interview is complete. Call /api/interview/summary to get feedback."
+            status_code=400,
+            detail="Interview is complete. Call /api/interview/summary to get feedback.",
         )
-    
+
     # Increment turn count
     session["turn_count"] += 1
     turn = session["turn_count"]
-    
+
     # Rebuild company data from session
     company_data = StartRequest(**session["company_data"])
-    
+
     # Build the message with company context
     system_context = build_system_context(company_data)
     turn_instruction = get_turn_instruction(turn, company_data)
-    
+
     message = f"""[SYSTEM CONTEXT]
 {system_context}
 
 [Turn {turn} of 3]
 User said: {user_input}
 
-ACKNOWLEDGE what they said, then: {turn_instruction}"""
-    
+INSTRUCTIONS:
+- If the user answered the question: ACKNOWLEDGE what they said, then {turn_instruction}
+- If the user asked a question or needs clarification: ANSWER them clearly. Do NOT move to the next stage yet.
+- Keep response concise."""
+
     # Send to Solace
     response_text, new_context_id, error = await send_to_solace(
-        message, 
-        context_id=session["context_id"]
+        message, context_id=session["context_id"]
     )
-    
+
     if error:
         raise HTTPException(status_code=500, detail=error)
-    
+
     # Update session
     session["context_id"] = new_context_id
-    
+
     # Remove [INTERVIEW_COMPLETE] marker if present
     if response_text:
         response_text = response_text.replace("[INTERVIEW_COMPLETE]", "").strip()
-    
+
     # Update transcript
-    session["transcript"] += f"\n\nCandidate: {user_input}\n\nInterviewer: {response_text}"
-    
+    session["transcript"] += (
+        f"\n\nCandidate: {user_input}\n\nInterviewer: {response_text}"
+    )
+
     interview_complete = turn >= session["max_turns"]
-    
+
     return RespondResponse(
         session_id=session_id,
         response=response_text or "(No response received)",
         turn=turn,
-        interview_complete=interview_complete
+        interview_complete=interview_complete,
     )
 
 
@@ -524,13 +571,13 @@ ACKNOWLEDGE what they said, then: {turn_instruction}"""
 async def get_interview_summary(data: SummaryRequest):
     """Get summary of the interview"""
     session_id = data.session_id
-    
+
     if session_id not in sessions:
         raise HTTPException(status_code=404, detail="Invalid session_id")
-    
+
     session = sessions[session_id]
     transcript = session["transcript"]
-    
+
     # Build summary request with full transcript
     message = f"""Here is the complete interview transcript. Please provide accurate feedback based on what actually happened:
 
@@ -539,23 +586,20 @@ async def get_interview_summary(data: SummaryRequest):
 --- END TRANSCRIPT ---
 
 Based on this transcript, give a brief spoken summary. Be honest about the candidate's actual performance."""
-    
+
     # Send to SummaryAgent
     response_text, _, error = await send_to_solace(
-        message,
-        context_id=session["context_id"],
-        agent_name="SummaryAgent"
+        message, context_id=session["context_id"], agent_name="SummaryAgent"
     )
-    
+
     if error:
         raise HTTPException(status_code=500, detail=error)
-    
+
     # Clean up session
     del sessions[session_id]
-    
+
     return SummaryResponse(
-        summary=response_text or "Could not generate summary",
-        transcript=transcript
+        summary=response_text or "Could not generate summary", transcript=transcript
     )
 
 
@@ -564,14 +608,14 @@ async def get_status(session_id: str = Query(..., description="The session ID"))
     """Get status of a session"""
     if session_id not in sessions:
         raise HTTPException(status_code=404, detail="Invalid session_id")
-    
+
     session = sessions[session_id]
-    
+
     return StatusResponse(
         session_id=session_id,
         turn=session["turn_count"],
         max_turns=session["max_turns"],
-        interview_complete=session["turn_count"] >= session["max_turns"]
+        interview_complete=session["turn_count"] >= session["max_turns"],
     )
 
 
@@ -583,5 +627,6 @@ async def health_check():
 
 if __name__ == "__main__":
     import uvicorn
+
     port = int(os.environ.get("PORT", 5000))
     uvicorn.run(app, host="0.0.0.0", port=port)
