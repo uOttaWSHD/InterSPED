@@ -1,0 +1,24 @@
+{
+  "company": "leetcode",
+  "source": "problem_details",
+  "url": "First Missing Positive",
+  "cached_at": "2026-01-17T20:40:27.130794",
+  "data": {
+    "url": "https://leetcode.ca/2016-01-10-41-First-Missing-Positive/",
+    "leetcode_number": null,
+    "examples": [
+      "Input:nums = [1,2,0]Output:3Explanation:The numbers in the range [1,2] are all in the array.",
+      "Input:nums = [3,4,-1,1]Output:2Explanation:1 is in the array but 2 is missing.",
+      "Input:nums = [7,8,9,11,12]Output:1Explanation:The smallest positive integer 1 is missing."
+    ],
+    "constraints": [
+      "1 <= nums.length <= 105",
+      "-231<= nums[i] <= 231- 1"
+    ],
+    "problem_statement": "Given an unsorted integer arraynums, return the smallest missing positive integer.\n\nYou must implement an algorithm that runs inO(n)time and usesO(1)auxiliary space.\n\n",
+    "difficulty": "medium",
+    "title": "First Missing Positive",
+    "example_input": "nums = [1,2,0]",
+    "example_output": "3"
+  }
+}

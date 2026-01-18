@@ -1,0 +1,23 @@
+{
+  "company": "leetcode",
+  "source": "problem_details",
+  "url": "Valid Anagram",
+  "cached_at": "2026-01-17T20:40:25.245020",
+  "data": {
+    "url": "https://leetcode.ca/2016-07-29-242-Valid-Anagram/",
+    "leetcode_number": null,
+    "examples": [
+      "Input:s = \"anagram\", t = \"nagaram\"Output:true",
+      "Input:s = \"rat\", t = \"car\"Output:false"
+    ],
+    "constraints": [
+      "1 <= s.length, t.length <= 5 * 104",
+      "sandtconsist of lowercase English letters."
+    ],
+    "problem_statement": "Given two stringssandt, returntrueiftis an anagram ofs, andfalseotherwise.\n\nAnAnagramis a word or phrase formed by rearranging the letters of a different word or phrase, typically using all the original letters exactly once.\n\n",
+    "difficulty": "medium",
+    "title": "Valid Anagram",
+    "example_input": "s = \"anagram\", t = \"nagaram\"",
+    "example_output": "true"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "company": "leetcode",
+  "source": "problem_details",
+  "url": "Clone Graph",
+  "cached_at": "2026-01-17T20:41:06.033659",
+  "data": {
+    "url": "https://leetcode.ca/2016-04-11-133-Clone-Graph/",
+    "leetcode_number": null,
+    "examples": [
+      "Input:adjList = [[2,4],[1,3],[2,4],[1,3]]Output:[[2,4],[1,3],[2,4],[1,3]]Explanation:There are 4 nodes in the graph.\n1st node (val = 1)'s neighbors are 2nd node (val = 2) and 4th node (val = 4).\n2nd node (val = 2)'s neighbors are 1st node (val = 1) and 3rd node (val = 3).\n3rd node (val = 3)'s neighbors are 2nd node (val = 2) and 4th node (val = 4).\n4th node (val = 4)'s neighbors are 1st node (val = 1) and 3rd node (val = 3).",
+      "Input:adjList = [[]]Output:[[]]Explanation:Note that the input contains one empty list. The graph consists of only one node with val = 1 and it does not have any neighbors.",
+      "Input:adjList = []Output:[]Explanation:This an empty graph, it does not have any nodes."
+    ],
+    "constraints": [
+      "The number of nodes in the graph is in the range[0, 100].",
+      "1 <= Node.val <= 100",
+      "Node.valis unique for each node.",
+      "There are no repeated edges and no self-loops in the graph.",
+      "The Graph is connected and all nodes can be visited starting from the given node."
+    ],
+    "problem_statement": "Given a reference of a node in aconnectedundirected graph.\n\nReturn adeep copy(clone) of the graph.\n\nEach node in the graph contains a value (int) and a list (List[Node]) of its neighbors.\n\n\n\nTest case format:\n\nFor simplicity, each node's value is the same as the node's index (1-indexed). For example, the first node withval == 1, the second node withval == 2, and so on. The graph is represented in the test case using an adjacency list.\n\nAn adjacency listis a collection of unorderedlistsused to represent a finite graph. Each list describes the set of neighbors of a node in the graph.\n\nThe given node will always be the first node withval = 1. You must return thecopy of the given nodeas a reference to the cloned graph.\n\n",
+    "difficulty": "medium",
+    "title": "Clone Graph",
+    "example_input": "adjList = [[2,4],[1,3],[2,4],[1,3]]",
+    "example_output": "[[2,4],[1,3],[2,4],[1,3]]"
+  }
+}

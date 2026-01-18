@@ -1,0 +1,26 @@
+{
+  "company": "leetcode",
+  "source": "problem_details",
+  "url": "Number of Islands II",
+  "cached_at": "2026-01-17T20:41:04.115116",
+  "data": {
+    "url": "https://leetcode.ca/2016-09-30-305-Number-of-Islands-II/",
+    "leetcode_number": null,
+    "examples": [
+      "Input:m = 3, n = 3, positions = [[0,0],[0,1],[1,2],[2,1]]Output:[1,1,2,3]Explanation:Initially, the 2d grid is filled with water.\n- Operation #1: addLand(0, 0) turns the water at grid[0][0] into a land. We have 1 island.\n- Operation #2: addLand(0, 1) turns the water at grid[0][1] into a land. We still have 1 island.\n- Operation #3: addLand(1, 2) turns the water at grid[1][2] into a land. We have 2 islands.\n- Operation #4: addLand(2, 1) turns the water at grid[2][1] into a land. We have 3 islands.",
+      "Input:m = 1, n = 1, positions = [[0,0]]Output:[1]"
+    ],
+    "constraints": [
+      "1 <= m, n, positions.length <= 104",
+      "1 <= m * n <= 104",
+      "positions[i].length == 2",
+      "0 <= ri< m",
+      "0 <= ci< n"
+    ],
+    "problem_statement": "You are given an empty 2D binary gridgridof sizem x n. The grid represents a map where0's represent water and1's represent land. Initially, all the cells ofgridare water cells (i.e., all the cells are0's).\n\nWe may perform an add land operation which turns the water at position into a land. You are given an arraypositionswherepositions[i] = [ri, ci]is the position(ri, ci)at which we should operate theithoperation.\n\nReturnan array of integersanswerwhereanswer[i]is the number of islands after turning the cell(ri, ci)into a land.\n\nAnislandis surrounded by water and is formed by connecting adjacent lands horizontally or vertically. You may assume all four edges of the grid are all surrounded by water.\n\n",
+    "difficulty": "medium",
+    "title": "Number of Islands II",
+    "example_input": "m = 3, n = 3, positions = [[0,0],[0,1],[1,2],[2,1]]",
+    "example_output": "[1,1,2,3]"
+  }
+}

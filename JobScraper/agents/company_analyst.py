@@ -2,6 +2,8 @@ from typing import List, Optional, Any, Dict
 from pydantic import BaseModel, Field
 import json
 from models import CompanyOverview, TechnicalRequirements
+from context_optimizer import optimize_context
+from tpm_limiter import tpm_limiter
 
 
 class CompanyAnalystOutput(BaseModel):
@@ -16,14 +18,8 @@ async def run_company_analyst(
 ) -> Dict[str, Any]:
     print("\n🔍" + "🔍" * 10 + " [AGENT START: Company Analyst] " + "🔍" * 10)
 
-    # Extract combined text from raw scraped data
-    parts = []
-    for item in state["raw_scraped_data"]:
-        if item["source_name"] in ["Job Posting", "Company Info"]:
-            parts.append(
-                f"=== {item['source_name']} ===\n{json.dumps(item['data'], indent=2)}"
-            )
-    context = "\n".join(parts)[:15000]
+    # Use optimized context
+    context = optimize_context(state["raw_scraped_data"], max_chars=6000)
 
     print(f"📊 [CONTEXT: Company Analyst] {len(context)} chars")
 
@@ -39,11 +35,11 @@ async def run_company_analyst(
             scraped_data=context,
         )
 
-        result = await structured_llm.ainvoke(messages)
-        print(
-            f"📄 [RAW OUTPUT: Company Analyst]\n{json.dumps(result.model_dump(), indent=2)}"
-        )
+        # TPM Limiting
+        estimated = tpm_limiter.estimate_tokens(str(messages))
+        await tpm_limiter.wait_for_capacity(estimated)
 
+        result = await structured_llm.ainvoke(messages)
         return {
             "company_overview": result.company_overview.model_dump(),
             "technical_requirements": result.technical_requirements.model_dump(),
@@ -52,7 +48,4 @@ async def run_company_analyst(
         }
     except Exception as e:
         print(f"❌ [AGENT ERROR: Company Analyst] {type(e).__name__}: {e}")
-        import traceback
-
-        traceback.print_exc()
         return {}

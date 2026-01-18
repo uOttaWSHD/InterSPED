@@ -1,0 +1,28 @@
+{
+  "company": "leetcode",
+  "source": "problem_details",
+  "url": "Search a 2D Matrix",
+  "cached_at": "2026-01-17T20:40:42.439529",
+  "data": {
+    "url": "https://leetcode.ca/2016-07-27-240-Search-a-2D-Matrix-II/",
+    "leetcode_number": null,
+    "examples": [
+      "Input:matrix = [[1,4,7,11,15],[2,5,8,12,19],[3,6,9,16,22],[10,13,14,17,24],[18,21,23,26,30]], target = 5Output:true",
+      "Input:matrix = [[1,4,7,11,15],[2,5,8,12,19],[3,6,9,16,22],[10,13,14,17,24],[18,21,23,26,30]], target = 20Output:false"
+    ],
+    "constraints": [
+      "m == matrix.length",
+      "n == matrix[i].length",
+      "1 <= n, m <= 300",
+      "-109<= matrix[i][j] <= 109",
+      "All the integers in each row aresortedin ascending order.",
+      "All the integers in each column aresortedin ascending order.",
+      "-109<= target <= 109"
+    ],
+    "problem_statement": "",
+    "difficulty": "medium",
+    "title": "Search a 2D Matrix II",
+    "example_input": "matrix = [[1,4,7,11,15],[2,5,8,12,19],[3,6,9,16,22],[10,13,14,17,24],[18,21,23,26,30]], target = 5",
+    "example_output": "true"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "company": "leetcode",
+  "source": "problem_details",
+  "url": "Symmetric Tree",
+  "cached_at": "2026-01-17T20:40:56.228295",
+  "data": {
+    "url": "https://leetcode.ca/2016-03-10-101-Symmetric-Tree/",
+    "leetcode_number": null,
+    "examples": [
+      "Input:root = [1,2,2,3,4,4,3]Output:true",
+      "Input:root = [1,2,2,null,3,null,3]Output:false"
+    ],
+    "constraints": [
+      "The number of nodes in the tree is in the range[1, 1000].",
+      "-100 <= Node.val <= 100"
+    ],
+    "problem_statement": "Given therootof a binary tree,check whether it is a mirror of itself(i.e., symmetric around its center).\n\n",
+    "difficulty": "medium",
+    "title": "Symmetric Tree",
+    "example_input": "root = [1,2,2,3,4,4,3]",
+    "example_output": "true"
+  }
+}

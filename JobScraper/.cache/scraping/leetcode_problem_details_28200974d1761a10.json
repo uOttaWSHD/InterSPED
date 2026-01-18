@@ -1,0 +1,15 @@
+{
+  "company": "leetcode",
+  "source": "problem_details",
+  "url": "The Skyline Problem",
+  "cached_at": "2026-01-17T20:41:22.254205",
+  "data": {
+    "url": "https://leetcode.ca/2016-07-05-218-The-Skyline-Problem/",
+    "leetcode_number": null,
+    "examples": [],
+    "constraints": [],
+    "problem_statement": "A city\u2019s skyline is the outer contour of the silhouette formed by all the buildings in that city when viewed from a distance. Now suppose you aregiven the locations and height of all the buildingsas shown on a cityscape photo (Figure A), write a program tooutput the skylineformed by these buildings collectively (Figure B).\n\n\n\nThe geometric information of each building is represented by a triplet of integers[Li, Ri, Hi], whereLiandRiare the x coordinates of the left and right edge of the ith building, respectively, andHiis its height. It is guaranteed that0 \u2264 Li, Ri \u2264 INT_MAX,0 < Hi \u2264 INT_MAX,and Ri - Li > 0. You may assume all buildings are perfect rectangles grounded on an absolutely flat surface at height 0.\n\nFor instance, the dimensions of all buildings in Figure A are recorded as:[ [2 9 10], [3 7 15], [5 12 12], [15 20 10], [19 24 8] ].\n\nThe output is a list of \u201ckey points\u201d (red dots in Figure B) in the format of[ [x1,y1], [x2, y2], [x3, y3], ... ]that uniquely defines a skyline.A key point is the left endpoint of a horizontal line segment. Note that the last key point, where the rightmost building ends, is merely used to mark the termination of the skyline, and always has zero height. Also, the ground in between any two adjacent buildings should be considered part of the skyline contour.\n\nFor instance, the skyline in Figure B should be represented as:[ [2 10], [3 15], [7 12], [12 0], [15 10], [20 8], [24, 0] ].\n\nNotes:\n\nThe skyline is defined as the outer contour of the rectangles formed by the buildings when viewed from a distance. The problem input is a list of buildings, each represented by a list[left, right, height], and the output is a list of key points defining the skyline, where each key point is a list[x, height]representing a vertical line atxwith a height change.\n\nSuppose the input isbuildings = [[2,9,10], [3,7,15], [5,12,12]]. The key steps would involve:\n\nThis solution efficiently computes the skyline by leveraging a priority queue to keep track of active buildings and their heights, ensuring that the highest buildings at each edge are accurately reflected in the output.",
+    "difficulty": "medium",
+    "title": "The Skyline Problem"
+  }
+}

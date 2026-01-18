@@ -1,0 +1,508 @@
+{
+  "company": "Google",
+  "source": "leetcode_problems",
+  "url": null,
+  "cached_at": "2026-01-17T20:43:05.487540",
+  "data": [
+    {
+      "title": "Two Sum",
+      "difficulty": "easy",
+      "link": "https://leetcode.com/problems/two-sum"
+    },
+    {
+      "title": "Add Two Numbers",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/add-two-numbers"
+    },
+    {
+      "title": "Trapping Rain Water",
+      "difficulty": "hard",
+      "link": "https://leetcode.com/problems/trapping-rain-water"
+    },
+    {
+      "title": "Median of Two Sorted Arrays",
+      "difficulty": "hard",
+      "link": "https://leetcode.com/problems/median-of-two-sorted-arrays"
+    },
+    {
+      "title": "Longest Substring Without Repeating Characters",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/longest-substring-without-repeating-characters"
+    },
+    {
+      "title": "Longest Common Prefix",
+      "difficulty": "easy",
+      "link": "https://leetcode.com/problems/longest-common-prefix"
+    },
+    {
+      "title": "Valid Parentheses",
+      "difficulty": "easy",
+      "link": "https://leetcode.com/problems/valid-parentheses"
+    },
+    {
+      "title": "Longest Consecutive Sequence",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/longest-consecutive-sequence"
+    },
+    {
+      "title": "Maximum Subarray",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/maximum-subarray"
+    },
+    {
+      "title": "Rotate Image",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/rotate-image"
+    },
+    {
+      "title": "Search in Rotated Sorted Array",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/search-in-rotated-sorted-array"
+    },
+    {
+      "title": "Reverse Linked List",
+      "difficulty": "easy",
+      "link": "https://leetcode.com/problems/reverse-linked-list"
+    },
+    {
+      "title": "4Sum",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/4sum"
+    },
+    {
+      "title": "Jump Game",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/jump-game"
+    },
+    {
+      "title": "Group Anagrams",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/group-anagrams"
+    },
+    {
+      "title": "Find Median from Data Stream",
+      "difficulty": "hard",
+      "link": "https://leetcode.com/problems/find-median-from-data-stream"
+    },
+    {
+      "title": "Pascal's Triangle",
+      "difficulty": "easy",
+      "link": "https://leetcode.com/problems/pascals-triangle"
+    },
+    {
+      "title": "Single Number",
+      "difficulty": "easy",
+      "link": "https://leetcode.com/problems/single-number"
+    },
+    {
+      "title": "Find the Index of the First Occurrence in a String",
+      "difficulty": "easy",
+      "link": "https://leetcode.com/problems/find-the-index-of-the-first-occurrence-in-a-string"
+    },
+    {
+      "title": "Maximal Rectangle",
+      "difficulty": "hard",
+      "link": "https://leetcode.com/problems/maximal-rectangle"
+    },
+    {
+      "title": "Valid Anagram",
+      "difficulty": "easy",
+      "link": "https://leetcode.com/problems/valid-anagram"
+    },
+    {
+      "title": "First Missing Positive",
+      "difficulty": "hard",
+      "link": "https://leetcode.com/problems/first-missing-positive"
+    },
+    {
+      "title": "Jump Game II",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/jump-game-ii"
+    },
+    {
+      "title": "Add Binary",
+      "difficulty": "easy",
+      "link": "https://leetcode.com/problems/add-binary"
+    },
+    {
+      "title": "Text Justification",
+      "difficulty": "hard",
+      "link": "https://leetcode.com/problems/text-justification"
+    },
+    {
+      "title": "Insert Interval",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/insert-interval"
+    },
+    {
+      "title": "Maximum Product Subarray",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/maximum-product-subarray"
+    },
+    {
+      "title": "String to Integer (atoi)",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/string-to-integer-atoi"
+    },
+    {
+      "title": "Same Tree",
+      "difficulty": "easy",
+      "link": "https://leetcode.com/problems/same-tree"
+    },
+    {
+      "title": "Search a 2D Matrix",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/search-a-2d-matrix"
+    },
+    {
+      "title": "Isomorphic Strings",
+      "difficulty": "easy",
+      "link": "https://leetcode.com/problems/isomorphic-strings"
+    },
+    {
+      "title": "3Sum Closest",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/3sum-closest"
+    },
+    {
+      "title": "Wildcard Matching",
+      "difficulty": "hard",
+      "link": "https://leetcode.com/problems/wildcard-matching"
+    },
+    {
+      "title": "Find the Duplicate Number",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/find-the-duplicate-number"
+    },
+    {
+      "title": "Contains Duplicate II",
+      "difficulty": "easy",
+      "link": "https://leetcode.com/problems/contains-duplicate-ii"
+    },
+    {
+      "title": "Missing Number",
+      "difficulty": "easy",
+      "link": "https://leetcode.com/problems/missing-number"
+    },
+    {
+      "title": "Symmetric Tree",
+      "difficulty": "easy",
+      "link": "https://leetcode.com/problems/symmetric-tree"
+    },
+    {
+      "title": "Minimum Path Sum",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/minimum-path-sum"
+    },
+    {
+      "title": "Kth Smallest Element in a BST",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/kth-smallest-element-in-a-bst"
+    },
+    {
+      "title": "Copy List with Random Pointer",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/copy-list-with-random-pointer"
+    },
+    {
+      "title": "Number of Islands II",
+      "difficulty": "hard",
+      "link": "https://leetcode.com/problems/number-of-islands-ii"
+    },
+    {
+      "title": "Clone Graph",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/clone-graph"
+    },
+    {
+      "title": "Integer to Roman",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/integer-to-roman"
+    },
+    {
+      "title": "Shortest Palindrome",
+      "difficulty": "hard",
+      "link": "https://leetcode.com/problems/shortest-palindrome"
+    },
+    {
+      "title": "Flatten Binary Tree to Linked List",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/flatten-binary-tree-to-linked-list"
+    },
+    {
+      "title": "Group Shifted Strings",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/group-shifted-strings"
+    },
+    {
+      "title": "Word Search II",
+      "difficulty": "hard",
+      "link": "https://leetcode.com/problems/word-search-ii"
+    },
+    {
+      "title": "Binary Tree Right Side View",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/binary-tree-right-side-view"
+    },
+    {
+      "title": "Subsets II",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/subsets-ii"
+    },
+    {
+      "title": "The Skyline Problem",
+      "difficulty": "hard",
+      "link": "https://leetcode.com/problems/the-skyline-problem"
+    },
+    {
+      "title": "Implement Stack using Queues",
+      "difficulty": "easy",
+      "link": "https://leetcode.com/problems/implement-stack-using-queues"
+    },
+    {
+      "title": "Best Time to Buy and Sell Stock with Cooldown",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-cooldown"
+    },
+    {
+      "title": "Missing Ranges",
+      "difficulty": "easy",
+      "link": "https://leetcode.com/problems/missing-ranges"
+    },
+    {
+      "title": "Graph Valid Tree",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/graph-valid-tree"
+    },
+    {
+      "title": "Second Highest Salary",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/second-highest-salary"
+    },
+    {
+      "title": "Basic Calculator II",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/basic-calculator-ii"
+    },
+    {
+      "title": "Game of Life",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/game-of-life"
+    },
+    {
+      "title": "Fraction to Recurring Decimal",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/fraction-to-recurring-decimal"
+    },
+    {
+      "title": "Number of Digit One",
+      "difficulty": "hard",
+      "link": "https://leetcode.com/problems/number-of-digit-one"
+    },
+    {
+      "title": "Walls and Gates",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/walls-and-gates"
+    },
+    {
+      "title": "Binary Tree Paths",
+      "difficulty": "easy",
+      "link": "https://leetcode.com/problems/binary-tree-paths"
+    },
+    {
+      "title": "Wiggle Sort",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/wiggle-sort"
+    },
+    {
+      "title": "Best Time to Buy and Sell Stock IV",
+      "difficulty": "hard",
+      "link": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iv"
+    },
+    {
+      "title": "3Sum Smaller",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/3sum-smaller"
+    },
+    {
+      "title": "Combinations",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/combinations"
+    },
+    {
+      "title": "Lowest Common Ancestor of a Binary Search Tree",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree"
+    },
+    {
+      "title": "Read N Characters Given read4 II - Call Multiple Times",
+      "difficulty": "hard",
+      "link": "https://leetcode.com/problems/read-n-characters-given-read4-ii-call-multiple-times"
+    },
+    {
+      "title": "Paint Fence",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/paint-fence"
+    },
+    {
+      "title": "Longest Substring with At Most Two Distinct Characters",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/longest-substring-with-at-most-two-distinct-characters"
+    },
+    {
+      "title": "Flip Game",
+      "difficulty": "easy",
+      "link": "https://leetcode.com/problems/flip-game"
+    },
+    {
+      "title": "Binary Tree Postorder Traversal",
+      "difficulty": "easy",
+      "link": "https://leetcode.com/problems/binary-tree-postorder-traversal"
+    },
+    {
+      "title": "Strobogrammatic Number",
+      "difficulty": "easy",
+      "link": "https://leetcode.com/problems/strobogrammatic-number"
+    },
+    {
+      "title": "Zigzag Iterator",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/zigzag-iterator"
+    },
+    {
+      "title": "Spiral Matrix II",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/spiral-matrix-ii"
+    },
+    {
+      "title": "Peeking Iterator",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/peeking-iterator"
+    },
+    {
+      "title": "Department Top Three Salaries",
+      "difficulty": "hard",
+      "link": "https://leetcode.com/problems/department-top-three-salaries"
+    },
+    {
+      "title": "Closest Binary Search Tree Value II",
+      "difficulty": "hard",
+      "link": "https://leetcode.com/problems/closest-binary-search-tree-value-ii"
+    },
+    {
+      "title": "Flatten 2D Vector",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/flatten-2d-vector"
+    },
+    {
+      "title": "Unique Word Abbreviation",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/unique-word-abbreviation"
+    },
+    {
+      "title": "Flip Game II",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/flip-game-ii"
+    },
+    {
+      "title": "Palindrome Permutation",
+      "difficulty": "easy",
+      "link": "https://leetcode.com/problems/palindrome-permutation"
+    },
+    {
+      "title": "Scramble String",
+      "difficulty": "hard",
+      "link": "https://leetcode.com/problems/scramble-string"
+    },
+    {
+      "title": "Insertion Sort List",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/insertion-sort-list"
+    },
+    {
+      "title": "Factorial Trailing Zeroes",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/factorial-trailing-zeroes"
+    },
+    {
+      "title": "Remove Duplicates from Sorted List II",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/remove-duplicates-from-sorted-list-ii"
+    },
+    {
+      "title": "Populating Next Right Pointers in Each Node",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/populating-next-right-pointers-in-each-node"
+    },
+    {
+      "title": "Word Pattern",
+      "difficulty": "easy",
+      "link": "https://leetcode.com/problems/word-pattern"
+    },
+    {
+      "title": "N-Queens II",
+      "difficulty": "hard",
+      "link": "https://leetcode.com/problems/n-queens-ii"
+    },
+    {
+      "title": "Minimum Depth of Binary Tree",
+      "difficulty": "easy",
+      "link": "https://leetcode.com/problems/minimum-depth-of-binary-tree"
+    },
+    {
+      "title": "Bitwise AND of Numbers Range",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/bitwise-and-of-numbers-range"
+    },
+    {
+      "title": "Rank Scores",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/rank-scores"
+    },
+    {
+      "title": "Valid Number",
+      "difficulty": "hard",
+      "link": "https://leetcode.com/problems/valid-number"
+    },
+    {
+      "title": "Read N Characters Given Read4",
+      "difficulty": "easy",
+      "link": "https://leetcode.com/problems/read-n-characters-given-read4"
+    },
+    {
+      "title": "Gray Code",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/gray-code"
+    },
+    {
+      "title": "Remove Invalid Parentheses",
+      "difficulty": "hard",
+      "link": "https://leetcode.com/problems/remove-invalid-parentheses"
+    },
+    {
+      "title": "Find Minimum in Rotated Sorted Array II",
+      "difficulty": "hard",
+      "link": "https://leetcode.com/problems/find-minimum-in-rotated-sorted-array-ii"
+    },
+    {
+      "title": "Find the Celebrity",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/find-the-celebrity"
+    },
+    {
+      "title": "Range Sum Query - Mutable",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/range-sum-query-mutable"
+    },
+    {
+      "title": "Binary Tree Level Order Traversal II",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/binary-tree-level-order-traversal-ii"
+    },
+    {
+      "title": "Paint House",
+      "difficulty": "medium",
+      "link": "https://leetcode.com/problems/paint-house"
+    }
+  ]
+}

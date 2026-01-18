@@ -1,0 +1,23 @@
+{
+  "company": "leetcode",
+  "source": "problem_details",
+  "url": "Shortest Palindrome",
+  "cached_at": "2026-01-17T20:41:10.046210",
+  "data": {
+    "url": "https://leetcode.ca/2016-07-01-214-Shortest-Palindrome/",
+    "leetcode_number": null,
+    "examples": [
+      "Input:s = \"aacecaaa\"Output:\"aaacecaaa\"",
+      "Input:s = \"abcd\"Output:\"dcbabcd\""
+    ],
+    "constraints": [
+      "0 <= s.length <= 5 * 104",
+      "sconsists of lowercase English letters only."
+    ],
+    "problem_statement": "",
+    "difficulty": "medium",
+    "title": "Shortest Palindrome",
+    "example_input": "s = \"aacecaaa\"",
+    "example_output": "\"aaacecaaa\""
+  }
+}

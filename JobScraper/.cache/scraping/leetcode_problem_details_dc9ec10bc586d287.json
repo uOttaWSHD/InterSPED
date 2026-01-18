@@ -1,0 +1,24 @@
+{
+  "company": "leetcode",
+  "source": "problem_details",
+  "url": "3Sum Closest",
+  "cached_at": "2026-01-17T20:40:46.182008",
+  "data": {
+    "url": "https://leetcode.ca/2015-12-16-16-3Sum-Closest/",
+    "leetcode_number": null,
+    "examples": [
+      "Input:nums = [-1,2,1,-4], target = 1Output:2Explanation:The sum that is closest to the target is 2. (-1 + 2 + 1 = 2).",
+      "Input:nums = [0,0,0], target = 1Output:0Explanation:The sum that is closest to the target is 0. (0 + 0 + 0 = 0)."
+    ],
+    "constraints": [
+      "3 <= nums.length <= 500",
+      "-1000 <= nums[i] <= 1000",
+      "-104<= target <= 104"
+    ],
+    "problem_statement": "Given an integer arraynumsof lengthnand an integertarget, find three integers innumssuch that the sum is closest totarget.\n\nReturnthe sum of the three integers.\n\nYou may assume that each input would have exactly one solution.\n\n",
+    "difficulty": "medium",
+    "title": "3Sum Closest",
+    "example_input": "nums = [-1,2,1,-4], target = 1",
+    "example_output": "2"
+  }
+}

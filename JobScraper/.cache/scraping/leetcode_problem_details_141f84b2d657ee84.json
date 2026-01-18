@@ -1,0 +1,25 @@
+{
+  "company": "leetcode",
+  "source": "problem_details",
+  "url": "Isomorphic Strings",
+  "cached_at": "2026-01-17T20:40:44.343210",
+  "data": {
+    "url": "https://leetcode.ca/2016-06-22-205-Isomorphic-Strings/",
+    "leetcode_number": null,
+    "examples": [
+      "Input:s = \"egg\", t = \"add\"Output:true",
+      "Input:s = \"foo\", t = \"bar\"Output:false",
+      "Input:s = \"paper\", t = \"title\"Output:true"
+    ],
+    "constraints": [
+      "1 <= s.length <= 5 * 104",
+      "t.length == s.length",
+      "sandtconsist of any valid ascii character."
+    ],
+    "problem_statement": "Given two stringssandt,determine if they are isomorphic.\n\nTwo stringssandtare isomorphic if the characters inscan be replaced to gett.\n\nAll occurrences of a character must be replaced with another character while preserving the order of characters. No two characters may map to the same character, but a character may map to itself.\n\n",
+    "difficulty": "medium",
+    "title": "Isomorphic Strings",
+    "example_input": "s = \"egg\", t = \"add\"",
+    "example_output": "true"
+  }
+}

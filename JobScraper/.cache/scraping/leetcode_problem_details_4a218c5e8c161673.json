@@ -1,0 +1,24 @@
+{
+  "company": "leetcode",
+  "source": "problem_details",
+  "url": "Missing Number",
+  "cached_at": "2026-01-17T20:40:54.038888",
+  "data": {
+    "url": "https://leetcode.ca/2019-04-11-1228-Missing-Number-In-Arithmetic-Progression/",
+    "leetcode_number": null,
+    "examples": [
+      "Input:arr = [5,7,11,13]Output:9Explanation:The previous array was [5,7,9,11,13].",
+      "Input:arr = [15,13,12]Output:14Explanation:The previous array was [15,14,13,12]."
+    ],
+    "constraints": [
+      "3 <= arr.length <= 1000",
+      "0 <= arr[i] <= 105",
+      "The given array isguaranteedto be a valid array."
+    ],
+    "problem_statement": "In some arrayarr, the values were in arithmetic progression: the valuesarr[i + 1] - arr[i]are all equal for every0 <= i < arr.length - 1.\n\nA value fromarrwas removed thatwas not the first or last value in the array.\n\nGivenarr, returnthe removed value.\n\n",
+    "difficulty": "medium",
+    "title": "Missing Number In Arithmetic Progression",
+    "example_input": "arr = [5,7,11,13]",
+    "example_output": "9"
+  }
+}

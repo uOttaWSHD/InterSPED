@@ -1,0 +1,25 @@
+{
+  "company": "leetcode",
+  "source": "problem_details",
+  "url": "Wildcard Matching",
+  "cached_at": "2026-01-17T20:40:48.165420",
+  "data": {
+    "url": "https://leetcode.ca/2016-01-13-44-Wildcard-Matching/",
+    "leetcode_number": null,
+    "examples": [
+      "Input:s = \"aa\", p = \"a\"Output:falseExplanation:\"a\" does not match the entire string \"aa\".",
+      "Input:s = \"aa\", p = \"*\"Output:trueExplanation:'*' matches any sequence.",
+      "Input:s = \"cb\", p = \"?a\"Output:falseExplanation:'?' matches 'c', but the second letter is 'a', which does not match 'b'."
+    ],
+    "constraints": [
+      "0 <= s.length, p.length <= 2000",
+      "scontains only lowercase English letters.",
+      "pcontains only lowercase English letters,'?'or'*'."
+    ],
+    "problem_statement": "Given an input string (s) and a pattern (p), implement wildcard pattern matching with support for'?'and'*'where:\n\nThe matching should cover theentireinput string (not partial).\n\n",
+    "difficulty": "medium",
+    "title": "Wildcard Matching",
+    "example_input": "s = \"aa\", p = \"a\"",
+    "example_output": "false"
+  }
+}

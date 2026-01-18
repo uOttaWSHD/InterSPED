@@ -9,6 +9,7 @@ import httpx
 import asyncio
 from bs4 import BeautifulSoup
 from config import settings
+from tpm_limiter import tpm_limiter
 
 
 class ScraperEngine:
