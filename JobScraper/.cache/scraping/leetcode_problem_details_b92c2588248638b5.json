@@ -1,0 +1,25 @@
+{
+  "company": "leetcode",
+  "source": "problem_details",
+  "url": "Group Anagrams",
+  "cached_at": "2026-01-17T20:43:00.559698",
+  "data": {
+    "url": "https://leetcode.ca/2016-01-18-49-Group-Anagrams/",
+    "leetcode_number": null,
+    "examples": [
+      "Input:strs = [\"eat\",\"tea\",\"tan\",\"ate\",\"nat\",\"bat\"]Output:[[\"bat\"],[\"nat\",\"tan\"],[\"ate\",\"eat\",\"tea\"]]",
+      "Input:strs = [\"\"]Output:[[\"\"]]",
+      "Input:strs = [\"a\"]Output:[[\"a\"]]"
+    ],
+    "constraints": [
+      "1 <= strs.length <= 104",
+      "0 <= strs[i].length <= 100",
+      "strs[i]consists of lowercase English letters."
+    ],
+    "problem_statement": "Given an array of stringsstrs, groupthe anagramstogether. You can return the answer inany order.\n\nAnAnagramis a word or phrase formed by rearranging the letters of a different word or phrase, typically using all the original letters exactly once.\n\n",
+    "difficulty": "medium",
+    "title": "Group Anagrams",
+    "example_input": "strs = [\"eat\",\"tea\",\"tan\",\"ate\",\"nat\",\"bat\"]",
+    "example_output": "[[\"bat\"],[\"nat\",\"tan\"],[\"ate\",\"eat\",\"tea\"]]"
+  }
+}

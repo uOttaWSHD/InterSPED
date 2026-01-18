@@ -1,0 +1,15 @@
+{
+  "company": "leetcode",
+  "source": "problem_details",
+  "url": "Kth Smallest Element in a BST",
+  "cached_at": "2026-01-17T20:41:00.166483",
+  "data": {
+    "url": "https://leetcode.ca/2016-07-17-230-Kth-Smallest-Element-in-a-BST/",
+    "leetcode_number": null,
+    "examples": [],
+    "constraints": [],
+    "problem_statement": "Given a binary search tree, write a functionkthSmallestto find thekth smallest element in it.\n\nNote:\n\nYou may assume k is always valid, 1 \u2264 k \u2264 BST\u2019s total elements.\n\nExample 1:\n\nExample 2:\n\nFollow up:\n\nWhat if the BST is modified (insert/delete operations) often and you need to find the kth smallest frequently? How would you optimize the kthSmallest routine?",
+    "difficulty": "medium",
+    "title": "Kth Smallest Element in a BST"
+  }
+}

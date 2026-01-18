@@ -1,0 +1,23 @@
+{
+  "company": "leetcode",
+  "source": "problem_details",
+  "url": "Subsets II",
+  "cached_at": "2026-01-17T20:41:20.276168",
+  "data": {
+    "url": "https://leetcode.ca/2016-02-28-90-Subsets-II/",
+    "leetcode_number": null,
+    "examples": [
+      "Input:nums = [1,2,2]Output:[[],[1],[1,2],[1,2,2],[2],[2,2]]",
+      "Input:nums = [0]Output:[[],[0]]"
+    ],
+    "constraints": [
+      "1 <= nums.length <= 10",
+      "-10 <= nums[i] <= 10"
+    ],
+    "problem_statement": "Given an integer arraynumsthat may contain duplicates, returnall possiblesubsets(the power set).\n\nThe solution setmust notcontain duplicate subsets. Return the solution inany order.\n\n",
+    "difficulty": "medium",
+    "title": "Subsets II",
+    "example_input": "nums = [1,2,2]",
+    "example_output": "[[],[1],[1,2],[1,2,2],[2],[2,2]]"
+  }
+}

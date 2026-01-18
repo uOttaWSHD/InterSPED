@@ -1,0 +1,15 @@
+{
+  "company": "leetcode",
+  "source": "problem_details",
+  "url": "Reverse Linked List",
+  "cached_at": "2026-01-17T20:40:08.780999",
+  "data": {
+    "url": "https://leetcode.ca/2016-06-23-206-Reverse-Linked-List/",
+    "leetcode_number": null,
+    "examples": [],
+    "constraints": [],
+    "problem_statement": "Reverse a singly linked list.\n\nExample:\n\nInput:1->2->3->4->5->NULL\n\nOutput:5->4->3->2->1->NULL\n\nFollow up:\n\nA linked list can be reversed either iteratively or recursively. Could you implement both?",
+    "difficulty": "medium",
+    "title": "Reverse Linked List"
+  }
+}

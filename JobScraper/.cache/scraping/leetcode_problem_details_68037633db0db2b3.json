@@ -1,0 +1,20 @@
+{
+  "company": "leetcode",
+  "source": "problem_details",
+  "url": "Single Number",
+  "cached_at": "2026-01-17T20:40:19.582170",
+  "data": {
+    "url": "https://leetcode.ca/2017-08-10-619-Biggest-Single-Number/",
+    "leetcode_number": null,
+    "examples": [
+      "Input:MyNumbers table:\n+-----+\n| num |\n+-----+\n| 8   |\n| 8   |\n| 3   |\n| 3   |\n| 1   |\n| 4   |\n| 5   |\n| 6   |\n+-----+Output:+-----+\n| num |\n+-----+\n| 6   |\n+-----+Explanation:The single numbers are 1, 4, 5, and 6.\nSince 6 is the largest single number, we return it.",
+      "Input:MyNumbers table:\n+-----+\n| num |\n+-----+\n| 8   |\n| 8   |\n| 7   |\n| 7   |\n| 3   |\n| 3   |\n| 3   |\n+-----+Output:+------+\n| num  |\n+------+\n| null |\n+------+Explanation:There are no single numbers in the input table so we return null."
+    ],
+    "constraints": [],
+    "problem_statement": "Table:MyNumbers\n\n\n\nAsingle numberis a number that appeared only once in theMyNumberstable.\n\nFind the largestsingle number. If there is nosingle number, reportnull.\n\nThe result format is in the following example.\n\n",
+    "difficulty": "medium",
+    "title": "Biggest Single Number",
+    "example_input": "MyNumbers table:\n+-----+\n| num |\n+-----+\n| 8   |\n| 8   |\n| 3   |\n| 3   |\n| 1   |\n| 4   |\n| 5   |\n| 6   |\n+-----+",
+    "example_output": "+-----+\n| num |\n+-----+\n| 6   |\n+-----+"
+  }
+}

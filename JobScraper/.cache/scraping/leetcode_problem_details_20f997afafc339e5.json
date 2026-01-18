@@ -1,0 +1,23 @@
+{
+  "company": "leetcode",
+  "source": "problem_details",
+  "url": "Integer to Roman",
+  "cached_at": "2026-01-17T20:41:08.111094",
+  "data": {
+    "url": "https://leetcode.ca/2015-12-12-12-Integer-to-Roman/",
+    "leetcode_number": null,
+    "examples": [
+      "Input:num = 3Output:\"III\"Explanation:3 is represented as 3 ones.",
+      "Input:num = 58Output:\"LVIII\"Explanation:L = 50, V = 5, III = 3.",
+      "Input:num = 1994Output:\"MCMXCIV\"Explanation:M = 1000, CM = 900, XC = 90 and IV = 4."
+    ],
+    "constraints": [
+      "1 <= num <= 3999"
+    ],
+    "problem_statement": "Roman numerals are represented by seven different symbols:I,V,X,L,C,DandM.\n\nFor example,2is written asIIin Roman numeral, just two one's added together.12is written asXII, which is simplyX + II. The number27is written asXXVII, which isXX + V + II.\n\nRoman numerals are usually written largest to smallest from left to right. However, the numeral for four is notIIII. Instead, the number four is written asIV. Because the one is before the five we subtract it making four. The same principle applies to the number nine, which is written asIX. There are six instances where subtraction is used:\n\nGiven an integer, convert it to a roman numeral.\n\n",
+    "difficulty": "medium",
+    "title": "Integer to Roman",
+    "example_input": "num = 3",
+    "example_output": "\"III\""
+  }
+}

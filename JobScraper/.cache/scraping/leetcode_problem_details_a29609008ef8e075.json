@@ -1,0 +1,27 @@
+{
+  "company": "leetcode",
+  "source": "problem_details",
+  "url": "Text Justification",
+  "cached_at": "2026-01-17T20:40:32.751096",
+  "data": {
+    "url": "https://leetcode.ca/2016-02-06-68-Text-Justification/",
+    "leetcode_number": null,
+    "examples": [
+      "Input:words = [\"This\", \"is\", \"an\", \"example\", \"of\", \"text\", \"justification.\"], maxWidth = 16Output:[\n\u00a0 \u00a0\"This \u00a0 \u00a0is \u00a0 \u00a0an\",\n\u00a0 \u00a0\"example \u00a0of text\",\n\u00a0 \u00a0\"justification. \u00a0\"\n]",
+      "Input:words = [\"What\",\"must\",\"be\",\"acknowledgment\",\"shall\",\"be\"], maxWidth = 16Output:[\n\u00a0 \"What \u00a0 must \u00a0 be\",\n\u00a0 \"acknowledgment \u00a0\",\n\u00a0 \"shall be \u00a0 \u00a0 \u00a0 \u00a0\"\n]Explanation:Note that the last line is \"shall be    \" instead of \"shall     be\", because the last line must be left-justified instead of fully-justified.\nNote that the second line is also left-justified because it contains only one word.",
+      "Input:words = [\"Science\",\"is\",\"what\",\"we\",\"understand\",\"well\",\"enough\",\"to\",\"explain\",\"to\",\"a\",\"computer.\",\"Art\",\"is\",\"everything\",\"else\",\"we\",\"do\"], maxWidth = 20Output:[\n\u00a0 \"Science \u00a0is \u00a0what we\",\n  \"understand \u00a0 \u00a0 \u00a0well\",\n\u00a0 \"enough to explain to\",\n\u00a0 \"a \u00a0computer. \u00a0Art is\",\n\u00a0 \"everything \u00a0else \u00a0we\",\n\u00a0 \"do \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0 \u00a0\"\n]"
+    ],
+    "constraints": [
+      "1 <= words.length <= 300",
+      "1 <= words[i].length <= 20",
+      "words[i]consists of only English letters and symbols.",
+      "1 <= maxWidth <= 100",
+      "words[i].length <= maxWidth"
+    ],
+    "problem_statement": "Given an array of stringswordsand a widthmaxWidth, format the text such that each line has exactlymaxWidthcharacters and is fully (left and right) justified.\n\nYou should pack your words in a greedy approach; that is, pack as many words as you can in each line. Pad extra spaces' 'when necessary so that each line has exactlymaxWidthcharacters.\n\nExtra spaces between words should be distributed as evenly as possible. If the number of spaces on a line does not divide evenly between words, the empty slots on the left will be assigned more spaces than the slots on the right.\n\nFor the last line of text, it should be left-justified, and no extra space is inserted between words.\n\nNote:\n\n",
+    "difficulty": "medium",
+    "title": "Text Justification",
+    "example_input": "words = [\"This\", \"is\", \"an\", \"example\", \"of\", \"text\", \"justification.\"], maxWidth = 16",
+    "example_output": "[\n\u00a0 \u00a0\"This \u00a0 \u00a0is \u00a0 \u00a0an\",\n\u00a0 \u00a0\"example \u00a0of text\",\n\u00a0 \u00a0\"justification. \u00a0\"\n]"
+  }
+}

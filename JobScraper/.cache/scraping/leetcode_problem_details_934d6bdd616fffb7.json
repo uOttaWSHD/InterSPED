@@ -1,0 +1,25 @@
+{
+  "company": "leetcode",
+  "source": "problem_details",
+  "url": "Copy List with Random Pointer",
+  "cached_at": "2026-01-17T20:41:02.088100",
+  "data": {
+    "url": "https://leetcode.ca/2016-04-16-138-Copy-List-with-Random-Pointer/",
+    "leetcode_number": null,
+    "examples": [
+      "Input:head = [[7,null],[13,0],[11,4],[10,2],[1,0]]Output:[[7,null],[13,0],[11,4],[10,2],[1,0]]",
+      "Input:head = [[1,1],[2,1]]Output:[[1,1],[2,1]]",
+      "Input:head = [[3,null],[3,0],[3,null]]Output:[[3,null],[3,0],[3,null]]"
+    ],
+    "constraints": [
+      "0 <= n <= 1000",
+      "-104<= Node.val <= 104",
+      "Node.randomisnullor is pointing to some node in the linked list."
+    ],
+    "problem_statement": "",
+    "difficulty": "medium",
+    "title": "Copy List with Random Pointer",
+    "example_input": "head = [[7,null],[13,0],[11,4],[10,2],[1,0]]",
+    "example_output": "[[7,null],[13,0],[11,4],[10,2],[1,0]]"
+  }
+}

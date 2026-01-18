@@ -1,0 +1,25 @@
+{
+  "company": "leetcode",
+  "source": "problem_details",
+  "url": "Search in Rotated Sorted Array",
+  "cached_at": "2026-01-17T20:43:23.553300",
+  "data": {
+    "url": "https://leetcode.ca/2016-02-19-81-Search-in-Rotated-Sorted-Array-II/",
+    "leetcode_number": null,
+    "examples": [
+      "Input:nums = [2,5,6,0,0,1,2], target = 0Output:true",
+      "Input:nums = [2,5,6,0,0,1,2], target = 3Output:false"
+    ],
+    "constraints": [
+      "1 <= nums.length <= 5000",
+      "-104<= nums[i] <= 104",
+      "numsis guaranteed to be rotated at some pivot.",
+      "-104<= target <= 104"
+    ],
+    "problem_statement": "There is an integer arraynumssorted in non-decreasing order (not necessarily withdistinctvalues).\n\nBefore being passed to your function,numsisrotatedat an unknown pivot indexk(0 <= k < nums.length) such that the resulting array is[nums[k], nums[k+1], ..., nums[n-1], nums[0], nums[1], ..., nums[k-1]](0-indexed). For example,[0,1,2,4,4,4,5,6,6,7]might be rotated at pivot index5and become[4,5,6,6,7,0,1,2,4,4].\n\nGiven the arraynumsafterthe rotation and an integertarget, returntrueiftargetis innums, orfalseif it is not innums.\n\nYou must decrease the overall operation steps as much as possible.\n\n",
+    "difficulty": "medium",
+    "title": "Search in Rotated Sorted Array II",
+    "example_input": "nums = [2,5,6,0,0,1,2], target = 0",
+    "example_output": "true"
+  }
+}

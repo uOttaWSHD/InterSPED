@@ -1,0 +1,24 @@
+{
+  "company": "leetcode",
+  "source": "problem_details",
+  "url": "Binary Tree Right Side View",
+  "cached_at": "2026-01-17T20:41:18.271750",
+  "data": {
+    "url": "https://leetcode.ca/2016-06-16-199-Binary-Tree-Right-Side-View/",
+    "leetcode_number": null,
+    "examples": [
+      "Input:root = [1,2,3,null,5,null,4]Output:[1,3,4]",
+      "Input:root = [1,null,3]Output:[1,3]",
+      "Input:root = []Output:[]"
+    ],
+    "constraints": [
+      "The number of nodes in the tree is in the range[0, 100].",
+      "-100 <= Node.val <= 100"
+    ],
+    "problem_statement": "Given therootof a binary tree, imagine yourself standing on theright sideof it, returnthe values of the nodes you can see ordered from top to bottom.\n\n",
+    "difficulty": "medium",
+    "title": "Binary Tree Right Side View",
+    "example_input": "root = [1,2,3,null,5,null,4]",
+    "example_output": "[1,3,4]"
+  }
+}
