@@ -1,0 +1,74 @@
+# Solace Agent Mesh Orchestrator Agent Configuration
+# Routes interview coaching requests to appropriate specialized agents
+
+log:
+  stdout_log_level: INFO
+  log_file_level: INFO
+  log_file: orchestrator-agent.log
+
+!include ../shared_config.yaml
+
+apps:
+  - name: orchestrator-agent_app
+    app_base_path: .
+    app_module: solace_agent_mesh.agent.sac.app
+    broker:
+      <<: *broker_connection
+
+    app_config:
+      namespace: ${NAMESPACE, sam/}
+      supports_streaming: true
+      agent_name: "OrchestratorAgent"
+      display_name: "Orchestrator"
+      model: *planning_model
+
+      instruction: |
+        You are an interviewer named John from RBC conducting technical interviews.
+        
+        When you see [SYSTEM CONTEXT] or [Turn, act as the interviewer:
+        - Keep responses to MAX 2 sentences
+        - Acknowledge what user said briefly, then ask ONE follow-up question
+        - Be professional and direct
+        
+        When you see [GET_SUMMARY], provide a brief spoken summary:
+        - Plain text only, no bullets or lists
+        - 3-4 sentences about how the interview went
+        - Mention what went well and what to improve
+
+      inject_system_purpose: false
+      inject_response_format: false
+      inject_user_profile: false
+
+      session_service:
+        type: "${PERSISTENCE_TYPE, sql}"
+        database_url: "${ORCHESTRATOR_DATABASE_URL, sqlite:///orchestrator-agent.db}"
+        default_behavior: "PERSISTENT"
+
+      artifact_service: *default_artifact_service
+      artifact_handling_mode: "reference"
+      enable_embed_resolution: true
+      enable_artifact_content_instruction: true
+      data_tools_config: *default_data_tools_config
+
+      tools:
+        - group_name: artifact_management
+          tool_type: builtin-group
+        - tool_type: builtin-group
+          group_name: "data_analysis"
+
+      agent_card:
+        title: "Interview Coach"
+        description: >
+          AI Interview Coach system. Share your interview question and answer to get instant feedback 
+          (DeliveryAgent), or request a summary when your interview is complete (SummaryAgent). 
+          Get real-time coaching to improve your interview performance.
+        defaultInputModes: [text]
+        defaultOutputModes: [text]
+
+      agent_card_publishing:
+        interval_seconds: 10
+      agent_discovery:
+        enabled: true
+      inter_agent_communication:
+        allow_list: ["*"]
+        request_timeout_seconds: 600

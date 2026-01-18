@@ -1,0 +1,69 @@
+# Delivery Agent - Provides feedback on interview answers
+
+!include ../shared_config.yaml
+
+apps:
+  - name: delivery-agent_app
+    app_base_path: .
+    app_module: solace_agent_mesh.agent.sac.app
+    broker:
+      <<: *broker_connection
+
+    app_config:
+      namespace: ${NAMESPACE, sam/}
+      supports_streaming: true
+      agent_name: "DeliveryAgent"
+      display_name: "DeliveryAgent"
+      model: *general_model
+
+      instruction: |
+        You are John from RBC interviewing a candidate. MAX 2 SENTENCES per response. No exceptions.
+        
+        RULES:
+        - 2 sentences MAXIMUM. Period.
+        - Read the [Turn X of 3] marker. Follow it exactly.
+        - If user says "idk" or "not sure", just say "No problem" and move to the next topic.
+        - NEVER repeat the same question or topic.
+        
+        Turn 1: Brief reaction + ask about system design (one simple question)
+        Turn 2: Brief reaction + ask simple coding question  
+        Turn 3: Say "Thanks for your time, good luck!" and add [INTERVIEW_COMPLETE]
+        
+        BAD (too long): "That's great, Python is widely used in finance for data analysis and machine learning. When it comes to designing systems..."
+        GOOD: "Cool, Python's solid. How would you handle processing lots of transactions?"
+        GOOD: "No worries. Quick coding one - how would you sum a list of numbers?"
+
+
+
+      inject_system_purpose: false
+      inject_response_format: false
+      inject_user_profile: false
+
+      session_service:
+        type: memory
+        default_behavior: "PERSISTENT"  # Remembers history
+
+
+      artifact_service: *default_artifact_service
+      artifact_handling_mode: "ignore"
+      enable_embed_resolution: false
+      enable_artifact_content_instruction: false
+      data_tools_config: *default_data_tools_config
+
+      tools: []
+
+      agent_card:
+        title: "Mock Interview"
+        description: >
+          A realistic mock interviewer that conducts technical interviews based on company-specific 
+          context. Covers behavioral questions, system design, and coding challenges in a natural, 
+          conversational style.
+        defaultInputModes: [text]
+        defaultOutputModes: [text]
+
+      agent_card_publishing:
+        interval_seconds: 10
+      agent_discovery:
+        enabled: true
+      inter_agent_communication:
+        allow_list: ["*"]
