@@ -8,3 +8,4 @@ intersped.db
 .next
 webui_app.log
 **/webui_app.log
+venv/

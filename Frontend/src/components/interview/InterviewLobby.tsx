@@ -257,37 +257,13 @@ const InterviewLobby = ({ onStartInterview }: InterviewLobbyProps) => {
         </Button>
 
         <Button
-          onClick={async () => {
-            const debugData = {
-              company_overview: {
-                name: "Royal Bank of Canada",
-                industry: "Banking & Financial Services",
-                size: "Large Enterprise",
-                headquarters: "Toronto, Canada",
-                mission: "To deliver trusted advice to help clients thrive and communities prosper.",
-                culture: "Dynamic, collaborative, progressive, and inclusive.",
-                recent_news: []
-              },
-              interview_insights: {/* ... fill with your provided debug data ... */},
-              session_id: "direct",
-              metadata: { llm_model: "llama-3.3-70b-versatile" }
-            };
-            try {
-              const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/interview/start`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(debugData),
-              });
-              const data = await res.json();
-              console.log("Debug /start response:", data);
-              if (data.success !== false) {
-                onStartInterview({ companyName: "DEBUG", jobUrl: "https://debug.local", initialResponse: data.response });
-              } else {
-                alert("Debug interview start failed.");
-              }
-            } catch {
-              alert("Debug interview start failed.");
-            }
+          onClick={() => {
+            // Bypass /start endpoint and ElevenLabs - go directly to interview
+            onStartInterview({ 
+              companyName: "DEBUG", 
+              jobUrl: "https://debug.local", 
+              initialResponse: null  // null to skip ElevenLabs TTS
+            });
           }}
           className="w-full h-12 mt-2 text-base font-semibold bg-muted text-foreground hover:bg-muted/80 border border-border"
         >
