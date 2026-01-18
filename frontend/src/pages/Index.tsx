@@ -1,14 +1,17 @@
 import { useState } from "react";
 import InterviewLobby from "@/components/interview/InterviewLobby";
 import InterviewRoom from "@/components/interview/InterviewRoom";
+import AnalysisPage from "@/components/interview/AnalysisPage";
 
-type InterviewState = "lobby" | "interview" | "ended";
+type InterviewState = "lobby" | "analyzing" | "interview" | "ended";
 
 const Index = () => {
   const [interviewState, setInterviewState] = useState<InterviewState>("lobby");
+  const [jobPayload, setJobPayload] = useState<{ companyName: string; jobUrl: string } | null>(null);
 
-  const handleStartInterview = () => {
-    setInterviewState("interview");
+  const handleStartInterview = (payload: { companyName: string; jobUrl: string }) => {
+    setJobPayload(payload);
+    setInterviewState("analyzing");
   };
 
   const handleEndInterview = () => {
@@ -21,6 +24,17 @@ const Index = () => {
 
   if (interviewState === "lobby") {
     return <InterviewLobby onStartInterview={handleStartInterview} />;
+  }
+
+  if (interviewState === "analyzing" && jobPayload) {
+    return (
+      <AnalysisPage
+        companyName={jobPayload.companyName}
+        jobUrl={jobPayload.jobUrl}
+        onComplete={() => setInterviewState("interview")}
+        onFail={() => setInterviewState("lobby")}
+      />
+    );
   }
 
   if (interviewState === "interview") {

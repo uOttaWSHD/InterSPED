@@ -4,13 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 interface InterviewLobbyProps {
-  onStartInterview: () => void;
+  onStartInterview: (payload: { companyName: string; jobUrl: string }) => void;
 }
 
 const InterviewLobby = ({ onStartInterview }: InterviewLobbyProps) => {
   const [isVideoOn, setIsVideoOn] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
   const [jobUrl, setJobUrl] = useState("");
+  const [companyName, setCompanyName] = useState("");
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -107,9 +108,10 @@ const InterviewLobby = ({ onStartInterview }: InterviewLobbyProps) => {
   };
 
   const handleStartInterview = () => {
-    if (isValidUrl(jobUrl)) {
-      onStartInterview();
-    }
+    if (!isValidUrl(jobUrl)) return;
+    if (!companyName.trim()) return;
+
+    onStartInterview({ companyName: companyName.trim(), jobUrl });
   };
 
   return (
@@ -205,34 +207,48 @@ const InterviewLobby = ({ onStartInterview }: InterviewLobbyProps) => {
           </div>
         </div>
 
-        {/* Job URL Input */}
+        {/* Job Input & Company Select */}
         <div className="bg-[hsl(var(--interview-elevated))] rounded-xl p-6 border border-border space-y-4">
           <h3 className="font-semibold text-foreground">Job Posting</h3>
-          <div className="space-y-2">
-            <label htmlFor="jobUrl" className="text-sm text-muted-foreground">
-              Paste the job posting URL
-            </label>
-            <Input
-              id="jobUrl"
-              type="url"
-              placeholder="https://example.com/job-posting"
-              value={jobUrl}
-              onChange={(e) => setJobUrl(e.target.value)}
-              className="bg-[hsl(var(--interview-surface))] border-border text-foreground placeholder:text-muted-foreground/50"
-            />
-            {jobUrl && !isValidUrl(jobUrl) && (
-              <p className="text-xs text-destructive">Please enter a valid URL (e.g., https://example.com/job)</p>
-            )}
-            {jobUrl && isValidUrl(jobUrl) && (
-              <p className="text-xs text-[hsl(var(--interview-success))]">✓ Valid URL</p>
-            )}
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <label htmlFor="jobUrl" className="text-sm text-muted-foreground">
+                Paste the job posting URL
+              </label>
+              <Input
+                id="jobUrl"
+                type="url"
+                placeholder="https://example.com/job-posting"
+                value={jobUrl}
+                onChange={(e) => setJobUrl(e.target.value)}
+                className="bg-[hsl(var(--interview-surface))] border-border text-foreground placeholder:text-muted-foreground/50"
+              />
+              {jobUrl && !isValidUrl(jobUrl) && (
+                <p className="text-xs text-destructive">Please enter a valid URL (e.g., https://example.com/job)</p>
+              )}
+              {jobUrl && isValidUrl(jobUrl) && (
+                <p className="text-xs text-[hsl(var(--interview-success))]">✓ Valid URL</p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="companyName" className="text-sm text-muted-foreground">Company Name</label>
+              <Input
+                id="companyName"
+                type="text"
+                placeholder="e.g. Google, Amazon, Meta"
+                value={companyName}
+                onChange={(e) => setCompanyName(e.target.value)}
+                className="bg-[hsl(var(--interview-surface))] border-border text-foreground placeholder:text-muted-foreground/50"
+              />
+            </div>
           </div>
         </div>
 
         {/* Start Button */}
         <Button
           onClick={handleStartInterview}
-          disabled={!isValidUrl(jobUrl)}
+          disabled={!isValidUrl(jobUrl) || companyName.trim().length === 0}
           className="w-full h-14 text-lg font-semibold bg-primary hover:bg-primary/90 glow-primary transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Start Interview
