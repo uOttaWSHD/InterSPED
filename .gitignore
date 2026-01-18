@@ -6,3 +6,5 @@ frontend/node_modules
 *.log
 *.mov
 *.db
+venv/
+*.mp4

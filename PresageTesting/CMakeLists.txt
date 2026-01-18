@@ -8,6 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Find required packages
 find_package(SmartSpectra REQUIRED)
 find_package(OpenCV REQUIRED)
+find_package(nlohmann_json 3.2.0 REQUIRED)
 
 # Create executable
 add_executable(hello_vitals hello_vitals.cpp)
@@ -17,4 +18,5 @@ target_link_libraries(hello_vitals
     SmartSpectra::Container
     SmartSpectra::Gui
     ${OpenCV_LIBS}
+    nlohmann_json::nlohmann_json
 )

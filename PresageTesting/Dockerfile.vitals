@@ -1,0 +1,43 @@
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=UTC
+
+# Install base dependencies (NOT opencv - will use Presage's version)
+RUN apt-get update && apt-get install -y \
+    gpg \
+    curl \
+    ca-certificates \
+    build-essential \
+    cmake \
+    libgoogle-glog-dev \
+    libcurl4-openssl-dev \
+    nlohmann-json3-dev \
+    lsb-release \
+    && rm -rf /var/lib/apt/lists/*
+
+# Add Presage repository
+RUN curl -s "https://presage-security.github.io/PPA/KEY.gpg" | gpg --dearmor | tee /etc/apt/trusted.gpg.d/presage-technologies.gpg >/dev/null \
+    && curl -s --compressed -o /etc/apt/sources.list.d/presage-technologies.list "https://presage-security.github.io/PPA/presage-technologies.list"
+
+# Install SmartSpectra SDK - use compatible versions
+RUN apt-get update && apt-get install -y \
+    libphysiologyedge-dev=2.0.4 \
+    libsmartspectra-dev=2.0.4 \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copy source and build
+COPY hello_vitals.cpp CMakeLists.txt ./
+
+# Build
+RUN mkdir -p build && cd build && cmake .. && make -j$(nproc)
+
+# Create data directory
+RUN mkdir -p /app/data
+
+WORKDIR /app
+
+# Entry point runs the vitals processor
+ENTRYPOINT ["/app/build/hello_vitals"]

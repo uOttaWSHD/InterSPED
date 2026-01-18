@@ -11,8 +11,14 @@ import { Bot } from "lucide-react";
 const ELEVENLABS_API_KEY = "sk_e49c018a8789bb8fbeb2161c9aca48a5fd667cabaf3dd9e0";
 const ELEVENLABS_VOICE_ID = "21m00Tcm4TlvDq8ikWAM"; // Rachel voice
 
+export interface VitalsData {
+  breathing: (number | null)[];
+  pulse: (number | null)[];
+  timestamp: number[];
+}
+
 interface InterviewRoomProps {
-  onEndInterview: () => void;
+  onEndInterview: (videoBlob?: Blob) => void;
   initialResponse?: string | null;
 }
 
@@ -81,6 +87,51 @@ const InterviewRoom = ({ onEndInterview, initialResponse }: InterviewRoomProps) 
   const [lastAudioUrl, setLastAudioUrl] = useState<string | null>(null);
   const hasSpokenInitialRef = useRef(false);
   const audioRef = useRef<HTMLAudioElement>(null);
+
+  // Recording refs
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const chunksRef = useRef<Blob[]>([]);
+  const streamRef = useRef<MediaStream | null>(null);
+
+  // Start recording on mount
+  useEffect(() => {
+    const startRecording = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        streamRef.current = stream;
+        const recorder = new MediaRecorder(stream, { mimeType: "video/mp4" });
+        mediaRecorderRef.current = recorder;
+        chunksRef.current = [];
+        recorder.ondataavailable = (e) => {
+          if (e.data.size > 0) chunksRef.current.push(e.data);
+        };
+        recorder.start();
+      } catch (err) {
+        console.error("Recording error:", err);
+      }
+    };
+    startRecording();
+    return () => {
+      streamRef.current?.getTracks().forEach((t) => t.stop());
+    };
+  }, []);
+
+  // Upload recording when interview ends
+  const handleEndInterview = async () => {
+    let videoBlob: Blob | undefined;
+    
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state === "recording") {
+      mediaRecorderRef.current.stop();
+      await new Promise<void>((resolve) => {
+        mediaRecorderRef.current!.onstop = () => {
+          videoBlob = new Blob(chunksRef.current, { type: "video/mp4" });
+          resolve();
+        };
+      });
+    }
+    streamRef.current?.getTracks().forEach((t) => t.stop());
+    onEndInterview(videoBlob);
+  };
 
 
 
@@ -308,7 +359,7 @@ const InterviewRoom = ({ onEndInterview, initialResponse }: InterviewRoomProps) 
               onToggleMute={() => setIsMuted(!isMuted)}
               onToggleVideo={() => setIsVideoOn(!isVideoOn)}
               onToggleCodeShare={() => setIsCodeSharing(!isCodeSharing)}
-              onEndInterview={onEndInterview}
+              onEndInterview={handleEndInterview}
             />
           </div>
         </div>
