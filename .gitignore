@@ -6,4 +6,4 @@ node_modules
 intersped.db
 *.pyc
 .next
-
+webui_app.log
