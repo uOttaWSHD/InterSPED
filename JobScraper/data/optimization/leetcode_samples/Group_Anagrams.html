@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="shortcut icon" type="image/png" href="/assets/img/favicon.png">
+  <link rel="stylesheet" href="/assets/css/uikit.min.css" />
+  <script src="/assets/js/uikit.min.js" type="text/javascript"></script>
+  <script src="/assets/js/uikit-icons.min.js" type="text/javascript"></script>
+
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        packages: {'[+]': ['ams']}  // Include the 'ams' package
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  
+  
+
+  
+<!-- below block is overlapping with SEO plugin generated title and description   -->
+<!-- 
+  <title>49 - Group Anagrams</title>
+
+  
+  <meta name="author" content="Leetcode">
+  
+
+  
+  <meta name="description" content="Welcome to Subscribe On Youtube 49. Group Anagrams Description Given an array of strings strs, group the anagrams together. You can return the answer in any order. An Anagram is a word or phrase formed by rearranging the letters of a different word or phrase, typically using all the original...">
+   -->
+
+  
+
+  
+  <meta name="keywords" content="LeetCode, Solution, Company Tag, Unlock Prime, Java, C++, Interview, Job, Algorithm, SQL, Canada">
+  
+
+  <link rel="alternate" type="application/rss+xml" title="Leetcode" href="https://leetcode.ca/feed.xml">
+
+  
+
+  
+
+  
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-K108N8L891"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-K108N8L891');
+  </script>
+  <!-- End Google Analytics -->
+
+
+  
+  <script data-ad-client="ca-pub-6766885420008650" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+
+
+
+  
+    
+      
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+
+    
+      
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
+
+
+    
+      
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic">
+
+
+    
+      
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800">
+
+
+    
+  
+
+  
+    
+      <link rel="stylesheet" href="/assets/css/bootstrap-social.css">
+    
+      <link rel="stylesheet" href="/assets/css/beautifuljekyll.css">
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <meta property="og:site_name" content="Leetcode">
+  <meta property="og:title" content="49 - Group Anagrams">
+  <meta property="og:description" content="Welcome to Subscribe On Youtube 49. Group Anagrams Description Given an array of strings strs, group the anagrams together. You can return the answer in any order. An Anagram is a word or phrase formed by rearranging the letters of a different word or phrase, typically using all the original letters exactly once. &amp;nbsp; Example 1: Input: strs = [&quot;eat&quot;,&quot;tea&quot;,&quot;tan&quot;,&quot;ate&quot;,&quot;nat&quot;,&quot;bat&quot;] Output: [[&quot;bat&quot;],[&quot;nat&quot;,&quot;tan&quot;],[&quot;ate&quot;,&quot;eat&quot;,&quot;tea&quot;]] Example 2: Input: strs = [&quot;&quot;] Output: [[&quot;&quot;]] Example 3: Input: strs = [&quot;a&quot;] Output: [[&quot;a&quot;]] &amp;nbsp; Constraints: 1 &amp;lt;= strs.length &amp;lt;= 104 0 &amp;lt;= strs[i].length &amp;lt;= 100 strs[i] consists of lowercase English letters. Solutions Solution 1: Hash Table Traverse the string array, sort each string in character dictionary order to get a new string. Use the new string as key and [str] as value, and store them in the hash table (HashMap&amp;lt;String, List&amp;lt;String&amp;gt;&amp;gt;). When encountering the same key during subsequent traversal, add it to the corresponding value. Take strs = [&quot;eat&quot;, &quot;tea&quot;, &quot;tan&quot;, &quot;ate&quot;, &quot;nat&quot;, &quot;bat&quot;] as an example. At the end of the traversal, the state of the hash table is: key value &quot;aet&quot; [&quot;eat&quot;, &quot;tea&quot;, &quot;ate&quot;] &quot;ant&quot; [&quot;tan&quot;, &quot;nat&quot;] &quot;abt&quot; [&quot;bat&quot;] Finally, return the value list of the hash table. The time complexity is $O(n\times k\times \log k)$, where $n$ and $k$ are the lengths of the string array and the maximum length of the string, respectively. Solution 2: Counting We can also change the sorting part in Solution 1 to counting, that is, use the characters in each string $s$ and their occurrence times as key, and use the string $s$ as value to store in the hash table. The time complexity is $O(n\times (k + C))$, where $n$ and $k$ are the lengths of the string array and the maximum length of the string, respectively, and $C$ is the size of the character set. In this problem, $C = 26$. Java C++ Python Go TypeScript C# RenderScript class Solution { public List&amp;lt;List&amp;lt;String&amp;gt;&amp;gt; groupAnagrams(String[] strs) { Map&amp;lt;String, List&amp;lt;String&amp;gt;&amp;gt; d = new HashMap&amp;lt;&amp;gt;(); for (String s : strs) { char[] t = s.toCharArray(); Arrays.sort(t); String k = String.valueOf(t); d.computeIfAbsent(k, key -&amp;gt; new ArrayList&amp;lt;&amp;gt;()).add(s); } return new ArrayList&amp;lt;&amp;gt;(d.values()); } } class Solution { public: vector&amp;lt;vector&amp;lt;string&amp;gt;&amp;gt; groupAnagrams(vector&amp;lt;string&amp;gt;&amp;amp; strs) { unordered_map&amp;lt;string, vector&amp;lt;string&amp;gt;&amp;gt; d; for (auto&amp;amp; s : strs) { string k = s; sort(k.begin(), k.end()); d[k].emplace_back(s); } vector&amp;lt;vector&amp;lt;string&amp;gt;&amp;gt; ans; for (auto&amp;amp; [_, v] : d) ans.emplace_back(v); return ans; } }; &apos;&apos;&apos; &amp;gt;&amp;gt;&amp;gt; from collections import defaultdict &amp;gt;&amp;gt;&amp;gt; d = defaultdict(list) &amp;gt;&amp;gt;&amp;gt; d[&quot;a&quot;]=1 &amp;gt;&amp;gt;&amp;gt; d[&quot;b&quot;]=2 &amp;gt;&amp;gt;&amp;gt; d defaultdict(&amp;lt;class &apos;list&apos;&amp;gt;, {&apos;a&apos;: 1, &apos;b&apos;: 2}) &amp;gt;&amp;gt;&amp;gt; d.values() dict_values([1, 2]) &amp;gt;&amp;gt;&amp;gt; list(d.values()) [1, 2] ### sorted(str) will return a list of chars &amp;gt;&amp;gt;&amp;gt; a = &quot;sdfddxyz&quot; &amp;gt;&amp;gt;&amp;gt; sorted(a) [&apos;d&apos;, &apos;d&apos;, &apos;d&apos;, &apos;f&apos;, &apos;s&apos;, &apos;x&apos;, &apos;y&apos;, &apos;z&apos;] &amp;gt;&amp;gt;&amp;gt; &quot;&quot;.join(sorted(a)) &apos;dddfsxyz&apos; &apos;&apos;&apos; class Solution: def groupAnagrams(self, strs: List[str]) -&amp;gt; List[List[str]]: d = defaultdict(list) for s in strs: k = &quot;&quot;.join(sorted(s)) d[k].append(s) return list(d.values()) func groupAnagrams(strs []string) (ans [][]string) { d := map[string][]string{} for _, s := range strs { t := []byte(s) sort.Slice(t, func(i, j int) bool { return t[i] &amp;lt; t[j] }) k...">
+
+  
+  <meta property="og:image" content="https://leetcode.ca/assets/img/avatar-icon.jpg">
+  
+
+  <!-- remove canonical below to use SEO plugin -->
+  
+  <meta property="og:type" content="article">
+  <meta property="og:article:author" content="Leetcode">
+  <meta property="og:article:published_time" content="2016-01-18T00:00:00-08:00">
+  <meta property="og:url" content="https://leetcode.ca/2016-01-18-49-Group-Anagrams/">
+  <!-- <link rel="canonical" href="https://leetcode.ca/2016-01-18-49-Group-Anagrams/"> -->
+  
+
+  
+  <meta name="twitter:card" content="summary">
+  
+  <meta name="twitter:site" content="@">
+  <meta name="twitter:creator" content="@">
+
+  <meta property="twitter:title" content="49 - Group Anagrams">
+  <meta property="twitter:description" content="Welcome to Subscribe On Youtube 49. Group Anagrams Description Given an array of strings strs, group the anagrams together. You can return the answer in any order. An Anagram is a word or phrase formed by rearranging the letters of a different word or phrase, typically using all the original letters exactly once. &amp;nbsp; Example 1: Input: strs = [&quot;eat&quot;,&quot;tea&quot;,&quot;tan&quot;,&quot;ate&quot;,&quot;nat&quot;,&quot;bat&quot;] Output: [[&quot;bat&quot;],[&quot;nat&quot;,&quot;tan&quot;],[&quot;ate&quot;,&quot;eat&quot;,&quot;tea&quot;]] Example 2: Input: strs = [&quot;&quot;] Output: [[&quot;&quot;]] Example 3: Input: strs = [&quot;a&quot;] Output: [[&quot;a&quot;]] &amp;nbsp; Constraints: 1 &amp;lt;= strs.length &amp;lt;= 104 0 &amp;lt;= strs[i].length &amp;lt;= 100 strs[i] consists of lowercase English letters. Solutions Solution 1: Hash Table Traverse the string array, sort each string in character dictionary order to get a new string. Use the new string as key and [str] as value, and store them in the hash table (HashMap&amp;lt;String, List&amp;lt;String&amp;gt;&amp;gt;). When encountering the same key during subsequent traversal, add it to the corresponding value. Take strs = [&quot;eat&quot;, &quot;tea&quot;, &quot;tan&quot;, &quot;ate&quot;, &quot;nat&quot;, &quot;bat&quot;] as an example. At the end of the traversal, the state of the hash table is: key value &quot;aet&quot; [&quot;eat&quot;, &quot;tea&quot;, &quot;ate&quot;] &quot;ant&quot; [&quot;tan&quot;, &quot;nat&quot;] &quot;abt&quot; [&quot;bat&quot;] Finally, return the value list of the hash table. The time complexity is $O(n\times k\times \log k)$, where $n$ and $k$ are the lengths of the string array and the maximum length of the string, respectively. Solution 2: Counting We can also change the sorting part in Solution 1 to counting, that is, use the characters in each string $s$ and their occurrence times as key, and use the string $s$ as value to store in the hash table. The time complexity is $O(n\times (k + C))$, where $n$ and $k$ are the lengths of the string array and the maximum length of the string, respectively, and $C$ is the size of the character set. In this problem, $C = 26$. Java C++ Python Go TypeScript C# RenderScript class Solution { public List&amp;lt;List&amp;lt;String&amp;gt;&amp;gt; groupAnagrams(String[] strs) { Map&amp;lt;String, List&amp;lt;String&amp;gt;&amp;gt; d = new HashMap&amp;lt;&amp;gt;(); for (String s : strs) { char[] t = s.toCharArray(); Arrays.sort(t); String k = String.valueOf(t); d.computeIfAbsent(k, key -&amp;gt; new ArrayList&amp;lt;&amp;gt;()).add(s); } return new ArrayList&amp;lt;&amp;gt;(d.values()); } } class Solution { public: vector&amp;lt;vector&amp;lt;string&amp;gt;&amp;gt; groupAnagrams(vector&amp;lt;string&amp;gt;&amp;amp; strs) { unordered_map&amp;lt;string, vector&amp;lt;string&amp;gt;&amp;gt; d; for (auto&amp;amp; s : strs) { string k = s; sort(k.begin(), k.end()); d[k].emplace_back(s); } vector&amp;lt;vector&amp;lt;string&amp;gt;&amp;gt; ans; for (auto&amp;amp; [_, v] : d) ans.emplace_back(v); return ans; } }; &apos;&apos;&apos; &amp;gt;&amp;gt;&amp;gt; from collections import defaultdict &amp;gt;&amp;gt;&amp;gt; d = defaultdict(list) &amp;gt;&amp;gt;&amp;gt; d[&quot;a&quot;]=1 &amp;gt;&amp;gt;&amp;gt; d[&quot;b&quot;]=2 &amp;gt;&amp;gt;&amp;gt; d defaultdict(&amp;lt;class &apos;list&apos;&amp;gt;, {&apos;a&apos;: 1, &apos;b&apos;: 2}) &amp;gt;&amp;gt;&amp;gt; d.values() dict_values([1, 2]) &amp;gt;&amp;gt;&amp;gt; list(d.values()) [1, 2] ### sorted(str) will return a list of chars &amp;gt;&amp;gt;&amp;gt; a = &quot;sdfddxyz&quot; &amp;gt;&amp;gt;&amp;gt; sorted(a) [&apos;d&apos;, &apos;d&apos;, &apos;d&apos;, &apos;f&apos;, &apos;s&apos;, &apos;x&apos;, &apos;y&apos;, &apos;z&apos;] &amp;gt;&amp;gt;&amp;gt; &quot;&quot;.join(sorted(a)) &apos;dddfsxyz&apos; &apos;&apos;&apos; class Solution: def groupAnagrams(self, strs: List[str]) -&amp;gt; List[List[str]]: d = defaultdict(list) for s in strs: k = &quot;&quot;.join(sorted(s)) d[k].append(s) return list(d.values()) func groupAnagrams(strs []string) (ans [][]string) { d := map[string][]string{} for _, s := range strs { t := []byte(s) sort.Slice(t, func(i, j int) bool { return t[i] &amp;lt; t[j] }) k...">
+
+  
+  <meta name="twitter:image" content="https://leetcode.ca/assets/img/avatar-icon.jpg">
+  
+
+  
+
+
+  <!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>49 - Group Anagrams | Leetcode</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="49 - Group Anagrams" />
+<meta name="author" content="Leetcode" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Welcome to Subscribe On Youtube" />
+<meta property="og:description" content="Welcome to Subscribe On Youtube" />
+<link rel="canonical" href="https://leetcode.ca/2016-01-18-49-Group-Anagrams/" />
+<meta property="og:url" content="https://leetcode.ca/2016-01-18-49-Group-Anagrams/" />
+<meta property="og:site_name" content="Leetcode" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2016-01-18T00:00:00-08:00" />
+<script type="application/ld+json">
+{"description":"Welcome to Subscribe On Youtube","headline":"49 - Group Anagrams","dateModified":"2016-01-18T00:00:00-08:00","datePublished":"2016-01-18T00:00:00-08:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://leetcode.ca/2016-01-18-49-Group-Anagrams/"},"url":"https://leetcode.ca/2016-01-18-49-Group-Anagrams/","author":{"@type":"Person","name":"Leetcode"},"@type":"BlogPosting","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+  
+
+  
+
+</head>
+
+
+<body>
+
+  
+
+
+  <nav class="navbar navbar-expand-xl navbar-light fixed-top navbar-custom top-nav-regular"><a class="navbar-brand" href="https://leetcode.ca/">Leetcode</a><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="main-navbar">
+    <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/blog">Posts</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/tags">Tag Index</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/search">Search</a>
+          </li></ul>
+  </div>
+
+  
+
+  
+    <div class="avatar-container">
+      <div class="avatar-img-border">
+        <a href="https://leetcode.ca/">
+          <img alt="Navigation bar avatar" class="avatar-img" src="/assets/img/avatar-icon.jpg" />
+        </a>
+      </div>
+    </div>
+  
+
+</nav>
+
+
+  <!-- TODO this file has become a mess, refactor it -->
+
+
+
+
+
+
+
+<header class="header-section ">
+
+<div class="intro-header no-img">
+  <div class="container-md">
+    <div class="row">
+      <div class="col-xl-8 offset-xl-2 col-lg-10 offset-lg-1">
+        <div class="post-heading">
+          <h1>49 - Group Anagrams</h1>
+          
+
+          
+            <span class="post-meta">Posted on January 18, 2016</span>
+            
+            
+              
+
+
+
+
+
+  
+  <span class="post-meta"><span class="d-none d-md-inline middot">&middot;</span> 3 minute read</span>
+
+
+            
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</header>
+
+
+
+
+
+<div class=" container-md ">
+  <div class="row">
+    <div class=" col-xl-8 offset-xl-2 col-lg-10 offset-lg-1 ">
+
+      
+
+      
+
+      <article role="main" class="blog-post">
+        <h5 id="welcome-to-subscribe-on-youtube">Welcome to Subscribe On Youtube</h5>
+<script src="https://apis.google.com/js/platform.js"></script>
+
+<div class="g-ytsubscribe" data-channelid="UCslk3mmaMJy1enit3L9vWig" data-layout="full" data-count="hidden"></div>
+
+<h1 id="49-group-anagrams"><a href="https://leetcode.com/problems/group-anagrams">49. Group Anagrams</a></h1>
+
+<h2 id="description">Description</h2>
+
+<p>Given an array of strings <code>strs</code>, group <strong>the anagrams</strong> together. You can return the answer in <strong>any order</strong>.</p>
+
+<p>An <strong>Anagram</strong> is a word or phrase formed by rearranging the letters of a different word or phrase, typically using all the original letters exactly once.</p>
+
+<p>&nbsp;</p>
+<p><strong class="example">Example 1:</strong></p>
+<pre><strong>Input:</strong> strs = ["eat","tea","tan","ate","nat","bat"]
+<strong>Output:</strong> [["bat"],["nat","tan"],["ate","eat","tea"]]
+</pre>
+<p><strong class="example">Example 2:</strong></p>
+<pre><strong>Input:</strong> strs = [""]
+<strong>Output:</strong> [[""]]
+</pre>
+<p><strong class="example">Example 3:</strong></p>
+<pre><strong>Input:</strong> strs = ["a"]
+<strong>Output:</strong> [["a"]]
+</pre>
+<p>&nbsp;</p>
+<p><strong>Constraints:</strong></p>
+
+<ul>
+	<li><code>1 &lt;= strs.length &lt;= 10<sup>4</sup></code></li>
+	<li><code>0 &lt;= strs[i].length &lt;= 100</code></li>
+	<li><code>strs[i]</code> consists of lowercase English letters.</li>
+</ul>
+
+<h2 id="solutions">Solutions</h2>
+
+<p><strong>Solution 1: Hash Table</strong></p>
+
+<ol>
+  <li>Traverse the string array, sort each string in <strong>character dictionary order</strong> to get a new string.</li>
+  <li>Use the new string as <code class="language-plaintext highlighter-rouge">key</code> and <code class="language-plaintext highlighter-rouge">[str]</code> as <code class="language-plaintext highlighter-rouge">value</code>, and store them in the hash table (<code class="language-plaintext highlighter-rouge">HashMap&lt;String, List&lt;String&gt;&gt;</code>).</li>
+  <li>When encountering the same <code class="language-plaintext highlighter-rouge">key</code> during subsequent traversal, add it to the corresponding <code class="language-plaintext highlighter-rouge">value</code>.</li>
+</ol>
+
+<p>Take <code class="language-plaintext highlighter-rouge">strs = ["eat", "tea", "tan", "ate", "nat", "bat"]</code> as an example. At the end of the traversal, the state of the hash table is:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>key</th>
+      <th>value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">"aet"</code></td>
+      <td><code class="language-plaintext highlighter-rouge">["eat", "tea", "ate"]</code></td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">"ant"</code></td>
+      <td><code class="language-plaintext highlighter-rouge">["tan", "nat"] </code></td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">"abt"</code></td>
+      <td><code class="language-plaintext highlighter-rouge">["bat"] </code></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Finally, return the <code class="language-plaintext highlighter-rouge">value</code> list of the hash table.</p>
+
+<p>The time complexity is $O(n\times k\times \log k)$, where $n$ and $k$ are the lengths of the string array and the maximum length of the string, respectively.</p>
+
+<p><strong>Solution 2: Counting</strong></p>
+
+<p>We can also change the sorting part in Solution 1 to counting, that is, use the characters in each string $s$ and their occurrence times as <code class="language-plaintext highlighter-rouge">key</code>, and use the string $s$ as <code class="language-plaintext highlighter-rouge">value</code> to store in the hash table.</p>
+
+<p>The time complexity is $O(n\times (k + C))$, where $n$ and $k$ are the lengths of the string array and the maximum length of the string, respectively, and $C$ is the size of the character set. In this problem, $C = 26$.</p>
+
+<ul class="uk-tab" data-uk-switcher="{connect:'#4184a283-a862-4837-9925-47879820d221'}">
+
+	<li class="uk-active"><a href="#">Java</a></li>
+
+	<li><a href="#">C++</a></li>
+
+	<li><a href="#">Python</a></li>
+
+	<li><a href="#">Go</a></li>
+
+	<li><a href="#">TypeScript</a></li>
+
+	<li><a href="#">C#</a></li>
+
+	<li><a href="#">RenderScript</a></li>
+
+</ul>
+
+<ul id="4184a283-a862-4837-9925-47879820d221" class="uk-switcher uk-margin">
+
+	<li>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Solution</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;&gt;</span> <span class="nf">groupAnagrams</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">strs</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;&gt;</span> <span class="n">d</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;();</span>
+        <span class="k">for</span> <span class="o">(</span><span class="nc">String</span> <span class="n">s</span> <span class="o">:</span> <span class="n">strs</span><span class="o">)</span> <span class="o">{</span>
+            <span class="kt">char</span><span class="o">[]</span> <span class="n">t</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="na">toCharArray</span><span class="o">();</span>
+            <span class="nc">Arrays</span><span class="o">.</span><span class="na">sort</span><span class="o">(</span><span class="n">t</span><span class="o">);</span>
+            <span class="nc">String</span> <span class="n">k</span> <span class="o">=</span> <span class="nc">String</span><span class="o">.</span><span class="na">valueOf</span><span class="o">(</span><span class="n">t</span><span class="o">);</span>
+            <span class="n">d</span><span class="o">.</span><span class="na">computeIfAbsent</span><span class="o">(</span><span class="n">k</span><span class="o">,</span> <span class="n">key</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;()).</span><span class="na">add</span><span class="o">(</span><span class="n">s</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;(</span><span class="n">d</span><span class="o">.</span><span class="na">values</span><span class="o">());</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+</li>
+
+	<li>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Solution</span> <span class="p">{</span>
+<span class="nl">public:</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;&gt;</span> <span class="n">groupAnagrams</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;&amp;</span> <span class="n">strs</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">unordered_map</span><span class="o">&lt;</span><span class="n">string</span><span class="p">,</span> <span class="n">vector</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;&gt;</span> <span class="n">d</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="n">s</span> <span class="o">:</span> <span class="n">strs</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">string</span> <span class="n">k</span> <span class="o">=</span> <span class="n">s</span><span class="p">;</span>
+            <span class="n">sort</span><span class="p">(</span><span class="n">k</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">k</span><span class="p">.</span><span class="n">end</span><span class="p">());</span>
+            <span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">].</span><span class="n">emplace_back</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="n">vector</span><span class="o">&lt;</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;&gt;</span> <span class="n">ans</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="p">[</span><span class="n">_</span><span class="p">,</span> <span class="n">v</span><span class="p">]</span> <span class="o">:</span> <span class="n">d</span><span class="p">)</span> <span class="n">ans</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+        <span class="k">return</span> <span class="n">ans</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</code></pre></div></div>
+</li>
+
+	<li>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">'''
+&gt;&gt;&gt; from collections import defaultdict
+&gt;&gt;&gt; d = defaultdict(list)
+&gt;&gt;&gt; d["a"]=1
+&gt;&gt;&gt; d["b"]=2
+&gt;&gt;&gt; d
+defaultdict(&lt;class 'list'&gt;, {'a': 1, 'b': 2})
+&gt;&gt;&gt; d.values()
+dict_values([1, 2])
+&gt;&gt;&gt; list(d.values())
+[1, 2]
+
+### sorted(str) will return a list of chars
+&gt;&gt;&gt; a = "sdfddxyz"
+&gt;&gt;&gt; sorted(a)
+['d', 'd', 'd', 'f', 's', 'x', 'y', 'z']
+&gt;&gt;&gt; "".join(sorted(a))
+'dddfsxyz'
+'''</span>
+
+<span class="k">class</span> <span class="nc">Solution</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">groupAnagrams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">strs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">strs</span><span class="p">:</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="s">""</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">s</span><span class="p">))</span>
+            <span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">].</span><span class="n">append</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">d</span><span class="p">.</span><span class="n">values</span><span class="p">())</span>
+
+</code></pre></div></div>
+</li>
+
+	<li>
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="n">groupAnagrams</span><span class="p">(</span><span class="n">strs</span> <span class="p">[]</span><span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="n">ans</span> <span class="p">[][]</span><span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">d</span> <span class="o">:=</span> <span class="k">map</span><span class="p">[</span><span class="kt">string</span><span class="p">][]</span><span class="kt">string</span><span class="p">{}</span>
+	<span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">s</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">strs</span> <span class="p">{</span>
+		<span class="n">t</span> <span class="o">:=</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+		<span class="n">sort</span><span class="o">.</span><span class="n">Slice</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="k">func</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span> <span class="k">return</span> <span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">t</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="p">})</span>
+		<span class="n">k</span> <span class="o">:=</span> <span class="kt">string</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+		<span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">append</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">s</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">v</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">d</span> <span class="p">{</span>
+		<span class="n">ans</span> <span class="o">=</span> <span class="nb">append</span><span class="p">(</span><span class="n">ans</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="k">return</span>
+<span class="p">}</span>
+</code></pre></div></div>
+</li>
+
+	<li>
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">groupAnagrams</span><span class="p">(</span><span class="nx">strs</span><span class="p">:</span> <span class="kr">string</span><span class="p">[]):</span> <span class="kr">string</span><span class="p">[][]</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">d</span><span class="p">:</span> <span class="nb">Map</span><span class="o">&lt;</span><span class="kr">string</span><span class="p">,</span> <span class="kr">string</span><span class="p">[]</span><span class="o">&gt;</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Map</span><span class="p">();</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">const</span> <span class="nx">s</span> <span class="k">of</span> <span class="nx">strs</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">const</span> <span class="nx">k</span> <span class="o">=</span> <span class="nx">s</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="dl">''</span><span class="p">).</span><span class="nx">sort</span><span class="p">().</span><span class="nx">join</span><span class="p">(</span><span class="dl">''</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">d</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="nx">k</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">d</span><span class="p">.</span><span class="kd">set</span><span class="p">(</span><span class="nx">k</span><span class="p">,</span> <span class="p">[]);</span>
+        <span class="p">}</span>
+        <span class="nx">d</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="nx">k</span><span class="p">)</span><span class="o">!</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">s</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nb">Array</span><span class="p">.</span><span class="k">from</span><span class="p">(</span><span class="nx">d</span><span class="p">.</span><span class="nx">values</span><span class="p">());</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+</li>
+
+	<li>
+<div class="language-cs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">using</span> <span class="nn">System.Collections.Generic</span><span class="p">;</span>
+
+<span class="k">public</span> <span class="k">class</span> <span class="nc">Comparer</span> <span class="p">:</span> <span class="n">IEqualityComparer</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="kt">bool</span> <span class="nf">Equals</span><span class="p">(</span><span class="kt">string</span> <span class="n">left</span><span class="p">,</span> <span class="kt">string</span> <span class="n">right</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">left</span><span class="p">.</span><span class="n">Length</span> <span class="p">!=</span> <span class="n">right</span><span class="p">.</span><span class="n">Length</span><span class="p">)</span> <span class="k">return</span> <span class="k">false</span><span class="p">;</span>
+
+        <span class="kt">var</span> <span class="n">leftCount</span> <span class="p">=</span> <span class="k">new</span> <span class="kt">int</span><span class="p">[</span><span class="m">26</span><span class="p">];</span>
+        <span class="k">foreach</span> <span class="p">(</span><span class="kt">var</span> <span class="n">ch</span> <span class="k">in</span> <span class="n">left</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="p">++</span><span class="n">leftCount</span><span class="p">[</span><span class="n">ch</span> <span class="p">-</span> <span class="sc">'a'</span><span class="p">];</span>
+        <span class="p">}</span>
+
+        <span class="kt">var</span> <span class="n">rightCount</span> <span class="p">=</span> <span class="k">new</span> <span class="kt">int</span><span class="p">[</span><span class="m">26</span><span class="p">];</span>
+        <span class="k">foreach</span> <span class="p">(</span><span class="kt">var</span> <span class="n">ch</span> <span class="k">in</span> <span class="n">right</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="kt">var</span> <span class="n">index</span> <span class="p">=</span> <span class="n">ch</span> <span class="p">-</span> <span class="sc">'a'</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(++</span><span class="n">rightCount</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="p">&gt;</span> <span class="n">leftCount</span><span class="p">[</span><span class="n">index</span><span class="p">])</span> <span class="k">return</span> <span class="k">false</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="k">true</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="kt">int</span> <span class="nf">GetHashCode</span><span class="p">(</span><span class="kt">string</span> <span class="n">obj</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="kt">var</span> <span class="n">hashCode</span> <span class="p">=</span> <span class="m">0</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="p">=</span> <span class="m">0</span><span class="p">;</span> <span class="n">i</span> <span class="p">&lt;</span> <span class="n">obj</span><span class="p">.</span><span class="n">Length</span><span class="p">;</span> <span class="p">++</span><span class="n">i</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">hashCode</span> <span class="p">^=</span> <span class="m">1</span> <span class="p">&lt;&lt;</span> <span class="p">(</span><span class="n">obj</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="p">-</span> <span class="sc">'a'</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">hashCode</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">public</span> <span class="k">class</span> <span class="nc">Solution</span> <span class="p">{</span>
+    <span class="k">public</span> <span class="n">IList</span><span class="p">&lt;</span><span class="n">IList</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;&gt;</span> <span class="nf">GroupAnagrams</span><span class="p">(</span><span class="kt">string</span><span class="p">[]</span> <span class="n">strs</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">var</span> <span class="n">dict</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Dictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="n">List</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;&gt;(</span><span class="k">new</span> <span class="nf">Comparer</span><span class="p">());</span>
+        <span class="k">foreach</span> <span class="p">(</span><span class="kt">var</span> <span class="n">str</span> <span class="k">in</span> <span class="n">strs</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">List</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;</span> <span class="n">list</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(!</span><span class="n">dict</span><span class="p">.</span><span class="nf">TryGetValue</span><span class="p">(</span><span class="n">str</span><span class="p">,</span> <span class="k">out</span> <span class="n">list</span><span class="p">))</span>
+            <span class="p">{</span>
+                <span class="n">list</span> <span class="p">=</span> <span class="k">new</span> <span class="n">List</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;();</span>
+                <span class="n">dict</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="n">str</span><span class="p">,</span> <span class="n">list</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="n">list</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="n">str</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">foreach</span> <span class="p">(</span><span class="kt">var</span> <span class="n">list</span> <span class="k">in</span> <span class="n">dict</span><span class="p">.</span><span class="n">Values</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="n">list</span><span class="p">.</span><span class="nf">Sort</span><span class="p">();</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">IList</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;&gt;(</span><span class="n">dict</span><span class="p">.</span><span class="n">Values</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+</li>
+
+	<li>
+<div class="language-rs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">use</span> <span class="nn">std</span><span class="p">::</span><span class="nn">collections</span><span class="p">::</span><span class="n">HashMap</span><span class="p">;</span>
+
+<span class="k">impl</span> <span class="n">Solution</span> <span class="p">{</span>
+    <span class="k">pub</span> <span class="k">fn</span> <span class="nf">group_anagrams</span><span class="p">(</span><span class="n">strs</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">String</span><span class="o">&gt;</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">String</span><span class="o">&gt;&gt;</span> <span class="p">{</span>
+        <span class="k">let</span> <span class="k">mut</span> <span class="n">map</span> <span class="o">=</span> <span class="nn">HashMap</span><span class="p">::</span><span class="nf">new</span><span class="p">();</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="k">in</span> <span class="n">strs</span> <span class="p">{</span>
+            <span class="k">let</span> <span class="n">key</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="k">let</span> <span class="k">mut</span> <span class="n">arr</span> <span class="o">=</span> <span class="n">s</span><span class="nf">.chars</span><span class="p">()</span><span class="py">.collect</span><span class="p">::</span><span class="o">&lt;</span><span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">char</span><span class="o">&gt;&gt;</span><span class="p">();</span>
+                <span class="n">arr</span><span class="nf">.sort</span><span class="p">();</span>
+                <span class="n">arr</span><span class="nf">.iter</span><span class="p">()</span><span class="py">.collect</span><span class="p">::</span><span class="o">&lt;</span><span class="nb">String</span><span class="o">&gt;</span><span class="p">()</span>
+            <span class="p">};</span>
+            <span class="k">let</span> <span class="n">val</span> <span class="o">=</span> <span class="n">map</span><span class="nf">.entry</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="nf">.or_insert</span><span class="p">(</span><span class="nd">vec!</span><span class="p">[]);</span>
+            <span class="n">val</span><span class="nf">.push</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="n">map</span><span class="nf">.into_iter</span><span class="p">()</span>
+            <span class="nf">.map</span><span class="p">(|(</span><span class="n">_</span><span class="p">,</span> <span class="n">v</span><span class="p">)|</span> <span class="n">v</span><span class="p">)</span>
+            <span class="nf">.collect</span><span class="p">()</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+</li>
+
+</ul>
+
+<h1 id="all-problems"><a href="https://leetcode.ca/all/problems.html">All Problems</a></h1>
+
+<h1 id="all-solutions"><a href="https://leetcode.ca/blog">All Solutions</a></h1>
+
+      </article>
+
+      
+
+      
+
+      
+        <!-- Check if any share-links are active -->
+
+
+
+
+<section id = "social-share-section">
+  <span class="sr-only">Share: </span>
+
+  
+    <a href="https://twitter.com/intent/tweet?text=49+-+Group+Anagrams&url=https%3A%2F%2Fleetcode.ca%2F2016-01-18-49-Group-Anagrams%2F"
+      class="btn btn-social-icon btn-twitter" title="Share on Twitter">
+      <span class="fab fa-fw fa-twitter" aria-hidden="true"></span>
+      <span class="sr-only">Twitter</span>
+    </a>
+  
+
+  
+    <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fleetcode.ca%2F2016-01-18-49-Group-Anagrams%2F"
+      class="btn btn-social-icon btn-facebook" title="Share on Facebook">
+      <span class="fab fa-fw fa-facebook" aria-hidden="true"></span>
+      <span class="sr-only">Facebook</span>
+    </a>
+  
+
+  
+    <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fleetcode.ca%2F2016-01-18-49-Group-Anagrams%2F"
+      class="btn btn-social-icon btn-linkedin" title="Share on LinkedIn">
+      <span class="fab fa-fw fa-linkedin" aria-hidden="true"></span>
+      <span class="sr-only">LinkedIn</span>
+    </a>
+  
+
+  
+
+</section>
+
+
+
+      
+
+      <ul class="pagination blog-pager">
+        
+        <li class="page-item previous">
+          <a class="page-link" href="/2016-01-17-48-Rotate-Image/" data-toggle="tooltip" data-placement="top" title="48 - Rotate Image">&larr; Previous Post</a>
+        </li>
+        
+        
+        <li class="page-item next">
+          <a class="page-link" href="/2016-01-19-50-Pow(x,-n)/" data-toggle="tooltip" data-placement="top" title="50 - Pow(x, n)">Next Post &rarr;</a>
+        </li>
+        
+      </ul>
+      
+  <div class="disqus-comments">
+  <div class="comments">
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+	  var disqus_shortname = 'leetcodeca';
+	  /* ensure that pages with query string get the same discussion */
+	  var url_parts = window.location.href.split("?");
+	  var disqus_url = url_parts[0];
+	  (function() {
+		var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+		dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+		(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	  })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</div>
+  
+  
+
+  
+
+
+
+
+    </div>
+  </div>
+</div>
+
+
+  <footer>
+  <div class="container-md beautiful-jekyll-footer">
+    <div class="row">
+      <div class="col-xl-8 offset-xl-2 col-lg-10 offset-lg-1">
+      <ul class="list-inline text-center footer-links"><li class="list-inline-item">
+    <a href="/feed.xml" title="RSS">
+      <span class="fa-stack fa-lg" aria-hidden="true">
+        <i class="fas fa-circle fa-stack-2x"></i>
+        <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+      </span>
+      <span class="sr-only">RSS</span>
+    </a>
+  </li><li class="list-inline-item">
+    <a href="mailto:admin@leetcode.ca" title="Email me">
+      <span class="fa-stack fa-lg" aria-hidden="true">
+        <i class="fas fa-circle fa-stack-2x"></i>
+        <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+      </span>
+      <span class="sr-only">Email me</span>
+   </a>
+  </li></ul>
+
+      
+      <p class="copyright text-muted">
+      
+        Leetcode
+        &nbsp;&bull;&nbsp;
+      
+      2026
+
+      
+        &nbsp;&bull;&nbsp;
+        <span class="author-site">
+          <a href="https://leetcode.ca/">leetcode.ca</a>
+        </span>
+      
+
+      
+      </p>
+      
+      <p class="theme-by text-muted">
+        Copyright © 2025 leetcode.ca
+      </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+  
+  
+    
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous"></script>
+
+
+  
+    
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+
+
+  
+    
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+
+  
+
+
+
+  
+    <!-- doing something a bit funky here because I want to be careful not to include JQuery twice! -->
+    
+      <script src="/assets/js/beautifuljekyll.js"></script>
+    
+  
+
+
+
+
+
+  
+    
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+  
+    
+  <script src="https://cdn.jsdelivr.net/npm/anchor-js/anchor.min.js"></script>
+
+
+  
+
+
+
+  
+    <script src="/assets/js/anchor-js-config.js"></script>
+  
+
+
+
+</body>
+</html>

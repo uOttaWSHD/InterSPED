@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="shortcut icon" type="image/png" href="/assets/img/favicon.png">
+  <link rel="stylesheet" href="/assets/css/uikit.min.css" />
+  <script src="/assets/js/uikit.min.js" type="text/javascript"></script>
+  <script src="/assets/js/uikit-icons.min.js" type="text/javascript"></script>
+
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        packages: {'[+]': ['ams']}  // Include the 'ams' package
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  
+  
+
+  
+<!-- below block is overlapping with SEO plugin generated title and description   -->
+<!-- 
+  <title>273 - Integer to English Words</title>
+
+  
+  <meta name="author" content="Leetcode">
+  
+
+  
+  <meta name="description" content="Welcome to Subscribe On Youtube 273. Integer to English Words Description Convert a non-negative integer num to its English words representation. &amp;nbsp; Example 1: Input: num = 123 Output: &amp;quot;One Hundred Twenty Three&amp;quot; Example 2: Input: num = 12345 Output: &amp;quot;Twelve Thousand Three Hundred Forty Five&amp;quot; Example 3: Input: num...">
+   -->
+
+  
+
+  
+  <meta name="keywords" content="LeetCode, Solution, Company Tag, Unlock Prime, Java, C++, Interview, Job, Algorithm, SQL, Canada">
+  
+
+  <link rel="alternate" type="application/rss+xml" title="Leetcode" href="https://leetcode.ca/feed.xml">
+
+  
+
+  
+
+  
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-K108N8L891"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-K108N8L891');
+  </script>
+  <!-- End Google Analytics -->
+
+
+  
+  <script data-ad-client="ca-pub-6766885420008650" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+
+
+
+  
+    
+      
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+
+    
+      
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
+
+
+    
+      
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic">
+
+
+    
+      
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800">
+
+
+    
+  
+
+  
+    
+      <link rel="stylesheet" href="/assets/css/bootstrap-social.css">
+    
+      <link rel="stylesheet" href="/assets/css/beautifuljekyll.css">
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <meta property="og:site_name" content="Leetcode">
+  <meta property="og:title" content="273 - Integer to English Words">
+  <meta property="og:description" content="Welcome to Subscribe On Youtube 273. Integer to English Words Description Convert a non-negative integer num to its English words representation. &amp;nbsp; Example 1: Input: num = 123 Output: &amp;quot;One Hundred Twenty Three&amp;quot; Example 2: Input: num = 12345 Output: &amp;quot;Twelve Thousand Three Hundred Forty Five&amp;quot; Example 3: Input: num = 1234567 Output: &amp;quot;One Million Two Hundred Thirty Four Thousand Five Hundred Sixty Seven&amp;quot; &amp;nbsp; Constraints: 0 &amp;lt;= num &amp;lt;= 231 - 1 Solutions The approach is designed to convert a numerical value into its English words representation, with the maximum limit capped at billions. The process is structured to manage up to four groups of three digits each. To facilitate this conversion, a structured method to process groups of three digits is essential. The methodology involves: Preparation: Create an array containing the English words for numbers 1 through 19, as these numbers have unique names that do not follow a repetitive pattern. Prepare another array for the tens place (20, 30, …, 90), as these numbers follow a pattern and are used as bases for constructing other numbers in their range. Processing a Three-Digit Number (n): The hundreds place is determined by dividing n by 100 (n/100). The last two digits are obtained by calculating n % 100. The tens place is extracted by dividing the last two digits by 10 (n%100/10). The ones place is found by n % 10. Handling the Last Two Digits: If the value is less than 20, the corresponding English word is directly fetched from the prepared array. If the value is 20 or more, the words for the tens and ones places are retrieved from their respective arrays. Addressing the Hundreds Place: If there is a non-zero hundreds place, its English word is appended with “Hundred” to indicate the hundreds place. This helper function is invoked up to four times within the main function to construct each part of the number’s English words representation, inserting “Thousand”, “Million”, and “Billion” as appropriate to denote the groups’ positions. Final Adjustments: After assembling the full English representation, any trailing spaces are removed to ensure the format is correct. A special check is conducted for an input of 0; in such cases, the function returns “Zero” to accurately reflect the numerical value. This methodical approach ensures that numbers are accurately and comprehensively translated into their English words representation, taking into account the unique naming conventions of the English language for numbers. Java Python C# TypeScript Javascript class Solution { private static Map&amp;lt;Integer, String&amp;gt; map; static { map = new HashMap&amp;lt;&amp;gt;(); map.put(1, &quot;One&quot;); map.put(2, &quot;Two&quot;); map.put(3, &quot;Three&quot;); map.put(4, &quot;Four&quot;); map.put(5, &quot;Five&quot;); map.put(6, &quot;Six&quot;); map.put(7, &quot;Seven&quot;); map.put(8, &quot;Eight&quot;); map.put(9, &quot;Nine&quot;); map.put(10, &quot;Ten&quot;); map.put(11, &quot;Eleven&quot;); map.put(12, &quot;Twelve&quot;); map.put(13, &quot;Thirteen&quot;); map.put(14, &quot;Fourteen&quot;); map.put(15, &quot;Fifteen&quot;); map.put(16, &quot;Sixteen&quot;); map.put(17, &quot;Seventeen&quot;); map.put(18, &quot;Eighteen&quot;); map.put(19, &quot;Nineteen&quot;); map.put(20, &quot;Twenty&quot;); map.put(30, &quot;Thirty&quot;); map.put(40, &quot;Forty&quot;); map.put(50, &quot;Fifty&quot;); map.put(60, &quot;Sixty&quot;); map.put(70, &quot;Seventy&quot;); map.put(80, &quot;Eighty&quot;); map.put(90, &quot;Ninety&quot;); map.put(100, &quot;Hundred&quot;); map.put(1000, &quot;Thousand&quot;); map.put(1000000, &quot;Million&quot;); map.put(1000000000, &quot;Billion&quot;); } public String numberToWords(int num) { if (num == 0) { return &quot;Zero&quot;; }...">
+
+  
+  <meta property="og:image" content="https://leetcode.ca/assets/img/avatar-icon.jpg">
+  
+
+  <!-- remove canonical below to use SEO plugin -->
+  
+  <meta property="og:type" content="article">
+  <meta property="og:article:author" content="Leetcode">
+  <meta property="og:article:published_time" content="2016-08-29T00:00:00-07:00">
+  <meta property="og:url" content="https://leetcode.ca/2016-08-29-273-Integer-to-English-Words/">
+  <!-- <link rel="canonical" href="https://leetcode.ca/2016-08-29-273-Integer-to-English-Words/"> -->
+  
+
+  
+  <meta name="twitter:card" content="summary">
+  
+  <meta name="twitter:site" content="@">
+  <meta name="twitter:creator" content="@">
+
+  <meta property="twitter:title" content="273 - Integer to English Words">
+  <meta property="twitter:description" content="Welcome to Subscribe On Youtube 273. Integer to English Words Description Convert a non-negative integer num to its English words representation. &amp;nbsp; Example 1: Input: num = 123 Output: &amp;quot;One Hundred Twenty Three&amp;quot; Example 2: Input: num = 12345 Output: &amp;quot;Twelve Thousand Three Hundred Forty Five&amp;quot; Example 3: Input: num = 1234567 Output: &amp;quot;One Million Two Hundred Thirty Four Thousand Five Hundred Sixty Seven&amp;quot; &amp;nbsp; Constraints: 0 &amp;lt;= num &amp;lt;= 231 - 1 Solutions The approach is designed to convert a numerical value into its English words representation, with the maximum limit capped at billions. The process is structured to manage up to four groups of three digits each. To facilitate this conversion, a structured method to process groups of three digits is essential. The methodology involves: Preparation: Create an array containing the English words for numbers 1 through 19, as these numbers have unique names that do not follow a repetitive pattern. Prepare another array for the tens place (20, 30, …, 90), as these numbers follow a pattern and are used as bases for constructing other numbers in their range. Processing a Three-Digit Number (n): The hundreds place is determined by dividing n by 100 (n/100). The last two digits are obtained by calculating n % 100. The tens place is extracted by dividing the last two digits by 10 (n%100/10). The ones place is found by n % 10. Handling the Last Two Digits: If the value is less than 20, the corresponding English word is directly fetched from the prepared array. If the value is 20 or more, the words for the tens and ones places are retrieved from their respective arrays. Addressing the Hundreds Place: If there is a non-zero hundreds place, its English word is appended with “Hundred” to indicate the hundreds place. This helper function is invoked up to four times within the main function to construct each part of the number’s English words representation, inserting “Thousand”, “Million”, and “Billion” as appropriate to denote the groups’ positions. Final Adjustments: After assembling the full English representation, any trailing spaces are removed to ensure the format is correct. A special check is conducted for an input of 0; in such cases, the function returns “Zero” to accurately reflect the numerical value. This methodical approach ensures that numbers are accurately and comprehensively translated into their English words representation, taking into account the unique naming conventions of the English language for numbers. Java Python C# TypeScript Javascript class Solution { private static Map&amp;lt;Integer, String&amp;gt; map; static { map = new HashMap&amp;lt;&amp;gt;(); map.put(1, &quot;One&quot;); map.put(2, &quot;Two&quot;); map.put(3, &quot;Three&quot;); map.put(4, &quot;Four&quot;); map.put(5, &quot;Five&quot;); map.put(6, &quot;Six&quot;); map.put(7, &quot;Seven&quot;); map.put(8, &quot;Eight&quot;); map.put(9, &quot;Nine&quot;); map.put(10, &quot;Ten&quot;); map.put(11, &quot;Eleven&quot;); map.put(12, &quot;Twelve&quot;); map.put(13, &quot;Thirteen&quot;); map.put(14, &quot;Fourteen&quot;); map.put(15, &quot;Fifteen&quot;); map.put(16, &quot;Sixteen&quot;); map.put(17, &quot;Seventeen&quot;); map.put(18, &quot;Eighteen&quot;); map.put(19, &quot;Nineteen&quot;); map.put(20, &quot;Twenty&quot;); map.put(30, &quot;Thirty&quot;); map.put(40, &quot;Forty&quot;); map.put(50, &quot;Fifty&quot;); map.put(60, &quot;Sixty&quot;); map.put(70, &quot;Seventy&quot;); map.put(80, &quot;Eighty&quot;); map.put(90, &quot;Ninety&quot;); map.put(100, &quot;Hundred&quot;); map.put(1000, &quot;Thousand&quot;); map.put(1000000, &quot;Million&quot;); map.put(1000000000, &quot;Billion&quot;); } public String numberToWords(int num) { if (num == 0) { return &quot;Zero&quot;; }...">
+
+  
+  <meta name="twitter:image" content="https://leetcode.ca/assets/img/avatar-icon.jpg">
+  
+
+  
+
+
+  <!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>273 - Integer to English Words | Leetcode</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="273 - Integer to English Words" />
+<meta name="author" content="Leetcode" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Welcome to Subscribe On Youtube" />
+<meta property="og:description" content="Welcome to Subscribe On Youtube" />
+<link rel="canonical" href="https://leetcode.ca/2016-08-29-273-Integer-to-English-Words/" />
+<meta property="og:url" content="https://leetcode.ca/2016-08-29-273-Integer-to-English-Words/" />
+<meta property="og:site_name" content="Leetcode" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2016-08-29T00:00:00-07:00" />
+<script type="application/ld+json">
+{"description":"Welcome to Subscribe On Youtube","headline":"273 - Integer to English Words","dateModified":"2016-08-29T00:00:00-07:00","datePublished":"2016-08-29T00:00:00-07:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://leetcode.ca/2016-08-29-273-Integer-to-English-Words/"},"url":"https://leetcode.ca/2016-08-29-273-Integer-to-English-Words/","author":{"@type":"Person","name":"Leetcode"},"@type":"BlogPosting","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+  
+
+  
+
+</head>
+
+
+<body>
+
+  
+
+
+  <nav class="navbar navbar-expand-xl navbar-light fixed-top navbar-custom top-nav-regular"><a class="navbar-brand" href="https://leetcode.ca/">Leetcode</a><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="main-navbar">
+    <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/blog">Posts</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/tags">Tag Index</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/search">Search</a>
+          </li></ul>
+  </div>
+
+  
+
+  
+    <div class="avatar-container">
+      <div class="avatar-img-border">
+        <a href="https://leetcode.ca/">
+          <img alt="Navigation bar avatar" class="avatar-img" src="/assets/img/avatar-icon.jpg" />
+        </a>
+      </div>
+    </div>
+  
+
+</nav>
+
+
+  <!-- TODO this file has become a mess, refactor it -->
+
+
+
+
+
+
+
+<header class="header-section ">
+
+<div class="intro-header no-img">
+  <div class="container-md">
+    <div class="row">
+      <div class="col-xl-8 offset-xl-2 col-lg-10 offset-lg-1">
+        <div class="post-heading">
+          <h1>273 - Integer to English Words</h1>
+          
+
+          
+            <span class="post-meta">Posted on August 29, 2016</span>
+            
+            
+              
+
+
+
+
+
+  
+  <span class="post-meta"><span class="d-none d-md-inline middot">&middot;</span> 6 minute read</span>
+
+
+            
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</header>
+
+
+
+
+
+<div class=" container-md ">
+  <div class="row">
+    <div class=" col-xl-8 offset-xl-2 col-lg-10 offset-lg-1 ">
+
+      
+
+      
+
+      <article role="main" class="blog-post">
+        <h5 id="welcome-to-subscribe-on-youtube">Welcome to Subscribe On Youtube</h5>
+<script src="https://apis.google.com/js/platform.js"></script>
+
+<div class="g-ytsubscribe" data-channelid="UCslk3mmaMJy1enit3L9vWig" data-layout="full" data-count="hidden"></div>
+
+<h1 id="273-integer-to-english-words"><a href="https://leetcode.com/problems/integer-to-english-words">273. Integer to English Words</a></h1>
+
+<h2 id="description">Description</h2>
+
+<p>Convert a non-negative integer <code>num</code> to its English words representation.</p>
+
+<p>&nbsp;</p>
+<p><strong class="example">Example 1:</strong></p>
+
+<pre>
+<strong>Input:</strong> num = 123
+<strong>Output:</strong> &quot;One Hundred Twenty Three&quot;
+</pre>
+
+<p><strong class="example">Example 2:</strong></p>
+
+<pre>
+<strong>Input:</strong> num = 12345
+<strong>Output:</strong> &quot;Twelve Thousand Three Hundred Forty Five&quot;
+</pre>
+
+<p><strong class="example">Example 3:</strong></p>
+
+<pre>
+<strong>Input:</strong> num = 1234567
+<strong>Output:</strong> &quot;One Million Two Hundred Thirty Four Thousand Five Hundred Sixty Seven&quot;
+</pre>
+
+<p>&nbsp;</p>
+<p><strong>Constraints:</strong></p>
+
+<ul>
+	<li><code>0 &lt;= num &lt;= 2<sup>31</sup> - 1</code></li>
+</ul>
+
+<h2 id="solutions">Solutions</h2>
+
+<p>The approach is designed to convert a numerical value into its English words representation, with the maximum limit capped at billions. The process is structured to manage up to four groups of three digits each.</p>
+
+<p>To facilitate this conversion, a structured method to process groups of three digits is essential. The methodology involves:</p>
+
+<ol>
+  <li><strong>Preparation</strong>:
+    <ul>
+      <li>Create an array containing the English words for numbers 1 through 19, as these numbers have unique names that do not follow a repetitive pattern.</li>
+      <li>Prepare another array for the tens place (20, 30, …, 90), as these numbers follow a pattern and are used as bases for constructing other numbers in their range.</li>
+    </ul>
+  </li>
+  <li><strong>Processing a Three-Digit Number</strong> (<code class="language-plaintext highlighter-rouge">n</code>):
+    <ul>
+      <li>The hundreds place is determined by dividing <code class="language-plaintext highlighter-rouge">n</code> by 100 (<code class="language-plaintext highlighter-rouge">n/100</code>).</li>
+      <li>The last two digits are obtained by calculating <code class="language-plaintext highlighter-rouge">n % 100</code>.</li>
+      <li>The tens place is extracted by dividing the last two digits by 10 (<code class="language-plaintext highlighter-rouge">n%100/10</code>).</li>
+      <li>The ones place is found by <code class="language-plaintext highlighter-rouge">n % 10</code>.</li>
+    </ul>
+  </li>
+  <li><strong>Handling the Last Two Digits</strong>:
+    <ul>
+      <li>If the value is less than 20, the corresponding English word is directly fetched from the prepared array.</li>
+      <li>If the value is 20 or more, the words for the tens and ones places are retrieved from their respective arrays.</li>
+    </ul>
+  </li>
+  <li><strong>Addressing the Hundreds Place</strong>:
+    <ul>
+      <li>If there is a non-zero hundreds place, its English word is appended with “Hundred” to indicate the hundreds place.</li>
+    </ul>
+  </li>
+</ol>
+
+<p>This helper function is invoked up to four times within the main function to construct each part of the number’s English words representation, inserting “Thousand”, “Million”, and “Billion” as appropriate to denote the groups’ positions.</p>
+
+<p><strong>Final Adjustments</strong>:</p>
+<ul>
+  <li>After assembling the full English representation, any trailing spaces are removed to ensure the format is correct.</li>
+  <li>A special check is conducted for an input of 0; in such cases, the function returns “Zero” to accurately reflect the numerical value.</li>
+</ul>
+
+<p>This methodical approach ensures that numbers are accurately and comprehensively translated into their English words representation, taking into account the unique naming conventions of the English language for numbers.</p>
+
+<ul class="uk-tab" data-uk-switcher="{connect:'#3dab9c80-cd3f-45c5-8a0b-4a5a59461a8c'}">
+
+	<li class="uk-active"><a href="#">Java</a></li>
+
+	<li><a href="#">Python</a></li>
+
+	<li><a href="#">C#</a></li>
+
+	<li><a href="#">TypeScript</a></li>
+
+	<li><a href="#">Javascript</a></li>
+
+</ul>
+
+<ul id="3dab9c80-cd3f-45c5-8a0b-4a5a59461a8c" class="uk-switcher uk-margin">
+
+	<li>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Solution</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">map</span><span class="o">;</span>
+
+    <span class="kd">static</span> <span class="o">{</span>
+        <span class="n">map</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;();</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="s">"One"</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="mi">2</span><span class="o">,</span> <span class="s">"Two"</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="mi">3</span><span class="o">,</span> <span class="s">"Three"</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="mi">4</span><span class="o">,</span> <span class="s">"Four"</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="mi">5</span><span class="o">,</span> <span class="s">"Five"</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="mi">6</span><span class="o">,</span> <span class="s">"Six"</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="mi">7</span><span class="o">,</span> <span class="s">"Seven"</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="mi">8</span><span class="o">,</span> <span class="s">"Eight"</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="mi">9</span><span class="o">,</span> <span class="s">"Nine"</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="mi">10</span><span class="o">,</span> <span class="s">"Ten"</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="mi">11</span><span class="o">,</span> <span class="s">"Eleven"</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="mi">12</span><span class="o">,</span> <span class="s">"Twelve"</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="mi">13</span><span class="o">,</span> <span class="s">"Thirteen"</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="mi">14</span><span class="o">,</span> <span class="s">"Fourteen"</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="mi">15</span><span class="o">,</span> <span class="s">"Fifteen"</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="mi">16</span><span class="o">,</span> <span class="s">"Sixteen"</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="mi">17</span><span class="o">,</span> <span class="s">"Seventeen"</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="mi">18</span><span class="o">,</span> <span class="s">"Eighteen"</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="mi">19</span><span class="o">,</span> <span class="s">"Nineteen"</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="mi">20</span><span class="o">,</span> <span class="s">"Twenty"</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="mi">30</span><span class="o">,</span> <span class="s">"Thirty"</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="mi">40</span><span class="o">,</span> <span class="s">"Forty"</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="mi">50</span><span class="o">,</span> <span class="s">"Fifty"</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="mi">60</span><span class="o">,</span> <span class="s">"Sixty"</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="mi">70</span><span class="o">,</span> <span class="s">"Seventy"</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="mi">80</span><span class="o">,</span> <span class="s">"Eighty"</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="mi">90</span><span class="o">,</span> <span class="s">"Ninety"</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="mi">100</span><span class="o">,</span> <span class="s">"Hundred"</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="mi">1000</span><span class="o">,</span> <span class="s">"Thousand"</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="mi">1000000</span><span class="o">,</span> <span class="s">"Million"</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="mi">1000000000</span><span class="o">,</span> <span class="s">"Billion"</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">numberToWords</span><span class="o">(</span><span class="kt">int</span> <span class="n">num</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">num</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="s">"Zero"</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="nc">StringBuilder</span> <span class="n">sb</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">StringBuilder</span><span class="o">();</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1000000000</span><span class="o">;</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">1000</span><span class="o">;</span> <span class="n">i</span> <span class="o">/=</span> <span class="mi">1000</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">num</span> <span class="o">&gt;=</span> <span class="n">i</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">sb</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="n">get3Digits</span><span class="o">(</span><span class="n">num</span> <span class="o">/</span> <span class="n">i</span><span class="o">)).</span><span class="na">append</span><span class="o">(</span><span class="sc">' '</span><span class="o">).</span><span class="na">append</span><span class="o">(</span><span class="n">map</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">i</span><span class="o">));</span>
+                <span class="n">num</span> <span class="o">%=</span> <span class="n">i</span><span class="o">;</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">num</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">sb</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="n">get3Digits</span><span class="o">(</span><span class="n">num</span><span class="o">));</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="n">sb</span><span class="o">.</span><span class="na">substring</span><span class="o">(</span><span class="mi">1</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">private</span> <span class="nc">String</span> <span class="nf">get3Digits</span><span class="o">(</span><span class="kt">int</span> <span class="n">num</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">StringBuilder</span> <span class="n">sb</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">StringBuilder</span><span class="o">();</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">num</span> <span class="o">&gt;=</span> <span class="mi">100</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">sb</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="sc">' '</span><span class="o">).</span><span class="na">append</span><span class="o">(</span><span class="n">map</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">num</span> <span class="o">/</span> <span class="mi">100</span><span class="o">)).</span><span class="na">append</span><span class="o">(</span><span class="sc">' '</span><span class="o">).</span><span class="na">append</span><span class="o">(</span><span class="n">map</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="mi">100</span><span class="o">));</span>
+            <span class="n">num</span> <span class="o">%=</span> <span class="mi">100</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">num</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">num</span> <span class="o">&lt;</span> <span class="mi">20</span> <span class="o">||</span> <span class="n">num</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">sb</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="sc">' '</span><span class="o">).</span><span class="na">append</span><span class="o">(</span><span class="n">map</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">num</span><span class="o">));</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="n">sb</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="sc">' '</span><span class="o">).</span><span class="na">append</span><span class="o">(</span><span class="n">map</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">num</span> <span class="o">/</span> <span class="mi">10</span> <span class="o">*</span> <span class="mi">10</span><span class="o">)).</span><span class="na">append</span><span class="o">(</span><span class="sc">' '</span><span class="o">).</span><span class="na">append</span><span class="o">(</span><span class="n">map</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">num</span> <span class="o">%</span> <span class="mi">10</span><span class="o">));</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="n">sb</span><span class="o">.</span><span class="na">toString</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+</code></pre></div></div>
+</li>
+
+	<li>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Solution</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">numberToWords</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s">'Zero'</span>
+
+        <span class="n">lt20</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s">''</span><span class="p">,</span>
+            <span class="s">'One'</span><span class="p">,</span>
+            <span class="s">'Two'</span><span class="p">,</span>
+            <span class="s">'Three'</span><span class="p">,</span>
+            <span class="s">'Four'</span><span class="p">,</span>
+            <span class="s">'Five'</span><span class="p">,</span>
+            <span class="s">'Six'</span><span class="p">,</span>
+            <span class="s">'Seven'</span><span class="p">,</span>
+            <span class="s">'Eight'</span><span class="p">,</span>
+            <span class="s">'Nine'</span><span class="p">,</span>
+            <span class="s">'Ten'</span><span class="p">,</span>
+            <span class="s">'Eleven'</span><span class="p">,</span>
+            <span class="s">'Twelve'</span><span class="p">,</span>
+            <span class="s">'Thirteen'</span><span class="p">,</span>
+            <span class="s">'Fourteen'</span><span class="p">,</span>
+            <span class="s">'Fifteen'</span><span class="p">,</span>
+            <span class="s">'Sixteen'</span><span class="p">,</span>
+            <span class="s">'Seventeen'</span><span class="p">,</span>
+            <span class="s">'Eighteen'</span><span class="p">,</span>
+            <span class="s">'Nineteen'</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="n">tens</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s">''</span><span class="p">,</span>
+            <span class="s">'Ten'</span><span class="p">,</span>
+            <span class="s">'Twenty'</span><span class="p">,</span>
+            <span class="s">'Thirty'</span><span class="p">,</span>
+            <span class="s">'Forty'</span><span class="p">,</span>
+            <span class="s">'Fifty'</span><span class="p">,</span>
+            <span class="s">'Sixty'</span><span class="p">,</span>
+            <span class="s">'Seventy'</span><span class="p">,</span>
+            <span class="s">'Eighty'</span><span class="p">,</span>
+            <span class="s">'Ninety'</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="n">thousands</span> <span class="o">=</span> <span class="p">[</span><span class="s">'Billion'</span><span class="p">,</span> <span class="s">'Million'</span><span class="p">,</span> <span class="s">'Thousand'</span><span class="p">,</span> <span class="s">''</span><span class="p">]</span>
+
+        <span class="k">def</span> <span class="nf">transfer</span><span class="p">(</span><span class="n">num</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s">''</span>
+            <span class="k">if</span> <span class="n">num</span> <span class="o">&lt;</span> <span class="mi">20</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">lt20</span><span class="p">[</span><span class="n">num</span><span class="p">]</span> <span class="o">+</span> <span class="s">' '</span>
+            <span class="k">if</span> <span class="n">num</span> <span class="o">&lt;</span> <span class="mi">100</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">tens</span><span class="p">[</span><span class="n">num</span> <span class="o">//</span> <span class="mi">10</span><span class="p">]</span> <span class="o">+</span> <span class="s">' '</span> <span class="o">+</span> <span class="n">transfer</span><span class="p">(</span><span class="n">num</span> <span class="o">%</span> <span class="mi">10</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">lt20</span><span class="p">[</span><span class="n">num</span> <span class="o">//</span> <span class="mi">100</span><span class="p">]</span> <span class="o">+</span> <span class="s">' Hundred '</span> <span class="o">+</span> <span class="n">transfer</span><span class="p">(</span><span class="n">num</span> <span class="o">%</span> <span class="mi">100</span><span class="p">)</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1000000000</span><span class="p">,</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">num</span> <span class="o">//</span> <span class="n">i</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">res</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">transfer</span><span class="p">(</span><span class="n">num</span> <span class="o">//</span> <span class="n">i</span><span class="p">))</span>
+                <span class="n">res</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">thousands</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+                <span class="n">res</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="s">' '</span><span class="p">)</span>
+                <span class="n">num</span> <span class="o">%=</span> <span class="n">i</span>
+            <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">i</span> <span class="o">//=</span> <span class="mi">1000</span>
+        <span class="k">return</span> <span class="s">''</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="n">res</span><span class="p">).</span><span class="n">strip</span><span class="p">()</span>
+
+</code></pre></div></div>
+</li>
+
+	<li>
+<div class="language-cs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">using</span> <span class="nn">System.Collections.Generic</span><span class="p">;</span>
+<span class="k">using</span> <span class="nn">System.Linq</span><span class="p">;</span>
+
+<span class="k">public</span> <span class="k">class</span> <span class="nc">Solution</span> <span class="p">{</span>
+    <span class="k">private</span> <span class="kt">string</span><span class="p">[]</span> <span class="n">bases</span> <span class="p">=</span> <span class="p">{</span> <span class="s">"Thousand"</span><span class="p">,</span> <span class="s">"Million"</span><span class="p">,</span> <span class="s">"Billion"</span> <span class="p">};</span>
+    <span class="k">public</span> <span class="kt">string</span> <span class="nf">NumberToWords</span><span class="p">(</span><span class="kt">int</span> <span class="n">num</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">num</span> <span class="p">==</span> <span class="m">0</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">return</span> <span class="s">"Zero"</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="kt">var</span> <span class="n">baseIndex</span> <span class="p">=</span> <span class="p">-</span><span class="m">1</span><span class="p">;</span>
+        <span class="kt">var</span> <span class="n">parts</span> <span class="p">=</span> <span class="k">new</span> <span class="n">List</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;();</span>
+        <span class="k">while</span> <span class="p">(</span><span class="n">num</span> <span class="p">&gt;</span> <span class="m">0</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="kt">var</span> <span class="n">part</span> <span class="p">=</span> <span class="nf">NumberToWordsInternal</span><span class="p">(</span><span class="n">num</span> <span class="p">%</span> <span class="m">1000</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">part</span><span class="p">.</span><span class="n">Length</span> <span class="p">&gt;</span> <span class="m">0</span> <span class="p">&amp;&amp;</span> <span class="n">baseIndex</span> <span class="p">&gt;=</span> <span class="m">0</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="n">part</span> <span class="p">=</span> <span class="nf">JoinParts</span><span class="p">(</span><span class="n">part</span><span class="p">,</span> <span class="n">bases</span><span class="p">[</span><span class="n">baseIndex</span><span class="p">]);</span>
+            <span class="p">}</span>
+            <span class="n">parts</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="n">part</span><span class="p">);</span>
+            <span class="n">baseIndex</span><span class="p">++;</span>
+            <span class="n">num</span> <span class="p">/=</span> <span class="m">1000</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="n">parts</span><span class="p">.</span><span class="nf">Reverse</span><span class="p">();</span>
+        <span class="k">return</span> <span class="nf">JoinParts</span><span class="p">(</span><span class="n">parts</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">private</span> <span class="kt">string</span> <span class="nf">JoinParts</span><span class="p">(</span><span class="n">IEnumerable</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;</span> <span class="n">parts</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="kt">string</span><span class="p">.</span><span class="nf">Join</span><span class="p">(</span><span class="s">" "</span><span class="p">,</span> <span class="n">parts</span><span class="p">.</span><span class="nf">Where</span><span class="p">(</span><span class="n">p</span> <span class="p">=&gt;</span> <span class="n">p</span><span class="p">.</span><span class="n">Length</span> <span class="p">&gt;</span> <span class="m">0</span><span class="p">));</span>
+    <span class="p">}</span>
+
+    <span class="k">private</span> <span class="kt">string</span> <span class="nf">JoinParts</span><span class="p">(</span><span class="k">params</span> <span class="kt">string</span><span class="p">[]</span> <span class="n">parts</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">return</span> <span class="nf">JoinParts</span><span class="p">((</span><span class="n">IEnumerable</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">&gt;)</span><span class="n">parts</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">private</span> <span class="kt">string</span> <span class="nf">NumberToWordsInternal</span><span class="p">(</span><span class="kt">int</span> <span class="n">num</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">switch</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">case</span> <span class="m">0</span><span class="p">:</span> <span class="k">return</span> <span class="s">""</span><span class="p">;</span>
+            <span class="k">case</span> <span class="m">1</span><span class="p">:</span> <span class="k">return</span> <span class="s">"One"</span><span class="p">;</span>
+            <span class="k">case</span> <span class="m">2</span><span class="p">:</span> <span class="k">return</span> <span class="s">"Two"</span><span class="p">;</span>
+            <span class="k">case</span> <span class="m">3</span><span class="p">:</span> <span class="k">return</span> <span class="s">"Three"</span><span class="p">;</span>
+            <span class="k">case</span> <span class="m">4</span><span class="p">:</span> <span class="k">return</span> <span class="s">"Four"</span><span class="p">;</span>
+            <span class="k">case</span> <span class="m">5</span><span class="p">:</span> <span class="k">return</span> <span class="s">"Five"</span><span class="p">;</span>
+            <span class="k">case</span> <span class="m">6</span><span class="p">:</span> <span class="k">return</span> <span class="s">"Six"</span><span class="p">;</span>
+            <span class="k">case</span> <span class="m">7</span><span class="p">:</span> <span class="k">return</span> <span class="s">"Seven"</span><span class="p">;</span>
+            <span class="k">case</span> <span class="m">8</span><span class="p">:</span> <span class="k">return</span> <span class="s">"Eight"</span><span class="p">;</span>
+            <span class="k">case</span> <span class="m">9</span><span class="p">:</span> <span class="k">return</span> <span class="s">"Nine"</span><span class="p">;</span>
+            <span class="k">case</span> <span class="m">10</span><span class="p">:</span> <span class="k">return</span> <span class="s">"Ten"</span><span class="p">;</span>
+            <span class="k">case</span> <span class="m">11</span><span class="p">:</span> <span class="k">return</span> <span class="s">"Eleven"</span><span class="p">;</span>
+            <span class="k">case</span> <span class="m">12</span><span class="p">:</span> <span class="k">return</span> <span class="s">"Twelve"</span><span class="p">;</span>
+            <span class="k">case</span> <span class="m">13</span><span class="p">:</span> <span class="k">return</span> <span class="s">"Thirteen"</span><span class="p">;</span>
+            <span class="k">case</span> <span class="m">14</span><span class="p">:</span> <span class="k">return</span> <span class="s">"Fourteen"</span><span class="p">;</span>
+            <span class="k">case</span> <span class="m">15</span><span class="p">:</span> <span class="k">return</span> <span class="s">"Fifteen"</span><span class="p">;</span>
+            <span class="k">case</span> <span class="m">16</span><span class="p">:</span> <span class="k">return</span> <span class="s">"Sixteen"</span><span class="p">;</span>
+            <span class="k">case</span> <span class="m">17</span><span class="p">:</span> <span class="k">return</span> <span class="s">"Seventeen"</span><span class="p">;</span>
+            <span class="k">case</span> <span class="m">18</span><span class="p">:</span> <span class="k">return</span> <span class="s">"Eighteen"</span><span class="p">;</span>
+            <span class="k">case</span> <span class="m">19</span><span class="p">:</span> <span class="k">return</span> <span class="s">"Nineteen"</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">num</span> <span class="p">&lt;</span> <span class="m">100</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="kt">string</span> <span class="n">part1</span><span class="p">;</span>
+            <span class="k">switch</span> <span class="p">(</span><span class="n">num</span><span class="p">/</span><span class="m">10</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="k">case</span> <span class="m">2</span><span class="p">:</span> <span class="n">part1</span> <span class="p">=</span> <span class="s">"Twenty"</span><span class="p">;</span> <span class="k">break</span><span class="p">;</span>
+                <span class="k">case</span> <span class="m">3</span><span class="p">:</span> <span class="n">part1</span> <span class="p">=</span> <span class="s">"Thirty"</span><span class="p">;</span> <span class="k">break</span><span class="p">;</span>
+                <span class="k">case</span> <span class="m">4</span><span class="p">:</span> <span class="n">part1</span> <span class="p">=</span> <span class="s">"Forty"</span><span class="p">;</span> <span class="k">break</span><span class="p">;</span>
+                <span class="k">case</span> <span class="m">5</span><span class="p">:</span> <span class="n">part1</span> <span class="p">=</span> <span class="s">"Fifty"</span><span class="p">;</span> <span class="k">break</span><span class="p">;</span>
+                <span class="k">case</span> <span class="m">6</span><span class="p">:</span> <span class="n">part1</span> <span class="p">=</span> <span class="s">"Sixty"</span><span class="p">;</span> <span class="k">break</span><span class="p">;</span>
+                <span class="k">case</span> <span class="m">7</span><span class="p">:</span> <span class="n">part1</span> <span class="p">=</span> <span class="s">"Seventy"</span><span class="p">;</span> <span class="k">break</span><span class="p">;</span>
+                <span class="k">case</span> <span class="m">8</span><span class="p">:</span> <span class="n">part1</span> <span class="p">=</span> <span class="s">"Eighty"</span><span class="p">;</span> <span class="k">break</span><span class="p">;</span>
+                <span class="k">case</span> <span class="m">9</span><span class="p">:</span> <span class="k">default</span><span class="p">:</span> <span class="n">part1</span> <span class="p">=</span> <span class="s">"Ninety"</span><span class="p">;</span> <span class="k">break</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="kt">var</span> <span class="n">part2</span> <span class="p">=</span> <span class="nf">NumberToWordsInternal</span><span class="p">(</span><span class="n">num</span> <span class="p">%</span> <span class="m">10</span><span class="p">);</span>
+            <span class="k">return</span> <span class="nf">JoinParts</span><span class="p">(</span><span class="n">part1</span><span class="p">,</span> <span class="n">part2</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="p">{</span>
+            <span class="kt">var</span> <span class="n">part1</span> <span class="p">=</span> <span class="nf">NumberToWordsInternal</span><span class="p">(</span><span class="n">num</span> <span class="p">/</span> <span class="m">100</span><span class="p">);</span>
+            <span class="kt">var</span> <span class="n">part2</span> <span class="p">=</span> <span class="nf">NumberToWordsInternal</span><span class="p">(</span><span class="n">num</span> <span class="p">%</span> <span class="m">100</span><span class="p">);</span>
+            <span class="k">return</span> <span class="nf">JoinParts</span><span class="p">(</span><span class="n">part1</span><span class="p">,</span> <span class="s">"Hundred"</span><span class="p">,</span> <span class="n">part2</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+</li>
+
+	<li>
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">numberToWords</span><span class="p">(</span><span class="nx">num</span><span class="p">:</span> <span class="kr">number</span><span class="p">):</span> <span class="kr">string</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">num</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="dl">'</span><span class="s1">Zero</span><span class="dl">'</span><span class="p">;</span>
+
+    <span class="c1">// prettier-ignore</span>
+    <span class="kd">const</span> <span class="nx">f</span> <span class="o">=</span> <span class="p">(</span><span class="nx">x</span><span class="p">:</span> <span class="kr">number</span><span class="p">):</span> <span class="kr">string</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">dict1</span> <span class="o">=</span> <span class="p">[</span><span class="dl">''</span><span class="p">,</span><span class="dl">'</span><span class="s1">One</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Two</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Three</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Four</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Five</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Six</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Seven</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Eight</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Nine</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Ten</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Eleven</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Twelve</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Thirteen</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Fourteen</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Fifteen</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Sixteen</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Seventeen</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Eighteen</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Nineteen</span><span class="dl">'</span><span class="p">,]</span>
+    <span class="kd">const</span> <span class="nx">dict2</span> <span class="o">=</span> <span class="p">[</span><span class="dl">''</span><span class="p">,</span><span class="dl">''</span><span class="p">,</span><span class="dl">'</span><span class="s1">Twenty</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Thirty</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Forty</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Fifty</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Sixty</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Seventy</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Eighty</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Ninety</span><span class="dl">'</span><span class="p">,]</span>
+    <span class="kd">let</span> <span class="nx">ans</span> <span class="o">=</span> <span class="dl">''</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">x</span> <span class="o">&lt;=</span> <span class="mi">19</span><span class="p">)</span> <span class="nx">ans</span> <span class="o">=</span> <span class="nx">dict1</span><span class="p">[</span><span class="nx">x</span><span class="p">]</span> <span class="o">??</span> <span class="dl">''</span>
+    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">x</span> <span class="o">&lt;</span> <span class="mi">100</span><span class="p">)</span> <span class="nx">ans</span> <span class="o">=</span> <span class="s2">`</span><span class="p">${</span><span class="nx">dict2</span><span class="p">[</span><span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nx">x</span> <span class="o">/</span> <span class="mi">10</span><span class="p">)]}</span><span class="s2"> </span><span class="p">${</span><span class="nx">f</span><span class="p">(</span><span class="nx">x</span> <span class="o">%</span> <span class="mi">10</span><span class="p">)}</span><span class="s2">`</span>
+    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">x</span> <span class="o">&lt;</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">3</span><span class="p">)</span> <span class="nx">ans</span> <span class="o">=</span> <span class="s2">`</span><span class="p">${</span><span class="nx">dict1</span><span class="p">[</span><span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nx">x</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)]}</span><span class="s2"> Hundred </span><span class="p">${</span><span class="nx">f</span><span class="p">(</span><span class="nx">x</span> <span class="o">%</span> <span class="mi">100</span><span class="p">)}</span><span class="s2">`</span>
+    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">x</span> <span class="o">&lt;</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">6</span><span class="p">)</span> <span class="nx">ans</span> <span class="o">=</span> <span class="s2">`</span><span class="p">${</span><span class="nx">f</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nx">x</span> <span class="o">/</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">3</span><span class="p">))}</span><span class="s2"> Thousand </span><span class="p">${</span><span class="nx">f</span><span class="p">(</span><span class="nx">x</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">3</span><span class="p">)}</span><span class="s2">`</span>
+    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">x</span> <span class="o">&lt;</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">9</span><span class="p">)</span> <span class="nx">ans</span> <span class="o">=</span> <span class="s2">`</span><span class="p">${</span><span class="nx">f</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nx">x</span> <span class="o">/</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">6</span><span class="p">))}</span><span class="s2"> Million </span><span class="p">${</span><span class="nx">f</span><span class="p">(</span><span class="nx">x</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">6</span><span class="p">)}</span><span class="s2">`</span>
+    <span class="k">else</span> <span class="nx">ans</span> <span class="o">=</span> <span class="s2">`</span><span class="p">${</span><span class="nx">f</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nx">x</span> <span class="o">/</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">9</span><span class="p">))}</span><span class="s2"> Billion </span><span class="p">${</span><span class="nx">f</span><span class="p">(</span><span class="nx">x</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">9</span><span class="p">)}</span><span class="s2">`</span>
+
+    <span class="k">return</span> <span class="nx">ans</span><span class="p">.</span><span class="nx">trim</span><span class="p">()</span>
+  <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nx">f</span><span class="p">(</span><span class="nx">num</span><span class="p">);</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+</li>
+
+	<li>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">numberToWords</span><span class="p">(</span><span class="nx">num</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">num</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="dl">'</span><span class="s1">Zero</span><span class="dl">'</span><span class="p">;</span>
+
+    <span class="c1">// prettier-ignore</span>
+    <span class="kd">const</span> <span class="nx">f</span> <span class="o">=</span> <span class="p">(</span><span class="nx">x</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">dict1</span> <span class="o">=</span> <span class="p">[</span><span class="dl">''</span><span class="p">,</span><span class="dl">'</span><span class="s1">One</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Two</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Three</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Four</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Five</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Six</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Seven</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Eight</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Nine</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Ten</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Eleven</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Twelve</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Thirteen</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Fourteen</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Fifteen</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Sixteen</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Seventeen</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Eighteen</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Nineteen</span><span class="dl">'</span><span class="p">,]</span>
+    <span class="kd">const</span> <span class="nx">dict2</span> <span class="o">=</span> <span class="p">[</span><span class="dl">''</span><span class="p">,</span><span class="dl">''</span><span class="p">,</span><span class="dl">'</span><span class="s1">Twenty</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Thirty</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Forty</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Fifty</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Sixty</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Seventy</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Eighty</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">Ninety</span><span class="dl">'</span><span class="p">,]</span>
+    <span class="kd">let</span> <span class="nx">ans</span> <span class="o">=</span> <span class="dl">''</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">x</span> <span class="o">&lt;=</span> <span class="mi">19</span><span class="p">)</span> <span class="nx">ans</span> <span class="o">=</span> <span class="nx">dict1</span><span class="p">[</span><span class="nx">x</span><span class="p">]</span> <span class="o">??</span> <span class="dl">''</span>
+    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">x</span> <span class="o">&lt;</span> <span class="mi">100</span><span class="p">)</span> <span class="nx">ans</span> <span class="o">=</span> <span class="s2">`</span><span class="p">${</span><span class="nx">dict2</span><span class="p">[</span><span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nx">x</span> <span class="o">/</span> <span class="mi">10</span><span class="p">)]}</span><span class="s2"> </span><span class="p">${</span><span class="nx">f</span><span class="p">(</span><span class="nx">x</span> <span class="o">%</span> <span class="mi">10</span><span class="p">)}</span><span class="s2">`</span>
+    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">x</span> <span class="o">&lt;</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">3</span><span class="p">)</span> <span class="nx">ans</span> <span class="o">=</span> <span class="s2">`</span><span class="p">${</span><span class="nx">dict1</span><span class="p">[</span><span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nx">x</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)]}</span><span class="s2"> Hundred </span><span class="p">${</span><span class="nx">f</span><span class="p">(</span><span class="nx">x</span> <span class="o">%</span> <span class="mi">100</span><span class="p">)}</span><span class="s2">`</span>
+    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">x</span> <span class="o">&lt;</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">6</span><span class="p">)</span> <span class="nx">ans</span> <span class="o">=</span> <span class="s2">`</span><span class="p">${</span><span class="nx">f</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nx">x</span> <span class="o">/</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">3</span><span class="p">))}</span><span class="s2"> Thousand </span><span class="p">${</span><span class="nx">f</span><span class="p">(</span><span class="nx">x</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">3</span><span class="p">)}</span><span class="s2">`</span>
+    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">x</span> <span class="o">&lt;</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">9</span><span class="p">)</span> <span class="nx">ans</span> <span class="o">=</span> <span class="s2">`</span><span class="p">${</span><span class="nx">f</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nx">x</span> <span class="o">/</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">6</span><span class="p">))}</span><span class="s2"> Million </span><span class="p">${</span><span class="nx">f</span><span class="p">(</span><span class="nx">x</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">6</span><span class="p">)}</span><span class="s2">`</span>
+    <span class="k">else</span> <span class="nx">ans</span> <span class="o">=</span> <span class="s2">`</span><span class="p">${</span><span class="nx">f</span><span class="p">(</span><span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span><span class="nx">x</span> <span class="o">/</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">9</span><span class="p">))}</span><span class="s2"> Billion </span><span class="p">${</span><span class="nx">f</span><span class="p">(</span><span class="nx">x</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">9</span><span class="p">)}</span><span class="s2">`</span>
+
+    <span class="k">return</span> <span class="nx">ans</span><span class="p">.</span><span class="nx">trim</span><span class="p">()</span>
+  <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nx">f</span><span class="p">(</span><span class="nx">num</span><span class="p">);</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+</li>
+
+</ul>
+
+<h1 id="all-problems"><a href="https://leetcode.ca/all/problems.html">All Problems</a></h1>
+
+<h1 id="all-solutions"><a href="https://leetcode.ca/blog">All Solutions</a></h1>
+
+      </article>
+
+      
+
+      
+
+      
+        <!-- Check if any share-links are active -->
+
+
+
+
+<section id = "social-share-section">
+  <span class="sr-only">Share: </span>
+
+  
+    <a href="https://twitter.com/intent/tweet?text=273+-+Integer+to+English+Words&url=https%3A%2F%2Fleetcode.ca%2F2016-08-29-273-Integer-to-English-Words%2F"
+      class="btn btn-social-icon btn-twitter" title="Share on Twitter">
+      <span class="fab fa-fw fa-twitter" aria-hidden="true"></span>
+      <span class="sr-only">Twitter</span>
+    </a>
+  
+
+  
+    <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fleetcode.ca%2F2016-08-29-273-Integer-to-English-Words%2F"
+      class="btn btn-social-icon btn-facebook" title="Share on Facebook">
+      <span class="fab fa-fw fa-facebook" aria-hidden="true"></span>
+      <span class="sr-only">Facebook</span>
+    </a>
+  
+
+  
+    <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fleetcode.ca%2F2016-08-29-273-Integer-to-English-Words%2F"
+      class="btn btn-social-icon btn-linkedin" title="Share on LinkedIn">
+      <span class="fab fa-fw fa-linkedin" aria-hidden="true"></span>
+      <span class="sr-only">LinkedIn</span>
+    </a>
+  
+
+  
+
+</section>
+
+
+
+      
+
+      <ul class="pagination blog-pager">
+        
+        <li class="page-item previous">
+          <a class="page-link" href="/2016-08-28-272-Closest-Binary-Search-Tree-Value-II/" data-toggle="tooltip" data-placement="top" title="272 - Closest Binary Search Tree Value II">&larr; Previous Post</a>
+        </li>
+        
+        
+        <li class="page-item next">
+          <a class="page-link" href="/2016-08-30-274-H-Index/" data-toggle="tooltip" data-placement="top" title="274 - H-Index">Next Post &rarr;</a>
+        </li>
+        
+      </ul>
+      
+  <div class="disqus-comments">
+  <div class="comments">
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+	  var disqus_shortname = 'leetcodeca';
+	  /* ensure that pages with query string get the same discussion */
+	  var url_parts = window.location.href.split("?");
+	  var disqus_url = url_parts[0];
+	  (function() {
+		var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+		dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+		(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	  })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</div>
+  
+  
+
+  
+
+
+
+
+    </div>
+  </div>
+</div>
+
+
+  <footer>
+  <div class="container-md beautiful-jekyll-footer">
+    <div class="row">
+      <div class="col-xl-8 offset-xl-2 col-lg-10 offset-lg-1">
+      <ul class="list-inline text-center footer-links"><li class="list-inline-item">
+    <a href="/feed.xml" title="RSS">
+      <span class="fa-stack fa-lg" aria-hidden="true">
+        <i class="fas fa-circle fa-stack-2x"></i>
+        <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+      </span>
+      <span class="sr-only">RSS</span>
+    </a>
+  </li><li class="list-inline-item">
+    <a href="mailto:admin@leetcode.ca" title="Email me">
+      <span class="fa-stack fa-lg" aria-hidden="true">
+        <i class="fas fa-circle fa-stack-2x"></i>
+        <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+      </span>
+      <span class="sr-only">Email me</span>
+   </a>
+  </li></ul>
+
+      
+      <p class="copyright text-muted">
+      
+        Leetcode
+        &nbsp;&bull;&nbsp;
+      
+      2026
+
+      
+        &nbsp;&bull;&nbsp;
+        <span class="author-site">
+          <a href="https://leetcode.ca/">leetcode.ca</a>
+        </span>
+      
+
+      
+      </p>
+      
+      <p class="theme-by text-muted">
+        Copyright © 2025 leetcode.ca
+      </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+  
+  
+    
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous"></script>
+
+
+  
+    
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+
+
+  
+    
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+
+  
+
+
+
+  
+    <!-- doing something a bit funky here because I want to be careful not to include JQuery twice! -->
+    
+      <script src="/assets/js/beautifuljekyll.js"></script>
+    
+  
+
+
+
+
+
+  
+    
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+  
+    
+  <script src="https://cdn.jsdelivr.net/npm/anchor-js/anchor.min.js"></script>
+
+
+  
+
+
+
+  
+    <script src="/assets/js/anchor-js-config.js"></script>
+  
+
+
+
+</body>
+</html>

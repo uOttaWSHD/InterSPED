@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="shortcut icon" type="image/png" href="/assets/img/favicon.png">
+  <link rel="stylesheet" href="/assets/css/uikit.min.css" />
+  <script src="/assets/js/uikit.min.js" type="text/javascript"></script>
+  <script src="/assets/js/uikit-icons.min.js" type="text/javascript"></script>
+
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        packages: {'[+]': ['ams']}  // Include the 'ams' package
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  
+  
+
+  
+<!-- below block is overlapping with SEO plugin generated title and description   -->
+<!-- 
+  <title>619 - Biggest Single Number</title>
+
+  
+  <meta name="author" content="Leetcode">
+  
+
+  
+  <meta name="description" content="Welcome to Subscribe On Youtube 619. Biggest Single Number Description Table: MyNumbers +-------------+------+ | Column Name | Type | +-------------+------+ | num | int | +-------------+------+ This table may contain duplicates (In other words, there is no primary key for this table in SQL). Each row of this table contains...">
+   -->
+
+  
+
+  
+  <meta name="keywords" content="LeetCode, Solution, Company Tag, Unlock Prime, Java, C++, Interview, Job, Algorithm, SQL, Canada">
+  
+
+  <link rel="alternate" type="application/rss+xml" title="Leetcode" href="https://leetcode.ca/feed.xml">
+
+  
+
+  
+
+  
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-K108N8L891"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-K108N8L891');
+  </script>
+  <!-- End Google Analytics -->
+
+
+  
+  <script data-ad-client="ca-pub-6766885420008650" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+
+
+
+  
+    
+      
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+
+    
+      
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
+
+
+    
+      
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic">
+
+
+    
+      
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800">
+
+
+    
+  
+
+  
+    
+      <link rel="stylesheet" href="/assets/css/bootstrap-social.css">
+    
+      <link rel="stylesheet" href="/assets/css/beautifuljekyll.css">
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <meta property="og:site_name" content="Leetcode">
+  <meta property="og:title" content="619 - Biggest Single Number">
+  <meta property="og:description" content="Welcome to Subscribe On Youtube
+
+
+
+
+619. Biggest Single Number
+
+Description
+
+Table: MyNumbers
+
+
++-------------+------+
+| Column Name | Type |
++-------------+------+
+| num         | int  |
++-------------+------+
+This table may contain duplicates (In other words, there is no primary key for this table in SQL).
+Each row of this table contains an integer.
+
+
+&amp;nbsp;
+
+A single number is a number that appeared only once in the MyNumbers table.
+
+Find the largest single number. If there is no single number, report null.
+
+The result format is in the following example.
+ 
+&amp;nbsp;
+Example 1:
+
+
+Input: 
+MyNumbers table:
++-----+
+| num |
++-----+
+| 8   |
+| 8   |
+| 3   |
+| 3   |
+| 1   |
+| 4   |
+| 5   |
+| 6   |
++-----+
+Output: 
++-----+
+| num |
++-----+
+| 6   |
++-----+
+Explanation: The single numbers are 1, 4, 5, and 6.
+Since 6 is the largest single number, we return it.
+
+
+Example 2:
+
+
+Input: 
+MyNumbers table:
++-----+
+| num |
++-----+
+| 8   |
+| 8   |
+| 7   |
+| 7   |
+| 3   |
+| 3   |
+| 3   |
++-----+
+Output: 
++------+
+| num  |
++------+
+| null |
++------+
+Explanation: There are no single numbers in the input table so we return null.
+
+
+Solutions
+
+Solution 1: Grouping and Subquery
+
+We can first group the MyNumbers table by num and count the number of occurrences of each number. Then, we can use a subquery to find the maximum number among the numbers that appear only once.
+
+Solution 2: Grouping and CASE Expression
+
+Similar to Solution 1, we can first group the MyNumbers table by num and count the number of occurrences of each number. Then, we can use a CASE expression to find the numbers that appear only once, sort them in descending order by number, and take the first one.
+
+
+
+	SQL
+
+
+
+
+
+	
+# Write your MySQL query statement below
+SELECT MAX(num) AS num
+FROM
+    (
+        SELECT num
+        FROM MyNumbers
+        GROUP BY 1
+        HAVING COUNT(1) = 1
+    ) AS t;
+
+
+
+
+
+
+All Problems
+
+All Solutions">
+
+  
+  <meta property="og:image" content="https://leetcode.ca/assets/img/avatar-icon.jpg">
+  
+
+  <!-- remove canonical below to use SEO plugin -->
+  
+  <meta property="og:type" content="article">
+  <meta property="og:article:author" content="Leetcode">
+  <meta property="og:article:published_time" content="2017-08-10T00:00:00-07:00">
+  <meta property="og:url" content="https://leetcode.ca/2017-08-10-619-Biggest-Single-Number/">
+  <!-- <link rel="canonical" href="https://leetcode.ca/2017-08-10-619-Biggest-Single-Number/"> -->
+  
+
+  
+  <meta name="twitter:card" content="summary">
+  
+  <meta name="twitter:site" content="@">
+  <meta name="twitter:creator" content="@">
+
+  <meta property="twitter:title" content="619 - Biggest Single Number">
+  <meta property="twitter:description" content="Welcome to Subscribe On Youtube
+
+
+
+
+619. Biggest Single Number
+
+Description
+
+Table: MyNumbers
+
+
++-------------+------+
+| Column Name | Type |
++-------------+------+
+| num         | int  |
++-------------+------+
+This table may contain duplicates (In other words, there is no primary key for this table in SQL).
+Each row of this table contains an integer.
+
+
+&amp;nbsp;
+
+A single number is a number that appeared only once in the MyNumbers table.
+
+Find the largest single number. If there is no single number, report null.
+
+The result format is in the following example.
+ 
+&amp;nbsp;
+Example 1:
+
+
+Input: 
+MyNumbers table:
++-----+
+| num |
++-----+
+| 8   |
+| 8   |
+| 3   |
+| 3   |
+| 1   |
+| 4   |
+| 5   |
+| 6   |
++-----+
+Output: 
++-----+
+| num |
++-----+
+| 6   |
++-----+
+Explanation: The single numbers are 1, 4, 5, and 6.
+Since 6 is the largest single number, we return it.
+
+
+Example 2:
+
+
+Input: 
+MyNumbers table:
++-----+
+| num |
++-----+
+| 8   |
+| 8   |
+| 7   |
+| 7   |
+| 3   |
+| 3   |
+| 3   |
++-----+
+Output: 
++------+
+| num  |
++------+
+| null |
++------+
+Explanation: There are no single numbers in the input table so we return null.
+
+
+Solutions
+
+Solution 1: Grouping and Subquery
+
+We can first group the MyNumbers table by num and count the number of occurrences of each number. Then, we can use a subquery to find the maximum number among the numbers that appear only once.
+
+Solution 2: Grouping and CASE Expression
+
+Similar to Solution 1, we can first group the MyNumbers table by num and count the number of occurrences of each number. Then, we can use a CASE expression to find the numbers that appear only once, sort them in descending order by number, and take the first one.
+
+
+
+	SQL
+
+
+
+
+
+	
+# Write your MySQL query statement below
+SELECT MAX(num) AS num
+FROM
+    (
+        SELECT num
+        FROM MyNumbers
+        GROUP BY 1
+        HAVING COUNT(1) = 1
+    ) AS t;
+
+
+
+
+
+
+All Problems
+
+All Solutions">
+
+  
+  <meta name="twitter:image" content="https://leetcode.ca/assets/img/avatar-icon.jpg">
+  
+
+  
+
+
+  <!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>619 - Biggest Single Number | Leetcode</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="619 - Biggest Single Number" />
+<meta name="author" content="Leetcode" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Welcome to Subscribe On Youtube" />
+<meta property="og:description" content="Welcome to Subscribe On Youtube" />
+<link rel="canonical" href="https://leetcode.ca/2017-08-10-619-Biggest-Single-Number/" />
+<meta property="og:url" content="https://leetcode.ca/2017-08-10-619-Biggest-Single-Number/" />
+<meta property="og:site_name" content="Leetcode" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2017-08-10T00:00:00-07:00" />
+<script type="application/ld+json">
+{"description":"Welcome to Subscribe On Youtube","headline":"619 - Biggest Single Number","dateModified":"2017-08-10T00:00:00-07:00","datePublished":"2017-08-10T00:00:00-07:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://leetcode.ca/2017-08-10-619-Biggest-Single-Number/"},"url":"https://leetcode.ca/2017-08-10-619-Biggest-Single-Number/","author":{"@type":"Person","name":"Leetcode"},"@type":"BlogPosting","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+  
+
+  
+
+</head>
+
+
+<body>
+
+  
+
+
+  <nav class="navbar navbar-expand-xl navbar-light fixed-top navbar-custom top-nav-regular"><a class="navbar-brand" href="https://leetcode.ca/">Leetcode</a><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="main-navbar">
+    <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/blog">Posts</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/tags">Tag Index</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/search">Search</a>
+          </li></ul>
+  </div>
+
+  
+
+  
+    <div class="avatar-container">
+      <div class="avatar-img-border">
+        <a href="https://leetcode.ca/">
+          <img alt="Navigation bar avatar" class="avatar-img" src="/assets/img/avatar-icon.jpg" />
+        </a>
+      </div>
+    </div>
+  
+
+</nav>
+
+
+  <!-- TODO this file has become a mess, refactor it -->
+
+
+
+
+
+
+
+<header class="header-section ">
+
+<div class="intro-header no-img">
+  <div class="container-md">
+    <div class="row">
+      <div class="col-xl-8 offset-xl-2 col-lg-10 offset-lg-1">
+        <div class="post-heading">
+          <h1>619 - Biggest Single Number</h1>
+          
+
+          
+            <span class="post-meta">Posted on August 10, 2017</span>
+            
+            
+              
+
+
+
+
+
+  
+  <span class="post-meta"><span class="d-none d-md-inline middot">&middot;</span> 1 minute read</span>
+
+
+            
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</header>
+
+
+
+
+
+<div class=" container-md ">
+  <div class="row">
+    <div class=" col-xl-8 offset-xl-2 col-lg-10 offset-lg-1 ">
+
+      
+
+      
+
+      <article role="main" class="blog-post">
+        <h5 id="welcome-to-subscribe-on-youtube">Welcome to Subscribe On Youtube</h5>
+<script src="https://apis.google.com/js/platform.js"></script>
+
+<div class="g-ytsubscribe" data-channelid="UCslk3mmaMJy1enit3L9vWig" data-layout="full" data-count="hidden"></div>
+
+<h1 id="619-biggest-single-number"><a href="https://leetcode.com/problems/biggest-single-number">619. Biggest Single Number</a></h1>
+
+<h2 id="description">Description</h2>
+
+<p>Table: <code>MyNumbers</code></p>
+
+<pre>
++-------------+------+
+| Column Name | Type |
++-------------+------+
+| num         | int  |
++-------------+------+
+This table may contain duplicates (In other words, there is no primary key for this table in SQL).
+Each row of this table contains an integer.
+</pre>
+
+<p>&nbsp;</p>
+
+<p>A <strong>single number</strong> is a number that appeared only once in the <code>MyNumbers</code> table.</p>
+
+<p>Find the largest <strong>single number</strong>. If there is no <strong>single number</strong>, report <code>null</code>.</p>
+
+<p>The result format is in the following example.</p>
+<ptable> </ptable>
+<p>&nbsp;</p>
+<p><strong class="example">Example 1:</strong></p>
+
+<pre>
+<strong>Input:</strong> 
+MyNumbers table:
++-----+
+| num |
++-----+
+| 8   |
+| 8   |
+| 3   |
+| 3   |
+| 1   |
+| 4   |
+| 5   |
+| 6   |
++-----+
+<strong>Output:</strong> 
++-----+
+| num |
++-----+
+| 6   |
++-----+
+<strong>Explanation:</strong> The single numbers are 1, 4, 5, and 6.
+Since 6 is the largest single number, we return it.
+</pre>
+
+<p><strong class="example">Example 2:</strong></p>
+
+<pre>
+<strong>Input:</strong> 
+MyNumbers table:
++-----+
+| num |
++-----+
+| 8   |
+| 8   |
+| 7   |
+| 7   |
+| 3   |
+| 3   |
+| 3   |
++-----+
+<strong>Output:</strong> 
++------+
+| num  |
++------+
+| null |
++------+
+<strong>Explanation:</strong> There are no single numbers in the input table so we return null.
+</pre>
+
+<h2 id="solutions">Solutions</h2>
+
+<p><strong>Solution 1: Grouping and Subquery</strong></p>
+
+<p>We can first group the <code class="language-plaintext highlighter-rouge">MyNumbers</code> table by <code class="language-plaintext highlighter-rouge">num</code> and count the number of occurrences of each number. Then, we can use a subquery to find the maximum number among the numbers that appear only once.</p>
+
+<p><strong>Solution 2: Grouping and <code class="language-plaintext highlighter-rouge">CASE</code> Expression</strong></p>
+
+<p>Similar to Solution 1, we can first group the <code class="language-plaintext highlighter-rouge">MyNumbers</code> table by <code class="language-plaintext highlighter-rouge">num</code> and count the number of occurrences of each number. Then, we can use a <code class="language-plaintext highlighter-rouge">CASE</code> expression to find the numbers that appear only once, sort them in descending order by number, and take the first one.</p>
+
+<ul class="uk-tab" data-uk-switcher="{connect:'#1cb4d848-7371-4b07-ab5b-0fb385546336'}">
+
+	<li class="uk-active"><a href="#">SQL</a></li>
+
+</ul>
+
+<ul id="1cb4d848-7371-4b07-ab5b-0fb385546336" class="uk-switcher uk-margin">
+
+	<li>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">Write</span> <span class="n">your</span> <span class="n">MySQL</span> <span class="n">query</span> <span class="k">statement</span> <span class="n">below</span>
+<span class="k">SELECT</span> <span class="k">MAX</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> <span class="k">AS</span> <span class="n">num</span>
+<span class="k">FROM</span>
+    <span class="p">(</span>
+        <span class="k">SELECT</span> <span class="n">num</span>
+        <span class="k">FROM</span> <span class="n">MyNumbers</span>
+        <span class="k">GROUP</span> <span class="k">BY</span> <span class="mi">1</span>
+        <span class="k">HAVING</span> <span class="k">COUNT</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="p">)</span> <span class="k">AS</span> <span class="n">t</span><span class="p">;</span>
+
+</code></pre></div></div>
+</li>
+
+</ul>
+
+<h1 id="all-problems"><a href="https://leetcode.ca/all/problems.html">All Problems</a></h1>
+
+<h1 id="all-solutions"><a href="https://leetcode.ca/blog">All Solutions</a></h1>
+
+      </article>
+
+      
+
+      
+
+      
+        <!-- Check if any share-links are active -->
+
+
+
+
+<section id = "social-share-section">
+  <span class="sr-only">Share: </span>
+
+  
+    <a href="https://twitter.com/intent/tweet?text=619+-+Biggest+Single+Number&url=https%3A%2F%2Fleetcode.ca%2F2017-08-10-619-Biggest-Single-Number%2F"
+      class="btn btn-social-icon btn-twitter" title="Share on Twitter">
+      <span class="fab fa-fw fa-twitter" aria-hidden="true"></span>
+      <span class="sr-only">Twitter</span>
+    </a>
+  
+
+  
+    <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fleetcode.ca%2F2017-08-10-619-Biggest-Single-Number%2F"
+      class="btn btn-social-icon btn-facebook" title="Share on Facebook">
+      <span class="fab fa-fw fa-facebook" aria-hidden="true"></span>
+      <span class="sr-only">Facebook</span>
+    </a>
+  
+
+  
+    <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fleetcode.ca%2F2017-08-10-619-Biggest-Single-Number%2F"
+      class="btn btn-social-icon btn-linkedin" title="Share on LinkedIn">
+      <span class="fab fa-fw fa-linkedin" aria-hidden="true"></span>
+      <span class="sr-only">LinkedIn</span>
+    </a>
+  
+
+  
+
+</section>
+
+
+
+      
+
+      <ul class="pagination blog-pager">
+        
+        <li class="page-item previous">
+          <a class="page-link" href="/2017-08-09-618-Students-Report-By-Geography/" data-toggle="tooltip" data-placement="top" title="618 - Students Report By Geography">&larr; Previous Post</a>
+        </li>
+        
+        
+        <li class="page-item next">
+          <a class="page-link" href="/2017-08-11-620-Not-Boring-Movies/" data-toggle="tooltip" data-placement="top" title="620 - Not Boring Movies">Next Post &rarr;</a>
+        </li>
+        
+      </ul>
+      
+  <div class="disqus-comments">
+  <div class="comments">
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+	  var disqus_shortname = 'leetcodeca';
+	  /* ensure that pages with query string get the same discussion */
+	  var url_parts = window.location.href.split("?");
+	  var disqus_url = url_parts[0];
+	  (function() {
+		var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+		dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+		(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	  })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</div>
+  
+  
+
+  
+
+
+
+
+    </div>
+  </div>
+</div>
+
+
+  <footer>
+  <div class="container-md beautiful-jekyll-footer">
+    <div class="row">
+      <div class="col-xl-8 offset-xl-2 col-lg-10 offset-lg-1">
+      <ul class="list-inline text-center footer-links"><li class="list-inline-item">
+    <a href="/feed.xml" title="RSS">
+      <span class="fa-stack fa-lg" aria-hidden="true">
+        <i class="fas fa-circle fa-stack-2x"></i>
+        <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+      </span>
+      <span class="sr-only">RSS</span>
+    </a>
+  </li><li class="list-inline-item">
+    <a href="mailto:admin@leetcode.ca" title="Email me">
+      <span class="fa-stack fa-lg" aria-hidden="true">
+        <i class="fas fa-circle fa-stack-2x"></i>
+        <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+      </span>
+      <span class="sr-only">Email me</span>
+   </a>
+  </li></ul>
+
+      
+      <p class="copyright text-muted">
+      
+        Leetcode
+        &nbsp;&bull;&nbsp;
+      
+      2026
+
+      
+        &nbsp;&bull;&nbsp;
+        <span class="author-site">
+          <a href="https://leetcode.ca/">leetcode.ca</a>
+        </span>
+      
+
+      
+      </p>
+      
+      <p class="theme-by text-muted">
+        Copyright © 2025 leetcode.ca
+      </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+  
+  
+    
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous"></script>
+
+
+  
+    
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+
+
+  
+    
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+
+  
+
+
+
+  
+    <!-- doing something a bit funky here because I want to be careful not to include JQuery twice! -->
+    
+      <script src="/assets/js/beautifuljekyll.js"></script>
+    
+  
+
+
+
+
+
+  
+    
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+  
+    
+  <script src="https://cdn.jsdelivr.net/npm/anchor-js/anchor.min.js"></script>
+
+
+  
+
+
+
+  
+    <script src="/assets/js/anchor-js-config.js"></script>
+  
+
+
+
+</body>
+</html>

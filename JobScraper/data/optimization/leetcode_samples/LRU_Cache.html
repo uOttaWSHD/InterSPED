@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="shortcut icon" type="image/png" href="/assets/img/favicon.png">
+  <link rel="stylesheet" href="/assets/css/uikit.min.css" />
+  <script src="/assets/js/uikit.min.js" type="text/javascript"></script>
+  <script src="/assets/js/uikit-icons.min.js" type="text/javascript"></script>
+
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        packages: {'[+]': ['ams']}  // Include the 'ams' package
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  
+  
+
+  
+<!-- below block is overlapping with SEO plugin generated title and description   -->
+<!-- 
+  <title>146 - LRU Cache</title>
+
+  
+  <meta name="author" content="Leetcode">
+  
+
+  
+  <meta name="description" content="Welcome to Subscribe On Youtube 146. LRU Cache Description Design a data structure that follows the constraints of a Least Recently Used (LRU) cache. Implement the LRUCache class: LRUCache(int capacity) Initialize the LRU cache with positive size capacity. int get(int key) Return the value of the key if the key...">
+   -->
+
+  
+
+  
+  <meta name="keywords" content="LeetCode, Solution, Company Tag, Unlock Prime, Java, C++, Interview, Job, Algorithm, SQL, Canada">
+  
+
+  <link rel="alternate" type="application/rss+xml" title="Leetcode" href="https://leetcode.ca/feed.xml">
+
+  
+
+  
+
+  
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-K108N8L891"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-K108N8L891');
+  </script>
+  <!-- End Google Analytics -->
+
+
+  
+  <script data-ad-client="ca-pub-6766885420008650" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+
+
+
+  
+    
+      
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+
+    
+      
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
+
+
+    
+      
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic">
+
+
+    
+      
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800">
+
+
+    
+  
+
+  
+    
+      <link rel="stylesheet" href="/assets/css/bootstrap-social.css">
+    
+      <link rel="stylesheet" href="/assets/css/beautifuljekyll.css">
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <meta property="og:site_name" content="Leetcode">
+  <meta property="og:title" content="146 - LRU Cache">
+  <meta property="og:description" content="Welcome to Subscribe On Youtube 146. LRU Cache Description Design a data structure that follows the constraints of a Least Recently Used (LRU) cache. Implement the LRUCache class: LRUCache(int capacity) Initialize the LRU cache with positive size capacity. int get(int key) Return the value of the key if the key exists, otherwise return -1. void put(int key, int value) Update the value of the key if the key exists. Otherwise, add the key-value pair to the cache. If the number of keys exceeds the capacity from this operation, evict the least recently used key. The functions get and put must each run in O(1) average time complexity. &amp;nbsp; Example 1: Input [&amp;quot;LRUCache&amp;quot;, &amp;quot;put&amp;quot;, &amp;quot;put&amp;quot;, &amp;quot;get&amp;quot;, &amp;quot;put&amp;quot;, &amp;quot;get&amp;quot;, &amp;quot;put&amp;quot;, &amp;quot;get&amp;quot;, &amp;quot;get&amp;quot;, &amp;quot;get&amp;quot;] [[2], [1, 1], [2, 2], [1], [3, 3], [2], [4, 4], [1], [3], [4]] Output [null, null, null, 1, null, -1, null, -1, 3, 4] Explanation LRUCache lRUCache = new LRUCache(2); lRUCache.put(1, 1); // cache is {1=1} lRUCache.put(2, 2); // cache is {1=1, 2=2} lRUCache.get(1); // return 1 lRUCache.put(3, 3); // LRU key was 2, evicts key 2, cache is {1=1, 3=3} lRUCache.get(2); // returns -1 (not found) lRUCache.put(4, 4); // LRU key was 1, evicts key 1, cache is {4=4, 3=3} lRUCache.get(1); // return -1 (not found) lRUCache.get(3); // return 3 lRUCache.get(4); // return 4 &amp;nbsp; Constraints: 1 &amp;lt;= capacity &amp;lt;= 3000 0 &amp;lt;= key &amp;lt;= 104 0 &amp;lt;= value &amp;lt;= 105 At most 2 * 105 calls will be made to get and put. Solutions Create a class MyNode, which contains data fields int key, int value, Node prev and Node next. That is, each node of type MyNode has a key and a value, and have references to its previous node and the next node. In class LRUCache, data fields include int capacity that stores the capacity of the cache, Map&amp;lt;Integer, MyNode&amp;gt; map that maps each key to its node, MyNode head and Node tail that represents the head node and the tail node respectively. For Least Recently Used cache, the most recently used node is the head node and the least recently used node is the tail node. In the constructor, initialize capacity with the given capacity. In get(key), if key is not in map, then key is not in the cache, so return -1. If key is in map, obtain the node and its value, remove the node and set the node to be the head, and return value. In put(key, value), if map contains key, then obtain the node and update its value, remove the node, and set the node to be the head. If map does not contain key, then create a new node using key and value, and set the new node to be the head. If the size of map is greater than or equal to capacity, then remove the node tail and remove the corresponding entry in map. Add a new entry of the new node into the map. Two supplementary methods are needed. Method remove(MyNode node). Obtain MyNode’s...">
+
+  
+  <meta property="og:image" content="https://leetcode.ca/assets/img/avatar-icon.jpg">
+  
+
+  <!-- remove canonical below to use SEO plugin -->
+  
+  <meta property="og:type" content="article">
+  <meta property="og:article:author" content="Leetcode">
+  <meta property="og:article:published_time" content="2016-04-24T00:00:00-07:00">
+  <meta property="og:url" content="https://leetcode.ca/2016-04-24-146-LRU-Cache/">
+  <!-- <link rel="canonical" href="https://leetcode.ca/2016-04-24-146-LRU-Cache/"> -->
+  
+
+  
+  <meta name="twitter:card" content="summary">
+  
+  <meta name="twitter:site" content="@">
+  <meta name="twitter:creator" content="@">
+
+  <meta property="twitter:title" content="146 - LRU Cache">
+  <meta property="twitter:description" content="Welcome to Subscribe On Youtube 146. LRU Cache Description Design a data structure that follows the constraints of a Least Recently Used (LRU) cache. Implement the LRUCache class: LRUCache(int capacity) Initialize the LRU cache with positive size capacity. int get(int key) Return the value of the key if the key exists, otherwise return -1. void put(int key, int value) Update the value of the key if the key exists. Otherwise, add the key-value pair to the cache. If the number of keys exceeds the capacity from this operation, evict the least recently used key. The functions get and put must each run in O(1) average time complexity. &amp;nbsp; Example 1: Input [&amp;quot;LRUCache&amp;quot;, &amp;quot;put&amp;quot;, &amp;quot;put&amp;quot;, &amp;quot;get&amp;quot;, &amp;quot;put&amp;quot;, &amp;quot;get&amp;quot;, &amp;quot;put&amp;quot;, &amp;quot;get&amp;quot;, &amp;quot;get&amp;quot;, &amp;quot;get&amp;quot;] [[2], [1, 1], [2, 2], [1], [3, 3], [2], [4, 4], [1], [3], [4]] Output [null, null, null, 1, null, -1, null, -1, 3, 4] Explanation LRUCache lRUCache = new LRUCache(2); lRUCache.put(1, 1); // cache is {1=1} lRUCache.put(2, 2); // cache is {1=1, 2=2} lRUCache.get(1); // return 1 lRUCache.put(3, 3); // LRU key was 2, evicts key 2, cache is {1=1, 3=3} lRUCache.get(2); // returns -1 (not found) lRUCache.put(4, 4); // LRU key was 1, evicts key 1, cache is {4=4, 3=3} lRUCache.get(1); // return -1 (not found) lRUCache.get(3); // return 3 lRUCache.get(4); // return 4 &amp;nbsp; Constraints: 1 &amp;lt;= capacity &amp;lt;= 3000 0 &amp;lt;= key &amp;lt;= 104 0 &amp;lt;= value &amp;lt;= 105 At most 2 * 105 calls will be made to get and put. Solutions Create a class MyNode, which contains data fields int key, int value, Node prev and Node next. That is, each node of type MyNode has a key and a value, and have references to its previous node and the next node. In class LRUCache, data fields include int capacity that stores the capacity of the cache, Map&amp;lt;Integer, MyNode&amp;gt; map that maps each key to its node, MyNode head and Node tail that represents the head node and the tail node respectively. For Least Recently Used cache, the most recently used node is the head node and the least recently used node is the tail node. In the constructor, initialize capacity with the given capacity. In get(key), if key is not in map, then key is not in the cache, so return -1. If key is in map, obtain the node and its value, remove the node and set the node to be the head, and return value. In put(key, value), if map contains key, then obtain the node and update its value, remove the node, and set the node to be the head. If map does not contain key, then create a new node using key and value, and set the new node to be the head. If the size of map is greater than or equal to capacity, then remove the node tail and remove the corresponding entry in map. Add a new entry of the new node into the map. Two supplementary methods are needed. Method remove(MyNode node). Obtain MyNode’s...">
+
+  
+  <meta name="twitter:image" content="https://leetcode.ca/assets/img/avatar-icon.jpg">
+  
+
+  
+
+
+  <!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>146 - LRU Cache | Leetcode</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="146 - LRU Cache" />
+<meta name="author" content="Leetcode" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Welcome to Subscribe On Youtube" />
+<meta property="og:description" content="Welcome to Subscribe On Youtube" />
+<link rel="canonical" href="https://leetcode.ca/2016-04-24-146-LRU-Cache/" />
+<meta property="og:url" content="https://leetcode.ca/2016-04-24-146-LRU-Cache/" />
+<meta property="og:site_name" content="Leetcode" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2016-04-24T00:00:00-07:00" />
+<script type="application/ld+json">
+{"description":"Welcome to Subscribe On Youtube","headline":"146 - LRU Cache","dateModified":"2016-04-24T00:00:00-07:00","datePublished":"2016-04-24T00:00:00-07:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://leetcode.ca/2016-04-24-146-LRU-Cache/"},"url":"https://leetcode.ca/2016-04-24-146-LRU-Cache/","author":{"@type":"Person","name":"Leetcode"},"@type":"BlogPosting","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+  
+
+  
+
+</head>
+
+
+<body>
+
+  
+
+
+  <nav class="navbar navbar-expand-xl navbar-light fixed-top navbar-custom top-nav-regular"><a class="navbar-brand" href="https://leetcode.ca/">Leetcode</a><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="main-navbar">
+    <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/blog">Posts</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/tags">Tag Index</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/search">Search</a>
+          </li></ul>
+  </div>
+
+  
+
+  
+    <div class="avatar-container">
+      <div class="avatar-img-border">
+        <a href="https://leetcode.ca/">
+          <img alt="Navigation bar avatar" class="avatar-img" src="/assets/img/avatar-icon.jpg" />
+        </a>
+      </div>
+    </div>
+  
+
+</nav>
+
+
+  <!-- TODO this file has become a mess, refactor it -->
+
+
+
+
+
+
+
+<header class="header-section ">
+
+<div class="intro-header no-img">
+  <div class="container-md">
+    <div class="row">
+      <div class="col-xl-8 offset-xl-2 col-lg-10 offset-lg-1">
+        <div class="post-heading">
+          <h1>146 - LRU Cache</h1>
+          
+
+          
+            <span class="post-meta">Posted on April 24, 2016</span>
+            
+            
+              
+
+
+
+
+
+  
+  <span class="post-meta"><span class="d-none d-md-inline middot">&middot;</span> 12 minute read</span>
+
+
+            
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</header>
+
+
+
+
+
+<div class=" container-md ">
+  <div class="row">
+    <div class=" col-xl-8 offset-xl-2 col-lg-10 offset-lg-1 ">
+
+      
+
+      
+
+      <article role="main" class="blog-post">
+        <h5 id="welcome-to-subscribe-on-youtube">Welcome to Subscribe On Youtube</h5>
+<script src="https://apis.google.com/js/platform.js"></script>
+
+<div class="g-ytsubscribe" data-channelid="UCslk3mmaMJy1enit3L9vWig" data-layout="full" data-count="hidden"></div>
+
+<h1 id="146-lru-cache"><a href="https://leetcode.com/problems/lru-cache">146. LRU Cache</a></h1>
+
+<h2 id="description">Description</h2>
+
+<p>Design a data structure that follows the constraints of a <strong><a href="https://en.wikipedia.org/wiki/Cache_replacement_policies#LRU" target="_blank">Least Recently Used (LRU) cache</a></strong>.</p>
+
+<p>Implement the <code>LRUCache</code> class:</p>
+
+<ul>
+	<li><code>LRUCache(int capacity)</code> Initialize the LRU cache with <strong>positive</strong> size <code>capacity</code>.</li>
+	<li><code>int get(int key)</code> Return the value of the <code>key</code> if the key exists, otherwise return <code>-1</code>.</li>
+	<li><code>void put(int key, int value)</code> Update the value of the <code>key</code> if the <code>key</code> exists. Otherwise, add the <code>key-value</code> pair to the cache. If the number of keys exceeds the <code>capacity</code> from this operation, <strong>evict</strong> the least recently used key.</li>
+</ul>
+
+<p>The functions <code>get</code> and <code>put</code> must each run in <code>O(1)</code> average time complexity.</p>
+
+<p>&nbsp;</p>
+<p><strong class="example">Example 1:</strong></p>
+
+<pre>
+<strong>Input</strong>
+[&quot;LRUCache&quot;, &quot;put&quot;, &quot;put&quot;, &quot;get&quot;, &quot;put&quot;, &quot;get&quot;, &quot;put&quot;, &quot;get&quot;, &quot;get&quot;, &quot;get&quot;]
+[[2], [1, 1], [2, 2], [1], [3, 3], [2], [4, 4], [1], [3], [4]]
+<strong>Output</strong>
+[null, null, null, 1, null, -1, null, -1, 3, 4]
+
+<strong>Explanation</strong>
+LRUCache lRUCache = new LRUCache(2);
+lRUCache.put(1, 1); // cache is {1=1}
+lRUCache.put(2, 2); // cache is {1=1, 2=2}
+lRUCache.get(1);    // return 1
+lRUCache.put(3, 3); // LRU key was 2, evicts key 2, cache is {1=1, 3=3}
+lRUCache.get(2);    // returns -1 (not found)
+lRUCache.put(4, 4); // LRU key was 1, evicts key 1, cache is {4=4, 3=3}
+lRUCache.get(1);    // return -1 (not found)
+lRUCache.get(3);    // return 3
+lRUCache.get(4);    // return 4
+</pre>
+
+<p>&nbsp;</p>
+<p><strong>Constraints:</strong></p>
+
+<ul>
+	<li><code>1 &lt;= capacity &lt;= 3000</code></li>
+	<li><code>0 &lt;= key &lt;= 10<sup>4</sup></code></li>
+	<li><code>0 &lt;= value &lt;= 10<sup>5</sup></code></li>
+	<li>At most <code>2 * 10<sup>5</sup></code> calls will be made to <code>get</code> and <code>put</code>.</li>
+</ul>
+
+<h2 id="solutions">Solutions</h2>
+
+<p>Create a class <code class="language-plaintext highlighter-rouge">MyNode</code>, which contains data fields <code class="language-plaintext highlighter-rouge">int key</code>, <code class="language-plaintext highlighter-rouge">int value</code>, <code class="language-plaintext highlighter-rouge">Node prev</code> and <code class="language-plaintext highlighter-rouge">Node next</code>. That is, each node of type <code class="language-plaintext highlighter-rouge">MyNode</code> has a key and a value, and have references to its previous node and the next node.</p>
+
+<p>In class <code class="language-plaintext highlighter-rouge">LRUCache</code>, data fields include <code class="language-plaintext highlighter-rouge">int capacity</code> that stores the capacity of the cache, <code class="language-plaintext highlighter-rouge">Map&lt;Integer, MyNode&gt; map</code> that maps each key to its node, <code class="language-plaintext highlighter-rouge">MyNode head</code> and <code class="language-plaintext highlighter-rouge">Node tail</code> that represents the head node and the tail node respectively. For Least Recently Used cache, the most recently used node is the head node and the least recently used node is the tail node.</p>
+
+<p>In the constructor, initialize <code class="language-plaintext highlighter-rouge">capacity</code> with the given <code class="language-plaintext highlighter-rouge">capacity</code>.</p>
+
+<p>In <code class="language-plaintext highlighter-rouge">get(key)</code>, if <code class="language-plaintext highlighter-rouge">key</code> is not in <code class="language-plaintext highlighter-rouge">map</code>, then <code class="language-plaintext highlighter-rouge">key</code> is not in the cache, so return -1. If <code class="language-plaintext highlighter-rouge">key</code> is in <code class="language-plaintext highlighter-rouge">map</code>, obtain the node and its <code class="language-plaintext highlighter-rouge">value</code>, remove the node and set the node to be the head, and return <code class="language-plaintext highlighter-rouge">value</code>.</p>
+
+<p>In <code class="language-plaintext highlighter-rouge">put(key, value)</code>, if <code class="language-plaintext highlighter-rouge">map</code> contains <code class="language-plaintext highlighter-rouge">key</code>, then obtain the node and update its <code class="language-plaintext highlighter-rouge">value</code>, remove the node, and set the node to be the head. If <code class="language-plaintext highlighter-rouge">map</code> does not contain <code class="language-plaintext highlighter-rouge">key</code>, then create a new node using <code class="language-plaintext highlighter-rouge">key</code> and <code class="language-plaintext highlighter-rouge">value</code>, and set the new node to be the head. If the size of <code class="language-plaintext highlighter-rouge">map</code> is greater than or equal to <code class="language-plaintext highlighter-rouge">capacity</code>, then remove the node <code class="language-plaintext highlighter-rouge">tail</code> and remove the corresponding entry in <code class="language-plaintext highlighter-rouge">map</code>. Add a new entry of the new node into the map.</p>
+
+<p>Two supplementary methods are needed.</p>
+
+<ol>
+  <li>Method <code class="language-plaintext highlighter-rouge">remove(MyNode node)</code>. Obtain <code class="language-plaintext highlighter-rouge">MyNode</code>’s previous node and next node, and update their references to other nodes accordingly. If <code class="language-plaintext highlighter-rouge">MyNode</code> is <code class="language-plaintext highlighter-rouge">head</code> or <code class="language-plaintext highlighter-rouge">tail</code>, then update <code class="language-plaintext highlighter-rouge">head</code> or <code class="language-plaintext highlighter-rouge">tail</code> accordingly.</li>
+  <li>Method <code class="language-plaintext highlighter-rouge">setHead(MyNode node)</code>. Set <code class="language-plaintext highlighter-rouge">MyNode</code> to be the new head and set the previous head’s reference accordingly. If <code class="language-plaintext highlighter-rouge">tail</code> is <code class="language-plaintext highlighter-rouge">null</code>, then update <code class="language-plaintext highlighter-rouge">tail</code> as well.</li>
+</ol>
+
+<ul class="uk-tab" data-uk-switcher="{connect:'#e2fdea63-4f8f-4e44-85a0-5ba3033e4d1a'}">
+
+	<li class="uk-active"><a href="#">Java</a></li>
+
+	<li><a href="#">C++</a></li>
+
+	<li><a href="#">Python</a></li>
+
+	<li><a href="#">Go</a></li>
+
+	<li><a href="#">TypeScript</a></li>
+
+	<li><a href="#">C#</a></li>
+
+	<li><a href="#">RenderScript</a></li>
+
+	<li><a href="#">Javascript</a></li>
+
+</ul>
+
+<ul id="e2fdea63-4f8f-4e44-85a0-5ba3033e4d1a" class="uk-switcher uk-margin">
+
+	<li>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Node</span> <span class="o">{</span>
+    <span class="kt">int</span> <span class="n">key</span><span class="o">;</span>
+    <span class="kt">int</span> <span class="n">val</span><span class="o">;</span>
+    <span class="nc">Node</span> <span class="n">prev</span><span class="o">;</span>
+    <span class="nc">Node</span> <span class="n">next</span><span class="o">;</span>
+
+    <span class="nc">Node</span><span class="o">()</span> <span class="o">{</span>
+    <span class="o">}</span>
+
+    <span class="nc">Node</span><span class="o">(</span><span class="kt">int</span> <span class="n">key</span><span class="o">,</span> <span class="kt">int</span> <span class="n">val</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">key</span> <span class="o">=</span> <span class="n">key</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">val</span> <span class="o">=</span> <span class="n">val</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">class</span> <span class="nc">LRUCache</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">,</span> <span class="nc">Node</span><span class="o">&gt;</span> <span class="n">cache</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">&lt;&gt;();</span>
+    <span class="kd">private</span> <span class="nc">Node</span> <span class="n">head</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Node</span><span class="o">();</span>
+    <span class="kd">private</span> <span class="nc">Node</span> <span class="n">tail</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Node</span><span class="o">();</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">capacity</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">size</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">LRUCache</span><span class="o">(</span><span class="kt">int</span> <span class="n">capacity</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">capacity</span> <span class="o">=</span> <span class="n">capacity</span><span class="o">;</span>
+        <span class="n">head</span><span class="o">.</span><span class="na">next</span> <span class="o">=</span> <span class="n">tail</span><span class="o">;</span>
+        <span class="n">tail</span><span class="o">.</span><span class="na">prev</span> <span class="o">=</span> <span class="n">head</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">get</span><span class="o">(</span><span class="kt">int</span> <span class="n">key</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(!</span><span class="n">cache</span><span class="o">.</span><span class="na">containsKey</span><span class="o">(</span><span class="n">key</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="nc">Node</span> <span class="n">node</span> <span class="o">=</span> <span class="n">cache</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+        <span class="n">moveToHead</span><span class="o">(</span><span class="n">node</span><span class="o">);</span>
+        <span class="k">return</span> <span class="n">node</span><span class="o">.</span><span class="na">val</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">put</span><span class="o">(</span><span class="kt">int</span> <span class="n">key</span><span class="o">,</span> <span class="kt">int</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">cache</span><span class="o">.</span><span class="na">containsKey</span><span class="o">(</span><span class="n">key</span><span class="o">))</span> <span class="o">{</span>
+            <span class="nc">Node</span> <span class="n">node</span> <span class="o">=</span> <span class="n">cache</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+            <span class="n">node</span><span class="o">.</span><span class="na">val</span> <span class="o">=</span> <span class="n">value</span><span class="o">;</span>
+            <span class="n">moveToHead</span><span class="o">(</span><span class="n">node</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="nc">Node</span> <span class="n">node</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Node</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">value</span><span class="o">);</span>
+            <span class="n">cache</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">node</span><span class="o">);</span>
+            <span class="n">addToHead</span><span class="o">(</span><span class="n">node</span><span class="o">);</span>
+            <span class="o">++</span><span class="n">size</span><span class="o">;</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">size</span> <span class="o">&gt;</span> <span class="n">capacity</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">node</span> <span class="o">=</span> <span class="n">removeTail</span><span class="o">();</span>
+                <span class="n">cache</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="n">node</span><span class="o">.</span><span class="na">key</span><span class="o">);</span>
+                <span class="o">--</span><span class="n">size</span><span class="o">;</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">moveToHead</span><span class="o">(</span><span class="nc">Node</span> <span class="n">node</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">removeNode</span><span class="o">(</span><span class="n">node</span><span class="o">);</span>
+        <span class="n">addToHead</span><span class="o">(</span><span class="n">node</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">removeNode</span><span class="o">(</span><span class="nc">Node</span> <span class="n">node</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">node</span><span class="o">.</span><span class="na">prev</span><span class="o">.</span><span class="na">next</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="na">next</span><span class="o">;</span>
+        <span class="n">node</span><span class="o">.</span><span class="na">next</span><span class="o">.</span><span class="na">prev</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="na">prev</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">addToHead</span><span class="o">(</span><span class="nc">Node</span> <span class="n">node</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">node</span><span class="o">.</span><span class="na">next</span> <span class="o">=</span> <span class="n">head</span><span class="o">.</span><span class="na">next</span><span class="o">;</span>
+        <span class="n">node</span><span class="o">.</span><span class="na">prev</span> <span class="o">=</span> <span class="n">head</span><span class="o">;</span>
+        <span class="n">head</span><span class="o">.</span><span class="na">next</span> <span class="o">=</span> <span class="n">node</span><span class="o">;</span>
+        <span class="n">node</span><span class="o">.</span><span class="na">next</span><span class="o">.</span><span class="na">prev</span> <span class="o">=</span> <span class="n">node</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">private</span> <span class="nc">Node</span> <span class="nf">removeTail</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nc">Node</span> <span class="n">node</span> <span class="o">=</span> <span class="n">tail</span><span class="o">.</span><span class="na">prev</span><span class="o">;</span>
+        <span class="n">removeNode</span><span class="o">(</span><span class="n">node</span><span class="o">);</span>
+        <span class="k">return</span> <span class="n">node</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="cm">/**
+ * Your LRUCache object will be instantiated and called as such:
+ * LRUCache obj = new LRUCache(capacity);
+ * int param_1 = obj.get(key);
+ * obj.put(key,value);
+ */</span>
+</code></pre></div></div>
+</li>
+
+	<li>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">struct</span> <span class="nc">Node</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">k</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">v</span><span class="p">;</span>
+    <span class="n">Node</span><span class="o">*</span> <span class="n">prev</span><span class="p">;</span>
+    <span class="n">Node</span><span class="o">*</span> <span class="n">next</span><span class="p">;</span>
+
+    <span class="n">Node</span><span class="p">()</span>
+        <span class="o">:</span> <span class="n">k</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="p">,</span> <span class="n">v</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="p">,</span> <span class="n">prev</span><span class="p">(</span><span class="nb">nullptr</span><span class="p">)</span>
+        <span class="p">,</span> <span class="n">next</span><span class="p">(</span><span class="nb">nullptr</span><span class="p">)</span> <span class="p">{}</span>
+    <span class="n">Node</span><span class="p">(</span><span class="kt">int</span> <span class="n">key</span><span class="p">,</span> <span class="kt">int</span> <span class="n">val</span><span class="p">)</span>
+        <span class="o">:</span> <span class="n">k</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="p">,</span> <span class="n">v</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+        <span class="p">,</span> <span class="n">prev</span><span class="p">(</span><span class="nb">nullptr</span><span class="p">)</span>
+        <span class="p">,</span> <span class="n">next</span><span class="p">(</span><span class="nb">nullptr</span><span class="p">)</span> <span class="p">{}</span>
+<span class="p">};</span>
+
+<span class="k">class</span> <span class="nc">LRUCache</span> <span class="p">{</span>
+<span class="nl">public:</span>
+    <span class="n">LRUCache</span><span class="p">(</span><span class="kt">int</span> <span class="n">capacity</span><span class="p">)</span>
+        <span class="o">:</span> <span class="n">cap</span><span class="p">(</span><span class="n">capacity</span><span class="p">)</span>
+        <span class="p">,</span> <span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">head</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Node</span><span class="p">();</span>
+        <span class="n">tail</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Node</span><span class="p">();</span>
+        <span class="n">head</span><span class="o">-&gt;</span><span class="n">next</span> <span class="o">=</span> <span class="n">tail</span><span class="p">;</span>
+        <span class="n">tail</span><span class="o">-&gt;</span><span class="n">prev</span> <span class="o">=</span> <span class="n">head</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kt">int</span> <span class="n">get</span><span class="p">(</span><span class="kt">int</span> <span class="n">key</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">cache</span><span class="p">.</span><span class="n">count</span><span class="p">(</span><span class="n">key</span><span class="p">))</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+        <span class="n">Node</span><span class="o">*</span> <span class="n">node</span> <span class="o">=</span> <span class="n">cache</span><span class="p">[</span><span class="n">key</span><span class="p">];</span>
+        <span class="n">moveToHead</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
+        <span class="k">return</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">v</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kt">void</span> <span class="n">put</span><span class="p">(</span><span class="kt">int</span> <span class="n">key</span><span class="p">,</span> <span class="kt">int</span> <span class="n">value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">cache</span><span class="p">.</span><span class="n">count</span><span class="p">(</span><span class="n">key</span><span class="p">))</span> <span class="p">{</span>
+            <span class="n">Node</span><span class="o">*</span> <span class="n">node</span> <span class="o">=</span> <span class="n">cache</span><span class="p">[</span><span class="n">key</span><span class="p">];</span>
+            <span class="n">node</span><span class="o">-&gt;</span><span class="n">v</span> <span class="o">=</span> <span class="n">value</span><span class="p">;</span>
+            <span class="n">moveToHead</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="n">Node</span><span class="o">*</span> <span class="n">node</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Node</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">);</span>
+            <span class="n">cache</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span><span class="p">;</span>
+            <span class="n">addToHead</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
+            <span class="o">++</span><span class="n">size</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">size</span> <span class="o">&gt;</span> <span class="n">cap</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">node</span> <span class="o">=</span> <span class="n">removeTail</span><span class="p">();</span>
+                <span class="n">cache</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">k</span><span class="p">);</span>
+                <span class="o">--</span><span class="n">size</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+<span class="nl">private:</span>
+    <span class="n">unordered_map</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="n">Node</span><span class="o">*&gt;</span> <span class="n">cache</span><span class="p">;</span>
+    <span class="n">Node</span><span class="o">*</span> <span class="n">head</span><span class="p">;</span>
+    <span class="n">Node</span><span class="o">*</span> <span class="n">tail</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">cap</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">size</span><span class="p">;</span>
+
+    <span class="kt">void</span> <span class="n">moveToHead</span><span class="p">(</span><span class="n">Node</span><span class="o">*</span> <span class="n">node</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">removeNode</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
+        <span class="n">addToHead</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="kt">void</span> <span class="n">removeNode</span><span class="p">(</span><span class="n">Node</span><span class="o">*</span> <span class="n">node</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">node</span><span class="o">-&gt;</span><span class="n">prev</span><span class="o">-&gt;</span><span class="n">next</span> <span class="o">=</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">;</span>
+        <span class="n">node</span><span class="o">-&gt;</span><span class="n">next</span><span class="o">-&gt;</span><span class="n">prev</span> <span class="o">=</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">prev</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="kt">void</span> <span class="n">addToHead</span><span class="p">(</span><span class="n">Node</span><span class="o">*</span> <span class="n">node</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">node</span><span class="o">-&gt;</span><span class="n">next</span> <span class="o">=</span> <span class="n">head</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">;</span>
+        <span class="n">node</span><span class="o">-&gt;</span><span class="n">prev</span> <span class="o">=</span> <span class="n">head</span><span class="p">;</span>
+        <span class="n">head</span><span class="o">-&gt;</span><span class="n">next</span> <span class="o">=</span> <span class="n">node</span><span class="p">;</span>
+        <span class="n">node</span><span class="o">-&gt;</span><span class="n">next</span><span class="o">-&gt;</span><span class="n">prev</span> <span class="o">=</span> <span class="n">node</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="n">Node</span><span class="o">*</span> <span class="n">removeTail</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">Node</span><span class="o">*</span> <span class="n">node</span> <span class="o">=</span> <span class="n">tail</span><span class="o">-&gt;</span><span class="n">prev</span><span class="p">;</span>
+        <span class="n">removeNode</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
+        <span class="k">return</span> <span class="n">node</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="cm">/**
+ * Your LRUCache object will be instantiated and called as such:
+ * LRUCache* obj = new LRUCache(capacity);
+ * int param_1 = obj-&gt;get(key);
+ * obj-&gt;put(key,value);
+ */</span>
+</code></pre></div></div>
+</li>
+
+	<li>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Node</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">key</span> <span class="o">=</span> <span class="n">key</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">prev</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="p">.</span><span class="nb">next</span> <span class="o">=</span> <span class="bp">None</span>
+
+
+<span class="k">class</span> <span class="nc">LRUCache</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">capacity</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">cache</span> <span class="o">=</span> <span class="p">{}</span> <span class="c1"># key ==&gt; Node(val)
+</span>        <span class="bp">self</span><span class="p">.</span><span class="n">head</span> <span class="o">=</span> <span class="n">Node</span><span class="p">()</span> <span class="c1"># dummy node
+</span>        <span class="bp">self</span><span class="p">.</span><span class="n">tail</span> <span class="o">=</span> <span class="n">Node</span><span class="p">()</span> <span class="c1"># dummy node
+</span>        <span class="bp">self</span><span class="p">.</span><span class="n">capacity</span> <span class="o">=</span> <span class="n">capacity</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">size</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">head</span><span class="p">.</span><span class="nb">next</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">tail</span> <span class="c1"># note: key setup
+</span>        <span class="bp">self</span><span class="p">.</span><span class="n">tail</span><span class="p">.</span><span class="n">prev</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">head</span>
+
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">.</span><span class="n">cache</span><span class="p">:</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">cache</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">move_to_head</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">node</span><span class="p">.</span><span class="n">val</span>
+
+    <span class="k">def</span> <span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">.</span><span class="n">cache</span><span class="p">:</span>
+            <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">cache</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="n">node</span><span class="p">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">move_to_head</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">node</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">cache</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">add_to_head</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">size</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="p">.</span><span class="n">capacity</span><span class="p">:</span>
+                <span class="n">tail</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">remove_tail</span><span class="p">()</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">cache</span><span class="p">.</span><span class="n">pop</span><span class="p">(</span><span class="n">tail</span><span class="p">.</span><span class="n">key</span><span class="p">)</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">size</span> <span class="o">-=</span> <span class="mi">1</span>
+
+    <span class="k">def</span> <span class="nf">move_to_head</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">remove_node</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">add_to_head</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">remove_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="n">node</span><span class="p">.</span><span class="n">prev</span><span class="p">.</span><span class="nb">next</span> <span class="o">=</span> <span class="n">node</span><span class="p">.</span><span class="nb">next</span>
+        <span class="n">node</span><span class="p">.</span><span class="nb">next</span><span class="p">.</span><span class="n">prev</span> <span class="o">=</span> <span class="n">node</span><span class="p">.</span><span class="n">prev</span>
+
+    <span class="k">def</span> <span class="nf">add_to_head</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="n">node</span><span class="p">.</span><span class="nb">next</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">head</span><span class="p">.</span><span class="nb">next</span>
+        <span class="n">node</span><span class="p">.</span><span class="n">prev</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">head</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">head</span><span class="p">.</span><span class="nb">next</span> <span class="o">=</span> <span class="n">node</span>
+        <span class="n">node</span><span class="p">.</span><span class="nb">next</span><span class="p">.</span><span class="n">prev</span> <span class="o">=</span> <span class="n">node</span>
+
+    <span class="k">def</span> <span class="nf">remove_tail</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">tail</span><span class="p">.</span><span class="n">prev</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">remove_node</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">node</span>
+
+
+<span class="c1"># Your LRUCache object will be instantiated and called as such:
+# obj = LRUCache(capacity)
+# param_1 = obj.get(key)
+# obj.put(key,value)
+</span>
+<span class="c1">############
+</span>
+<span class="s">'''
+example:
+
+&gt;&gt;&gt; od = collections.OrderedDict()
+&gt;&gt;&gt;
+&gt;&gt;&gt; od[1]=1
+&gt;&gt;&gt; od[2]=2
+&gt;&gt;&gt; od[3]=3
+&gt;&gt;&gt;
+&gt;&gt;&gt; od
+OrderedDict([(1, 1), (2, 2), (3, 3)])
+&gt;&gt;&gt; od.move_to_end(1)
+&gt;&gt;&gt; od
+OrderedDict([(2, 2), (3, 3), (1, 1)])
+&gt;&gt;&gt;
+&gt;&gt;&gt; od.get(1)
+1
+&gt;&gt;&gt; od.popitem()
+(1, 1)
+&gt;&gt;&gt; od
+OrderedDict([(2, 2), (3, 3)])
+&gt;&gt;&gt;
+&gt;&gt;&gt; od[1]=1
+&gt;&gt;&gt; od
+OrderedDict([(2, 2), (3, 3), (1, 1)])
+&gt;&gt;&gt;
+&gt;&gt;&gt; od.popitem(last=False)
+(2, 2)
+&gt;&gt;&gt; od
+OrderedDict([(3, 3), (1, 1)])
+
+'''</span>
+
+<span class="kn">import</span> <span class="nn">collections</span>
+
+<span class="k">class</span> <span class="nc">LRUCache</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">capacity</span><span class="p">:</span> <span class="s">'int'</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">cache</span> <span class="o">=</span> <span class="n">collections</span><span class="p">.</span><span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">remain</span> <span class="o">=</span> <span class="n">capacity</span>
+
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="s">'int'</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s">'int'</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">.</span><span class="n">cache</span><span class="p">:</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">cache</span><span class="p">.</span><span class="n">move_to_end</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="c1"># meaning end is the most recently used
+</span>        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">cache</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="s">'int'</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="s">'int'</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s">'None'</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">.</span><span class="n">cache</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">remain</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">remain</span> <span class="o">-=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">cache</span><span class="p">.</span><span class="n">popitem</span><span class="p">(</span><span class="n">last</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span> <span class="c1"># pop start position
+</span>        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">cache</span><span class="p">.</span><span class="n">pop</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">cache</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span> <span class="c1"># add to end of dict, meaning most recently used
+</span>
+
+<span class="c1">############
+</span>
+<span class="c1">### below solution with no ordered-dict
+</span><span class="k">class</span> <span class="nc">DLinkedNode</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">key</span> <span class="o">=</span> <span class="n">key</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="p">.</span><span class="nb">next</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">prev</span> <span class="o">=</span> <span class="bp">None</span>
+
+
+<span class="k">class</span> <span class="nc">DLinkedList</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">head</span> <span class="o">=</span> <span class="n">DLinkedNode</span><span class="p">()</span> <span class="c1"># dummy head, its next is real head
+</span>        <span class="bp">self</span><span class="p">.</span><span class="n">tail</span> <span class="o">=</span> <span class="n">DLinkedNode</span><span class="p">()</span> <span class="c1"># dummy tail, its prev is real tail
+</span>        <span class="bp">self</span><span class="p">.</span><span class="n">head</span><span class="p">.</span><span class="nb">next</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">tail</span><span class="p">.</span><span class="n">prev</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">tail</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">head</span>
+
+    <span class="k">def</span> <span class="nf">add_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span> <span class="c1"># add to head
+</span>        <span class="n">node</span><span class="p">.</span><span class="n">prev</span><span class="p">,</span> <span class="n">node</span><span class="p">.</span><span class="nb">next</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">head</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">head</span><span class="p">.</span><span class="nb">next</span>
+        <span class="n">node</span><span class="p">.</span><span class="nb">next</span><span class="p">.</span><span class="n">prev</span><span class="p">,</span> <span class="n">node</span><span class="p">.</span><span class="n">prev</span><span class="p">.</span><span class="nb">next</span> <span class="o">=</span> <span class="n">node</span><span class="p">,</span> <span class="n">node</span>
+
+    <span class="k">def</span> <span class="nf">remove_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="n">node</span><span class="p">.</span><span class="n">prev</span><span class="p">.</span><span class="nb">next</span><span class="p">,</span> <span class="n">node</span><span class="p">.</span><span class="nb">next</span><span class="p">.</span><span class="n">prev</span> <span class="o">=</span> <span class="n">node</span><span class="p">.</span><span class="nb">next</span><span class="p">,</span> <span class="n">node</span><span class="p">.</span><span class="n">prev</span>
+        <span class="k">return</span> <span class="n">node</span><span class="p">.</span><span class="n">key</span>
+
+    <span class="k">def</span> <span class="nf">remove_tail</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">remove_node</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">tail</span><span class="p">.</span><span class="n">prev</span><span class="p">)</span> <span class="c1"># dummy tail's prev is real tail
+</span>
+    <span class="k">def</span> <span class="nf">move_to_head</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">remove_node</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+
+    <span class="c1"># def __repr__(self):
+</span>    <span class="c1">#     ans = []
+</span>    <span class="c1">#     h = self.head
+</span>    <span class="c1">#     while h:
+</span>    <span class="c1">#         ans.append(str(h.val))
+</span>    <span class="c1">#         h = h.next
+</span>    <span class="c1">#     return '&lt;DLinkedList: {}&gt;'.format('-&gt;'.join(ans))
+</span>
+<span class="k">class</span> <span class="nc">LRUCache</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">capacity</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">capacity</span> <span class="o">=</span> <span class="n">capacity</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">nodes_map</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">cache_list</span> <span class="o">=</span> <span class="n">DLinkedList</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">nodes_map</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">node</span><span class="p">:</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">cache_list</span><span class="p">.</span><span class="n">move_to_head</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">node</span><span class="p">.</span><span class="n">val</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+
+    <span class="k">def</span> <span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">nodes_map</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">node</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="p">.</span><span class="n">capacity</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">capacity</span> <span class="o">-=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">rm_key</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">cache_list</span><span class="p">.</span><span class="n">remove_tail</span><span class="p">()</span>
+                <span class="bp">self</span><span class="p">.</span><span class="n">nodes_map</span><span class="p">.</span><span class="n">pop</span><span class="p">(</span><span class="n">rm_key</span><span class="p">)</span> <span class="c1"># note api
+</span>            <span class="n">new_node</span> <span class="o">=</span> <span class="n">DLinkedNode</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">nodes_map</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_node</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">cache_list</span><span class="p">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">new_node</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">cache_list</span><span class="p">.</span><span class="n">move_to_head</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+            <span class="n">node</span><span class="p">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">value</span>
+
+</code></pre></div></div>
+</li>
+
+	<li>
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">node</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="n">key</span><span class="p">,</span> <span class="n">val</span>   <span class="kt">int</span>
+	<span class="n">prev</span><span class="p">,</span> <span class="n">next</span> <span class="o">*</span><span class="n">node</span>
+<span class="p">}</span>
+
+<span class="k">type</span> <span class="n">LRUCache</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="n">capacity</span>   <span class="kt">int</span>
+	<span class="n">cache</span>      <span class="k">map</span><span class="p">[</span><span class="kt">int</span><span class="p">]</span><span class="o">*</span><span class="n">node</span>
+	<span class="n">head</span><span class="p">,</span> <span class="n">tail</span> <span class="o">*</span><span class="n">node</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">Constructor</span><span class="p">(</span><span class="n">capacity</span> <span class="kt">int</span><span class="p">)</span> <span class="n">LRUCache</span> <span class="p">{</span>
+	<span class="n">head</span> <span class="o">:=</span> <span class="nb">new</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+	<span class="n">tail</span> <span class="o">:=</span> <span class="nb">new</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+	<span class="n">head</span><span class="o">.</span><span class="n">next</span> <span class="o">=</span> <span class="n">tail</span>
+	<span class="n">tail</span><span class="o">.</span><span class="n">prev</span> <span class="o">=</span> <span class="n">head</span>
+	<span class="k">return</span> <span class="n">LRUCache</span><span class="p">{</span>
+		<span class="n">capacity</span><span class="o">:</span> <span class="n">capacity</span><span class="p">,</span>
+		<span class="n">cache</span><span class="o">:</span>    <span class="nb">make</span><span class="p">(</span><span class="k">map</span><span class="p">[</span><span class="kt">int</span><span class="p">]</span><span class="o">*</span><span class="n">node</span><span class="p">,</span> <span class="n">capacity</span><span class="p">),</span>
+		<span class="n">head</span><span class="o">:</span>     <span class="n">head</span><span class="p">,</span>
+		<span class="n">tail</span><span class="o">:</span>     <span class="n">tail</span><span class="p">,</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">this</span> <span class="o">*</span><span class="n">LRUCache</span><span class="p">)</span> <span class="n">Get</span><span class="p">(</span><span class="n">key</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
+	<span class="n">n</span><span class="p">,</span> <span class="n">ok</span> <span class="o">:=</span> <span class="n">this</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+	<span class="k">if</span> <span class="o">!</span><span class="n">ok</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="o">-</span><span class="m">1</span>
+	<span class="p">}</span>
+	<span class="n">this</span><span class="o">.</span><span class="n">moveToFront</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">n</span><span class="o">.</span><span class="n">val</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">this</span> <span class="o">*</span><span class="n">LRUCache</span><span class="p">)</span> <span class="n">Put</span><span class="p">(</span><span class="n">key</span> <span class="kt">int</span><span class="p">,</span> <span class="n">value</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">n</span><span class="p">,</span> <span class="n">ok</span> <span class="o">:=</span> <span class="n">this</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+	<span class="k">if</span> <span class="n">ok</span> <span class="p">{</span>
+		<span class="n">n</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">value</span>
+		<span class="n">this</span><span class="o">.</span><span class="n">moveToFront</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+		<span class="k">return</span>
+	<span class="p">}</span>
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">this</span><span class="o">.</span><span class="n">cache</span><span class="p">)</span> <span class="o">==</span> <span class="n">this</span><span class="o">.</span><span class="n">capacity</span> <span class="p">{</span>
+		<span class="n">back</span> <span class="o">:=</span> <span class="n">this</span><span class="o">.</span><span class="n">tail</span><span class="o">.</span><span class="n">prev</span>
+		<span class="n">this</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">back</span><span class="p">)</span>
+		<span class="nb">delete</span><span class="p">(</span><span class="n">this</span><span class="o">.</span><span class="n">cache</span><span class="p">,</span> <span class="n">back</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="n">n</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">node</span><span class="p">{</span><span class="n">key</span><span class="o">:</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="o">:</span> <span class="n">value</span><span class="p">}</span>
+	<span class="n">this</span><span class="o">.</span><span class="n">pushFront</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+	<span class="n">this</span><span class="o">.</span><span class="n">cache</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">n</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">this</span> <span class="o">*</span><span class="n">LRUCache</span><span class="p">)</span> <span class="n">moveToFront</span><span class="p">(</span><span class="n">n</span> <span class="o">*</span><span class="n">node</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">this</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+	<span class="n">this</span><span class="o">.</span><span class="n">pushFront</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">this</span> <span class="o">*</span><span class="n">LRUCache</span><span class="p">)</span> <span class="n">remove</span><span class="p">(</span><span class="n">n</span> <span class="o">*</span><span class="n">node</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">n</span><span class="o">.</span><span class="n">prev</span><span class="o">.</span><span class="n">next</span> <span class="o">=</span> <span class="n">n</span><span class="o">.</span><span class="n">next</span>
+	<span class="n">n</span><span class="o">.</span><span class="n">next</span><span class="o">.</span><span class="n">prev</span> <span class="o">=</span> <span class="n">n</span><span class="o">.</span><span class="n">prev</span>
+	<span class="n">n</span><span class="o">.</span><span class="n">prev</span> <span class="o">=</span> <span class="no">nil</span>
+	<span class="n">n</span><span class="o">.</span><span class="n">next</span> <span class="o">=</span> <span class="no">nil</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">this</span> <span class="o">*</span><span class="n">LRUCache</span><span class="p">)</span> <span class="n">pushFront</span><span class="p">(</span><span class="n">n</span> <span class="o">*</span><span class="n">node</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">n</span><span class="o">.</span><span class="n">prev</span> <span class="o">=</span> <span class="n">this</span><span class="o">.</span><span class="n">head</span>
+	<span class="n">n</span><span class="o">.</span><span class="n">next</span> <span class="o">=</span> <span class="n">this</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">next</span>
+	<span class="n">this</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">next</span><span class="o">.</span><span class="n">prev</span> <span class="o">=</span> <span class="n">n</span>
+	<span class="n">this</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">next</span> <span class="o">=</span> <span class="n">n</span>
+<span class="p">}</span>
+</code></pre></div></div>
+</li>
+
+	<li>
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">LRUCache</span> <span class="p">{</span>
+    <span class="nl">capacity</span><span class="p">:</span> <span class="kr">number</span><span class="p">;</span>
+    <span class="nl">map</span><span class="p">:</span> <span class="nb">Map</span><span class="o">&lt;</span><span class="kr">number</span><span class="p">,</span> <span class="kr">number</span><span class="o">&gt;</span><span class="p">;</span>
+    <span class="kd">constructor</span><span class="p">(</span><span class="nx">capacity</span><span class="p">:</span> <span class="kr">number</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">capacity</span> <span class="o">=</span> <span class="nx">capacity</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">map</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Map</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="kd">get</span><span class="p">(</span><span class="nx">key</span><span class="p">:</span> <span class="kr">number</span><span class="p">):</span> <span class="kr">number</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">map</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="nx">key</span><span class="p">))</span> <span class="p">{</span>
+            <span class="kd">const</span> <span class="nx">val</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">map</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="nx">key</span><span class="p">)</span><span class="o">!</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">map</span><span class="p">.</span><span class="k">delete</span><span class="p">(</span><span class="nx">key</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">map</span><span class="p">.</span><span class="kd">set</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">val</span><span class="p">);</span>
+            <span class="k">return</span> <span class="nx">val</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nx">put</span><span class="p">(</span><span class="nx">key</span><span class="p">:</span> <span class="kr">number</span><span class="p">,</span> <span class="nx">value</span><span class="p">:</span> <span class="kr">number</span><span class="p">):</span> <span class="k">void</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">map</span><span class="p">.</span><span class="k">delete</span><span class="p">(</span><span class="nx">key</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">map</span><span class="p">.</span><span class="kd">set</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">map</span><span class="p">.</span><span class="nx">size</span> <span class="o">&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">capacity</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">map</span><span class="p">.</span><span class="k">delete</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">map</span><span class="p">.</span><span class="nx">keys</span><span class="p">().</span><span class="nx">next</span><span class="p">().</span><span class="nx">value</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="cm">/**
+ * Your LRUCache object will be instantiated and called as such:
+ * var obj = new LRUCache(capacity)
+ * var param_1 = obj.get(key)
+ * obj.put(key,value)
+ */</span>
+
+</code></pre></div></div>
+</li>
+
+	<li>
+<div class="language-cs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">LRUCache</span> <span class="p">{</span>
+    <span class="k">class</span> <span class="nc">Node</span> <span class="p">{</span>
+        <span class="k">public</span> <span class="n">Node</span> <span class="n">Prev</span><span class="p">;</span>
+        <span class="k">public</span> <span class="n">Node</span> <span class="n">Next</span><span class="p">;</span>
+        <span class="k">public</span> <span class="kt">int</span> <span class="n">Key</span><span class="p">;</span>
+        <span class="k">public</span> <span class="kt">int</span> <span class="n">Val</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">private</span> <span class="n">Node</span> <span class="n">head</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">Node</span><span class="p">();</span>
+    <span class="k">private</span> <span class="n">Node</span> <span class="n">tail</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">Node</span><span class="p">();</span>
+    <span class="k">private</span> <span class="n">Dictionary</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="n">Node</span><span class="p">&gt;</span> <span class="n">cache</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Dictionary</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="n">Node</span><span class="p">&gt;();</span>
+    <span class="k">private</span> <span class="k">readonly</span> <span class="kt">int</span> <span class="n">capacity</span><span class="p">;</span>
+    <span class="k">private</span> <span class="kt">int</span> <span class="n">size</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="nf">LRUCache</span><span class="p">(</span><span class="kt">int</span> <span class="n">capacity</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="n">capacity</span> <span class="p">=</span> <span class="n">capacity</span><span class="p">;</span>
+        <span class="n">head</span><span class="p">.</span><span class="n">Next</span> <span class="p">=</span> <span class="n">tail</span><span class="p">;</span>
+        <span class="n">tail</span><span class="p">.</span><span class="n">Prev</span> <span class="p">=</span> <span class="n">head</span><span class="p">;</span>
+    <span class="p">}</span>
+    
+    <span class="k">public</span> <span class="kt">int</span> <span class="nf">Get</span><span class="p">(</span><span class="kt">int</span> <span class="n">key</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">Node</span> <span class="n">node</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">cache</span><span class="p">.</span><span class="nf">TryGetValue</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="k">out</span> <span class="n">node</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nf">moveToHead</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
+            <span class="k">return</span> <span class="n">node</span><span class="p">.</span><span class="n">Val</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="p">-</span><span class="m">1</span><span class="p">;</span>
+    <span class="p">}</span>
+    
+    <span class="k">public</span> <span class="k">void</span> <span class="nf">Put</span><span class="p">(</span><span class="kt">int</span> <span class="n">key</span><span class="p">,</span> <span class="kt">int</span> <span class="n">Val</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">Node</span> <span class="n">node</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">cache</span><span class="p">.</span><span class="nf">TryGetValue</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="k">out</span> <span class="n">node</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nf">moveToHead</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
+            <span class="n">node</span><span class="p">.</span><span class="n">Val</span> <span class="p">=</span> <span class="n">Val</span><span class="p">;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="n">node</span> <span class="p">=</span> <span class="k">new</span> <span class="nf">Node</span><span class="p">()</span> <span class="p">{</span> <span class="n">Key</span> <span class="p">=</span> <span class="n">key</span><span class="p">,</span> <span class="n">Val</span> <span class="p">=</span> <span class="n">Val</span> <span class="p">};</span>
+            <span class="n">cache</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">node</span><span class="p">);</span>
+            <span class="nf">addToHead</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(++</span><span class="n">size</span> <span class="p">&gt;</span> <span class="n">capacity</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">node</span> <span class="p">=</span> <span class="nf">removeTail</span><span class="p">();</span>
+                <span class="n">cache</span><span class="p">.</span><span class="nf">Remove</span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="n">Key</span><span class="p">);</span>
+                <span class="p">--</span><span class="n">size</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">private</span> <span class="k">void</span> <span class="nf">moveToHead</span><span class="p">(</span><span class="n">Node</span> <span class="n">node</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nf">removeNode</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
+        <span class="nf">addToHead</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">private</span> <span class="k">void</span> <span class="nf">removeNode</span><span class="p">(</span><span class="n">Node</span> <span class="n">node</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">node</span><span class="p">.</span><span class="n">Prev</span><span class="p">.</span><span class="n">Next</span> <span class="p">=</span> <span class="n">node</span><span class="p">.</span><span class="n">Next</span><span class="p">;</span>
+        <span class="n">node</span><span class="p">.</span><span class="n">Next</span><span class="p">.</span><span class="n">Prev</span> <span class="p">=</span> <span class="n">node</span><span class="p">.</span><span class="n">Prev</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">private</span> <span class="k">void</span> <span class="nf">addToHead</span><span class="p">(</span><span class="n">Node</span> <span class="n">node</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">node</span><span class="p">.</span><span class="n">Next</span> <span class="p">=</span> <span class="n">head</span><span class="p">.</span><span class="n">Next</span><span class="p">;</span>
+        <span class="n">node</span><span class="p">.</span><span class="n">Prev</span> <span class="p">=</span> <span class="n">head</span><span class="p">;</span>
+        <span class="n">head</span><span class="p">.</span><span class="n">Next</span> <span class="p">=</span> <span class="n">node</span><span class="p">;</span>
+        <span class="n">node</span><span class="p">.</span><span class="n">Next</span><span class="p">.</span><span class="n">Prev</span> <span class="p">=</span> <span class="n">node</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">private</span> <span class="n">Node</span> <span class="nf">removeTail</span><span class="p">()</span> <span class="p">{</span>
+        <span class="n">Node</span> <span class="n">node</span> <span class="p">=</span> <span class="n">tail</span><span class="p">.</span><span class="n">Prev</span><span class="p">;</span>
+        <span class="nf">removeNode</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
+        <span class="k">return</span> <span class="n">node</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="cm">/**
+ * Your LRUCache object will be instantiated and called as such:
+ * LRUCache obj = new LRUCache(capacity);
+ * int param_1 = obj.Get(key);
+ * obj.Put(key,Val);
+ */</span>
+</code></pre></div></div>
+</li>
+
+	<li>
+<div class="language-rs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">use</span> <span class="nn">std</span><span class="p">::</span><span class="nn">cell</span><span class="p">::</span><span class="n">RefCell</span><span class="p">;</span>
+<span class="k">use</span> <span class="nn">std</span><span class="p">::</span><span class="nn">collections</span><span class="p">::</span><span class="n">HashMap</span><span class="p">;</span>
+<span class="k">use</span> <span class="nn">std</span><span class="p">::</span><span class="nn">rc</span><span class="p">::</span><span class="nb">Rc</span><span class="p">;</span>
+
+<span class="k">struct</span> <span class="n">Node</span> <span class="p">{</span>
+    <span class="n">key</span><span class="p">:</span> <span class="nb">i32</span><span class="p">,</span>
+    <span class="n">value</span><span class="p">:</span> <span class="nb">i32</span><span class="p">,</span>
+    <span class="n">prev</span><span class="p">:</span> <span class="nb">Option</span><span class="o">&lt;</span><span class="nb">Rc</span><span class="o">&lt;</span><span class="n">RefCell</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;&gt;&gt;</span><span class="p">,</span>
+    <span class="n">next</span><span class="p">:</span> <span class="nb">Option</span><span class="o">&lt;</span><span class="nb">Rc</span><span class="o">&lt;</span><span class="n">RefCell</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;&gt;&gt;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="k">impl</span> <span class="n">Node</span> <span class="p">{</span>
+    <span class="nd">#[inline]</span>
+    <span class="k">fn</span> <span class="nf">new</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">i32</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">i32</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="k">Self</span> <span class="p">{</span>
+        <span class="k">Self</span> <span class="p">{</span>
+            <span class="n">key</span><span class="p">,</span>
+            <span class="n">value</span><span class="p">,</span>
+            <span class="n">prev</span><span class="p">:</span> <span class="nb">None</span><span class="p">,</span>
+            <span class="n">next</span><span class="p">:</span> <span class="nb">None</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">struct</span> <span class="n">LRUCache</span> <span class="p">{</span>
+    <span class="n">capacity</span><span class="p">:</span> <span class="nb">usize</span><span class="p">,</span>
+    <span class="n">cache</span><span class="p">:</span> <span class="n">HashMap</span><span class="o">&lt;</span><span class="nb">i32</span><span class="p">,</span> <span class="nb">Rc</span><span class="o">&lt;</span><span class="n">RefCell</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;&gt;&gt;</span><span class="p">,</span>
+    <span class="n">head</span><span class="p">:</span> <span class="nb">Option</span><span class="o">&lt;</span><span class="nb">Rc</span><span class="o">&lt;</span><span class="n">RefCell</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;&gt;&gt;</span><span class="p">,</span>
+    <span class="n">tail</span><span class="p">:</span> <span class="nb">Option</span><span class="o">&lt;</span><span class="nb">Rc</span><span class="o">&lt;</span><span class="n">RefCell</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;&gt;&gt;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="cd">/**
+ * `&amp;self` means the method takes an immutable reference.
+ * If you need a mutable reference, change it to `&amp;mut self` instead.
+ */</span>
+<span class="k">impl</span> <span class="n">LRUCache</span> <span class="p">{</span>
+    <span class="k">fn</span> <span class="nf">new</span><span class="p">(</span><span class="n">capacity</span><span class="p">:</span> <span class="nb">i32</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="k">Self</span> <span class="p">{</span>
+        <span class="k">Self</span> <span class="p">{</span>
+            <span class="n">capacity</span><span class="p">:</span> <span class="n">capacity</span> <span class="k">as</span> <span class="nb">usize</span><span class="p">,</span>
+            <span class="n">cache</span><span class="p">:</span> <span class="nn">HashMap</span><span class="p">::</span><span class="nf">new</span><span class="p">(),</span>
+            <span class="n">head</span><span class="p">:</span> <span class="nb">None</span><span class="p">,</span>
+            <span class="n">tail</span><span class="p">:</span> <span class="nb">None</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">fn</span> <span class="nf">get</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">i32</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">i32</span> <span class="p">{</span>
+        <span class="k">match</span> <span class="k">self</span><span class="py">.cache</span><span class="nf">.get</span><span class="p">(</span><span class="o">&amp;</span><span class="n">key</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nf">Some</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
+                <span class="k">let</span> <span class="n">node</span> <span class="o">=</span> <span class="nn">Rc</span><span class="p">::</span><span class="nf">clone</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
+                <span class="k">self</span><span class="nf">.remove</span><span class="p">(</span><span class="o">&amp;</span><span class="n">node</span><span class="p">);</span>
+                <span class="k">self</span><span class="nf">.push_front</span><span class="p">(</span><span class="o">&amp;</span><span class="n">node</span><span class="p">);</span>
+                <span class="k">let</span> <span class="n">value</span> <span class="o">=</span> <span class="n">node</span><span class="nf">.borrow</span><span class="p">()</span><span class="py">.value</span><span class="p">;</span>
+                <span class="n">value</span>
+            <span class="p">}</span>
+            <span class="nb">None</span> <span class="k">=&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">fn</span> <span class="nf">put</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">i32</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">i32</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">match</span> <span class="k">self</span><span class="py">.cache</span><span class="nf">.get</span><span class="p">(</span><span class="o">&amp;</span><span class="n">key</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nf">Some</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
+                <span class="k">let</span> <span class="n">node</span> <span class="o">=</span> <span class="nn">Rc</span><span class="p">::</span><span class="nf">clone</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
+                <span class="n">node</span><span class="nf">.borrow_mut</span><span class="p">()</span><span class="py">.value</span> <span class="o">=</span> <span class="n">value</span><span class="p">;</span>
+                <span class="k">self</span><span class="nf">.remove</span><span class="p">(</span><span class="o">&amp;</span><span class="n">node</span><span class="p">);</span>
+                <span class="k">self</span><span class="nf">.push_front</span><span class="p">(</span><span class="o">&amp;</span><span class="n">node</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="nb">None</span> <span class="k">=&gt;</span> <span class="p">{</span>
+                <span class="k">let</span> <span class="n">node</span> <span class="o">=</span> <span class="nn">Rc</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="nn">RefCell</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="nn">Node</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)));</span>
+                <span class="k">self</span><span class="py">.cache</span><span class="nf">.insert</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nn">Rc</span><span class="p">::</span><span class="nf">clone</span><span class="p">(</span><span class="o">&amp;</span><span class="n">node</span><span class="p">));</span>
+                <span class="k">self</span><span class="nf">.push_front</span><span class="p">(</span><span class="o">&amp;</span><span class="n">node</span><span class="p">);</span>
+                <span class="k">if</span> <span class="k">self</span><span class="py">.cache</span><span class="nf">.len</span><span class="p">()</span> <span class="o">&gt;</span> <span class="k">self</span><span class="py">.capacity</span> <span class="p">{</span>
+                    <span class="k">let</span> <span class="n">back_key</span> <span class="o">=</span> <span class="k">self</span><span class="nf">.pop_back</span><span class="p">()</span><span class="nf">.unwrap</span><span class="p">()</span><span class="nf">.borrow</span><span class="p">()</span><span class="py">.key</span><span class="p">;</span>
+                    <span class="k">self</span><span class="py">.cache</span><span class="nf">.remove</span><span class="p">(</span><span class="o">&amp;</span><span class="n">back_key</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">};</span>
+    <span class="p">}</span>
+
+    <span class="k">fn</span> <span class="nf">push_front</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="o">&amp;</span><span class="nb">Rc</span><span class="o">&lt;</span><span class="n">RefCell</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;&gt;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">match</span> <span class="k">self</span><span class="py">.head</span><span class="nf">.take</span><span class="p">()</span> <span class="p">{</span>
+            <span class="nf">Some</span><span class="p">(</span><span class="n">head</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
+                <span class="n">head</span><span class="nf">.borrow_mut</span><span class="p">()</span><span class="py">.prev</span> <span class="o">=</span> <span class="nf">Some</span><span class="p">(</span><span class="nn">Rc</span><span class="p">::</span><span class="nf">clone</span><span class="p">(</span><span class="n">node</span><span class="p">));</span>
+                <span class="n">node</span><span class="nf">.borrow_mut</span><span class="p">()</span><span class="py">.prev</span> <span class="o">=</span> <span class="nb">None</span><span class="p">;</span>
+                <span class="n">node</span><span class="nf">.borrow_mut</span><span class="p">()</span><span class="py">.next</span> <span class="o">=</span> <span class="nf">Some</span><span class="p">(</span><span class="n">head</span><span class="p">);</span>
+                <span class="k">self</span><span class="py">.head</span> <span class="o">=</span> <span class="nf">Some</span><span class="p">(</span><span class="nn">Rc</span><span class="p">::</span><span class="nf">clone</span><span class="p">(</span><span class="n">node</span><span class="p">));</span>
+            <span class="p">}</span>
+            <span class="nb">None</span> <span class="k">=&gt;</span> <span class="p">{</span>
+                <span class="k">self</span><span class="py">.head</span> <span class="o">=</span> <span class="nf">Some</span><span class="p">(</span><span class="nn">Rc</span><span class="p">::</span><span class="nf">clone</span><span class="p">(</span><span class="n">node</span><span class="p">));</span>
+                <span class="k">self</span><span class="py">.tail</span> <span class="o">=</span> <span class="nf">Some</span><span class="p">(</span><span class="nn">Rc</span><span class="p">::</span><span class="nf">clone</span><span class="p">(</span><span class="n">node</span><span class="p">));</span>
+            <span class="p">}</span>
+        <span class="p">};</span>
+    <span class="p">}</span>
+
+    <span class="k">fn</span> <span class="nf">remove</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="o">&amp;</span><span class="nb">Rc</span><span class="o">&lt;</span><span class="n">RefCell</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;&gt;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">match</span> <span class="p">(</span><span class="n">node</span><span class="nf">.borrow</span><span class="p">()</span><span class="py">.prev</span><span class="nf">.as_ref</span><span class="p">(),</span> <span class="n">node</span><span class="nf">.borrow</span><span class="p">()</span><span class="py">.next</span><span class="nf">.as_ref</span><span class="p">())</span> <span class="p">{</span>
+            <span class="p">(</span><span class="nb">None</span><span class="p">,</span> <span class="nb">None</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
+                <span class="k">self</span><span class="py">.head</span> <span class="o">=</span> <span class="nb">None</span><span class="p">;</span>
+                <span class="k">self</span><span class="py">.tail</span> <span class="o">=</span> <span class="nb">None</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="p">(</span><span class="nb">None</span><span class="p">,</span> <span class="nf">Some</span><span class="p">(</span><span class="n">next</span><span class="p">))</span> <span class="k">=&gt;</span> <span class="p">{</span>
+                <span class="k">self</span><span class="py">.head</span> <span class="o">=</span> <span class="nf">Some</span><span class="p">(</span><span class="nn">Rc</span><span class="p">::</span><span class="nf">clone</span><span class="p">(</span><span class="n">next</span><span class="p">));</span>
+                <span class="n">next</span><span class="nf">.borrow_mut</span><span class="p">()</span><span class="py">.prev</span> <span class="o">=</span> <span class="nb">None</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="p">(</span><span class="nf">Some</span><span class="p">(</span><span class="n">prev</span><span class="p">),</span> <span class="nb">None</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
+                <span class="k">self</span><span class="py">.tail</span> <span class="o">=</span> <span class="nf">Some</span><span class="p">(</span><span class="nn">Rc</span><span class="p">::</span><span class="nf">clone</span><span class="p">(</span><span class="n">prev</span><span class="p">));</span>
+                <span class="n">prev</span><span class="nf">.borrow_mut</span><span class="p">()</span><span class="py">.next</span> <span class="o">=</span> <span class="nb">None</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="p">(</span><span class="nf">Some</span><span class="p">(</span><span class="n">prev</span><span class="p">),</span> <span class="nf">Some</span><span class="p">(</span><span class="n">next</span><span class="p">))</span> <span class="k">=&gt;</span> <span class="p">{</span>
+                <span class="n">next</span><span class="nf">.borrow_mut</span><span class="p">()</span><span class="py">.prev</span> <span class="o">=</span> <span class="nf">Some</span><span class="p">(</span><span class="nn">Rc</span><span class="p">::</span><span class="nf">clone</span><span class="p">(</span><span class="n">prev</span><span class="p">));</span>
+                <span class="n">prev</span><span class="nf">.borrow_mut</span><span class="p">()</span><span class="py">.next</span> <span class="o">=</span> <span class="nf">Some</span><span class="p">(</span><span class="nn">Rc</span><span class="p">::</span><span class="nf">clone</span><span class="p">(</span><span class="n">next</span><span class="p">));</span>
+            <span class="p">}</span>
+        <span class="p">};</span>
+    <span class="p">}</span>
+
+    <span class="k">fn</span> <span class="nf">pop_back</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">Option</span><span class="o">&lt;</span><span class="nb">Rc</span><span class="o">&lt;</span><span class="n">RefCell</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;&gt;&gt;</span> <span class="p">{</span>
+        <span class="k">match</span> <span class="k">self</span><span class="py">.tail</span><span class="nf">.take</span><span class="p">()</span> <span class="p">{</span>
+            <span class="nf">Some</span><span class="p">(</span><span class="n">tail</span><span class="p">)</span> <span class="k">=&gt;</span> <span class="p">{</span>
+                <span class="k">self</span><span class="nf">.remove</span><span class="p">(</span><span class="o">&amp;</span><span class="n">tail</span><span class="p">);</span>
+                <span class="nf">Some</span><span class="p">(</span><span class="n">tail</span><span class="p">)</span>
+            <span class="p">}</span>
+            <span class="nb">None</span> <span class="k">=&gt;</span> <span class="nb">None</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span><span class="cd">/**
+ * Your LRUCache object will be instantiated and called as such:
+ * let obj = LRUCache::new(capacity);
+ * let ret_1: i32 = obj.get(key);
+ * obj.put(key, value);
+ */</span>
+
+</code></pre></div></div>
+</li>
+
+	<li>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/**
+ * @param {number} capacity
+ */</span>
+<span class="kd">var</span> <span class="nx">LRUCache</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">capacity</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">size</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">capacity</span> <span class="o">=</span> <span class="nx">capacity</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">cache</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Map</span><span class="p">();</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">head</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Node</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">tail</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Node</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">head</span><span class="p">.</span><span class="nx">next</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">tail</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">tail</span><span class="p">.</span><span class="nx">prev</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">head</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="cm">/**
+ * @param {number} key
+ * @return {number}
+ */</span>
+<span class="nx">LRUCache</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="kd">get</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">key</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">cache</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="nx">key</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="kd">const</span> <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">cache</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="nx">key</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">removeNode</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">addToHead</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">val</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="cm">/**
+ * @param {number} key
+ * @param {number} value
+ * @return {void}
+ */</span>
+<span class="nx">LRUCache</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">put</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">cache</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="nx">key</span><span class="p">))</span> <span class="p">{</span>
+        <span class="kd">const</span> <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">cache</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="nx">key</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">removeNode</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+        <span class="nx">node</span><span class="p">.</span><span class="nx">val</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">addToHead</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="kd">const</span> <span class="nx">node</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Node</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">cache</span><span class="p">.</span><span class="kd">set</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">node</span><span class="p">);</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">addToHead</span><span class="p">(</span><span class="nx">node</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">++</span><span class="k">this</span><span class="p">.</span><span class="nx">size</span> <span class="o">&gt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">capacity</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">const</span> <span class="nx">nodeToRemove</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">tail</span><span class="p">.</span><span class="nx">prev</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">cache</span><span class="p">.</span><span class="k">delete</span><span class="p">(</span><span class="nx">nodeToRemove</span><span class="p">.</span><span class="nx">key</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">removeNode</span><span class="p">(</span><span class="nx">nodeToRemove</span><span class="p">);</span>
+            <span class="o">--</span><span class="k">this</span><span class="p">.</span><span class="nx">size</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="nx">LRUCache</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">removeNode</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">prev</span><span class="p">.</span><span class="nx">next</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">next</span><span class="p">;</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">next</span><span class="p">.</span><span class="nx">prev</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">prev</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="nx">LRUCache</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">addToHead</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">next</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">head</span><span class="p">.</span><span class="nx">next</span><span class="p">;</span>
+    <span class="nx">node</span><span class="p">.</span><span class="nx">prev</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">head</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">head</span><span class="p">.</span><span class="nx">next</span><span class="p">.</span><span class="nx">prev</span> <span class="o">=</span> <span class="nx">node</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">head</span><span class="p">.</span><span class="nx">next</span> <span class="o">=</span> <span class="nx">node</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="cm">/**
+ * @constructor
+ * @param {number} key
+ * @param {number} val
+ */</span>
+<span class="kd">function</span> <span class="nx">Node</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">val</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">key</span> <span class="o">=</span> <span class="nx">key</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">val</span> <span class="o">=</span> <span class="nx">val</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">prev</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">next</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="cm">/**
+ * Your LRUCache object will be instantiated and called as such:
+ * var obj = new LRUCache(capacity)
+ * var param_1 = obj.get(key)
+ * obj.put(key,value)
+ */</span>
+
+</code></pre></div></div>
+</li>
+
+</ul>
+
+<h1 id="all-problems"><a href="https://leetcode.ca/all/problems.html">All Problems</a></h1>
+
+<h1 id="all-solutions"><a href="https://leetcode.ca/blog">All Solutions</a></h1>
+
+      </article>
+
+      
+
+      
+
+      
+        <!-- Check if any share-links are active -->
+
+
+
+
+<section id = "social-share-section">
+  <span class="sr-only">Share: </span>
+
+  
+    <a href="https://twitter.com/intent/tweet?text=146+-+LRU+Cache&url=https%3A%2F%2Fleetcode.ca%2F2016-04-24-146-LRU-Cache%2F"
+      class="btn btn-social-icon btn-twitter" title="Share on Twitter">
+      <span class="fab fa-fw fa-twitter" aria-hidden="true"></span>
+      <span class="sr-only">Twitter</span>
+    </a>
+  
+
+  
+    <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fleetcode.ca%2F2016-04-24-146-LRU-Cache%2F"
+      class="btn btn-social-icon btn-facebook" title="Share on Facebook">
+      <span class="fab fa-fw fa-facebook" aria-hidden="true"></span>
+      <span class="sr-only">Facebook</span>
+    </a>
+  
+
+  
+    <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fleetcode.ca%2F2016-04-24-146-LRU-Cache%2F"
+      class="btn btn-social-icon btn-linkedin" title="Share on LinkedIn">
+      <span class="fab fa-fw fa-linkedin" aria-hidden="true"></span>
+      <span class="sr-only">LinkedIn</span>
+    </a>
+  
+
+  
+
+</section>
+
+
+
+      
+
+      <ul class="pagination blog-pager">
+        
+        <li class="page-item previous">
+          <a class="page-link" href="/2016-04-23-145-Binary-Tree-Postorder-Traversal/" data-toggle="tooltip" data-placement="top" title="145 - Binary Tree Postorder Traversal">&larr; Previous Post</a>
+        </li>
+        
+        
+        <li class="page-item next">
+          <a class="page-link" href="/2016-04-25-147-Insertion-Sort-List/" data-toggle="tooltip" data-placement="top" title="147 - Insertion Sort List">Next Post &rarr;</a>
+        </li>
+        
+      </ul>
+      
+  <div class="disqus-comments">
+  <div class="comments">
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+	  var disqus_shortname = 'leetcodeca';
+	  /* ensure that pages with query string get the same discussion */
+	  var url_parts = window.location.href.split("?");
+	  var disqus_url = url_parts[0];
+	  (function() {
+		var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+		dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+		(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	  })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</div>
+  
+  
+
+  
+
+
+
+
+    </div>
+  </div>
+</div>
+
+
+  <footer>
+  <div class="container-md beautiful-jekyll-footer">
+    <div class="row">
+      <div class="col-xl-8 offset-xl-2 col-lg-10 offset-lg-1">
+      <ul class="list-inline text-center footer-links"><li class="list-inline-item">
+    <a href="/feed.xml" title="RSS">
+      <span class="fa-stack fa-lg" aria-hidden="true">
+        <i class="fas fa-circle fa-stack-2x"></i>
+        <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+      </span>
+      <span class="sr-only">RSS</span>
+    </a>
+  </li><li class="list-inline-item">
+    <a href="mailto:admin@leetcode.ca" title="Email me">
+      <span class="fa-stack fa-lg" aria-hidden="true">
+        <i class="fas fa-circle fa-stack-2x"></i>
+        <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+      </span>
+      <span class="sr-only">Email me</span>
+   </a>
+  </li></ul>
+
+      
+      <p class="copyright text-muted">
+      
+        Leetcode
+        &nbsp;&bull;&nbsp;
+      
+      2026
+
+      
+        &nbsp;&bull;&nbsp;
+        <span class="author-site">
+          <a href="https://leetcode.ca/">leetcode.ca</a>
+        </span>
+      
+
+      
+      </p>
+      
+      <p class="theme-by text-muted">
+        Copyright © 2025 leetcode.ca
+      </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+  
+  
+    
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous"></script>
+
+
+  
+    
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+
+
+  
+    
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+
+  
+
+
+
+  
+    <!-- doing something a bit funky here because I want to be careful not to include JQuery twice! -->
+    
+      <script src="/assets/js/beautifuljekyll.js"></script>
+    
+  
+
+
+
+
+
+  
+    
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+  
+    
+  <script src="https://cdn.jsdelivr.net/npm/anchor-js/anchor.min.js"></script>
+
+
+  
+
+
+
+  
+    <script src="/assets/js/anchor-js-config.js"></script>
+  
+
+
+
+</body>
+</html>

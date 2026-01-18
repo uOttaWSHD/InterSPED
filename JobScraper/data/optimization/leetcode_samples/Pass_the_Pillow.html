@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="shortcut icon" type="image/png" href="/assets/img/favicon.png">
+  <link rel="stylesheet" href="/assets/css/uikit.min.css" />
+  <script src="/assets/js/uikit.min.js" type="text/javascript"></script>
+  <script src="/assets/js/uikit-icons.min.js" type="text/javascript"></script>
+
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        packages: {'[+]': ['ams']}  // Include the 'ams' package
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  
+  
+
+  
+<!-- below block is overlapping with SEO plugin generated title and description   -->
+<!-- 
+  <title>2582 - Pass the Pillow</title>
+
+  
+  <meta name="author" content="Leetcode">
+  
+
+  
+  <meta name="description" content="Welcome to Subscribe On Youtube 2582. Pass the Pillow Description There are n people standing in a line labeled from 1 to n. The first person in the line is holding a pillow initially. Every second, the person holding the pillow passes it to the next person standing in the...">
+   -->
+
+  
+
+  
+  <meta name="keywords" content="LeetCode, Solution, Company Tag, Unlock Prime, Java, C++, Interview, Job, Algorithm, SQL, Canada">
+  
+
+  <link rel="alternate" type="application/rss+xml" title="Leetcode" href="https://leetcode.ca/feed.xml">
+
+  
+
+  
+
+  
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-K108N8L891"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-K108N8L891');
+  </script>
+  <!-- End Google Analytics -->
+
+
+  
+  <script data-ad-client="ca-pub-6766885420008650" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+
+
+
+  
+    
+      
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+
+    
+      
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
+
+
+    
+      
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic">
+
+
+    
+      
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800">
+
+
+    
+  
+
+  
+    
+      <link rel="stylesheet" href="/assets/css/bootstrap-social.css">
+    
+      <link rel="stylesheet" href="/assets/css/beautifuljekyll.css">
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <meta property="og:site_name" content="Leetcode">
+  <meta property="og:title" content="2582 - Pass the Pillow">
+  <meta property="og:description" content="Welcome to Subscribe On Youtube 2582. Pass the Pillow Description There are n people standing in a line labeled from 1 to n. The first person in the line is holding a pillow initially. Every second, the person holding the pillow passes it to the next person standing in the line. Once the pillow reaches the end of the line, the direction changes, and people continue passing the pillow in the opposite direction. For example, once the pillow reaches the nth person they pass it to the n - 1th person, then to the n - 2th person and so on. Given the two positive integers n and time, return the index of the person holding the pillow after time seconds. &amp;nbsp; Example 1: Input: n = 4, time = 5 Output: 2 Explanation: People pass the pillow in the following way: 1 -&amp;gt; 2 -&amp;gt; 3 -&amp;gt; 4 -&amp;gt; 3 -&amp;gt; 2. Afer five seconds, the pillow is given to the 2nd person. Example 2: Input: n = 3, time = 2 Output: 3 Explanation: People pass the pillow in the following way: 1 -&amp;gt; 2 -&amp;gt; 3. Afer two seconds, the pillow is given to the 3rd person. &amp;nbsp; Constraints: 2 &amp;lt;= n &amp;lt;= 1000 1 &amp;lt;= time &amp;lt;= 1000 Solutions Solution 1: Simulation We can simulate the process of passing the pillow, and each time the pillow is passed, if the pillow reaches the front or the end of the queue, the direction of the pillow will change, and the queue will continue to pass the pillow along the opposite direction. The time complexity is $O(time)$ and the space complexity is $O(1)$, where $time$ is the given time. Solution 2: Math We notice that there are $n - 1$ passes in each round. Therefore, we can divide $time$ by $n - 1$ to get the number of rounds $k$ that the pillow is passed, and then take the remainder of $time$ modulo $n - 1$ to get the remaining passes $mod$ in the current round. Then we judge the current round $k$: If $k$ is odd, then the current direction of the pillow is from the end of the queue to the front, so the pillow will be passed to the person with the number $n - mod$. If $k$ is even, then the current direction of the pillow is from the front of the queue to the back, so the pillow will be passed to the person with the number $mod + 1$. The time complexity is $O(1)$ and the space complexity is $O(1)$. Java C++ Python Go TypeScript RenderScript class Solution { public int passThePillow(int n, int time) { int ans = 1, k = 1; while (time-- &amp;gt; 0) { ans += k; if (ans == 1 || ans == n) { k *= -1; } } return ans; } } class Solution { public: int passThePillow(int n, int time) { int ans = 1, k = 1; while (time--) { ans += k;...">
+
+  
+  <meta property="og:image" content="https://leetcode.ca/assets/img/avatar-icon.jpg">
+  
+
+  <!-- remove canonical below to use SEO plugin -->
+  
+  <meta property="og:type" content="article">
+  <meta property="og:article:author" content="Leetcode">
+  <meta property="og:article:published_time" content="2022-12-25T00:00:00-08:00">
+  <meta property="og:url" content="https://leetcode.ca/2022-12-25-2582-Pass-the-Pillow/">
+  <!-- <link rel="canonical" href="https://leetcode.ca/2022-12-25-2582-Pass-the-Pillow/"> -->
+  
+
+  
+  <meta name="twitter:card" content="summary">
+  
+  <meta name="twitter:site" content="@">
+  <meta name="twitter:creator" content="@">
+
+  <meta property="twitter:title" content="2582 - Pass the Pillow">
+  <meta property="twitter:description" content="Welcome to Subscribe On Youtube 2582. Pass the Pillow Description There are n people standing in a line labeled from 1 to n. The first person in the line is holding a pillow initially. Every second, the person holding the pillow passes it to the next person standing in the line. Once the pillow reaches the end of the line, the direction changes, and people continue passing the pillow in the opposite direction. For example, once the pillow reaches the nth person they pass it to the n - 1th person, then to the n - 2th person and so on. Given the two positive integers n and time, return the index of the person holding the pillow after time seconds. &amp;nbsp; Example 1: Input: n = 4, time = 5 Output: 2 Explanation: People pass the pillow in the following way: 1 -&amp;gt; 2 -&amp;gt; 3 -&amp;gt; 4 -&amp;gt; 3 -&amp;gt; 2. Afer five seconds, the pillow is given to the 2nd person. Example 2: Input: n = 3, time = 2 Output: 3 Explanation: People pass the pillow in the following way: 1 -&amp;gt; 2 -&amp;gt; 3. Afer two seconds, the pillow is given to the 3rd person. &amp;nbsp; Constraints: 2 &amp;lt;= n &amp;lt;= 1000 1 &amp;lt;= time &amp;lt;= 1000 Solutions Solution 1: Simulation We can simulate the process of passing the pillow, and each time the pillow is passed, if the pillow reaches the front or the end of the queue, the direction of the pillow will change, and the queue will continue to pass the pillow along the opposite direction. The time complexity is $O(time)$ and the space complexity is $O(1)$, where $time$ is the given time. Solution 2: Math We notice that there are $n - 1$ passes in each round. Therefore, we can divide $time$ by $n - 1$ to get the number of rounds $k$ that the pillow is passed, and then take the remainder of $time$ modulo $n - 1$ to get the remaining passes $mod$ in the current round. Then we judge the current round $k$: If $k$ is odd, then the current direction of the pillow is from the end of the queue to the front, so the pillow will be passed to the person with the number $n - mod$. If $k$ is even, then the current direction of the pillow is from the front of the queue to the back, so the pillow will be passed to the person with the number $mod + 1$. The time complexity is $O(1)$ and the space complexity is $O(1)$. Java C++ Python Go TypeScript RenderScript class Solution { public int passThePillow(int n, int time) { int ans = 1, k = 1; while (time-- &amp;gt; 0) { ans += k; if (ans == 1 || ans == n) { k *= -1; } } return ans; } } class Solution { public: int passThePillow(int n, int time) { int ans = 1, k = 1; while (time--) { ans += k;...">
+
+  
+  <meta name="twitter:image" content="https://leetcode.ca/assets/img/avatar-icon.jpg">
+  
+
+  
+
+
+  <!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>2582 - Pass the Pillow | Leetcode</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="2582 - Pass the Pillow" />
+<meta name="author" content="Leetcode" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Welcome to Subscribe On Youtube" />
+<meta property="og:description" content="Welcome to Subscribe On Youtube" />
+<link rel="canonical" href="https://leetcode.ca/2022-12-25-2582-Pass-the-Pillow/" />
+<meta property="og:url" content="https://leetcode.ca/2022-12-25-2582-Pass-the-Pillow/" />
+<meta property="og:site_name" content="Leetcode" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2022-12-25T00:00:00-08:00" />
+<script type="application/ld+json">
+{"description":"Welcome to Subscribe On Youtube","headline":"2582 - Pass the Pillow","dateModified":"2022-12-25T00:00:00-08:00","datePublished":"2022-12-25T00:00:00-08:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://leetcode.ca/2022-12-25-2582-Pass-the-Pillow/"},"url":"https://leetcode.ca/2022-12-25-2582-Pass-the-Pillow/","author":{"@type":"Person","name":"Leetcode"},"@type":"BlogPosting","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+  
+
+  
+
+</head>
+
+
+<body>
+
+  
+
+
+  <nav class="navbar navbar-expand-xl navbar-light fixed-top navbar-custom top-nav-regular"><a class="navbar-brand" href="https://leetcode.ca/">Leetcode</a><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="main-navbar">
+    <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/blog">Posts</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/tags">Tag Index</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/search">Search</a>
+          </li></ul>
+  </div>
+
+  
+
+  
+    <div class="avatar-container">
+      <div class="avatar-img-border">
+        <a href="https://leetcode.ca/">
+          <img alt="Navigation bar avatar" class="avatar-img" src="/assets/img/avatar-icon.jpg" />
+        </a>
+      </div>
+    </div>
+  
+
+</nav>
+
+
+  <!-- TODO this file has become a mess, refactor it -->
+
+
+
+
+
+
+
+<header class="header-section ">
+
+<div class="intro-header no-img">
+  <div class="container-md">
+    <div class="row">
+      <div class="col-xl-8 offset-xl-2 col-lg-10 offset-lg-1">
+        <div class="post-heading">
+          <h1>2582 - Pass the Pillow</h1>
+          
+
+          
+            <span class="post-meta">Posted on December 25, 2022</span>
+            
+            
+              
+
+
+
+
+
+  
+  <span class="post-meta"><span class="d-none d-md-inline middot">&middot;</span> 3 minute read</span>
+
+
+            
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</header>
+
+
+
+
+
+<div class=" container-md ">
+  <div class="row">
+    <div class=" col-xl-8 offset-xl-2 col-lg-10 offset-lg-1 ">
+
+      
+
+      
+
+      <article role="main" class="blog-post">
+        <h5 id="welcome-to-subscribe-on-youtube">Welcome to Subscribe On Youtube</h5>
+<script src="https://apis.google.com/js/platform.js"></script>
+
+<div class="g-ytsubscribe" data-channelid="UCslk3mmaMJy1enit3L9vWig" data-layout="full" data-count="hidden"></div>
+
+<h1 id="2582-pass-the-pillow"><a href="https://leetcode.com/problems/pass-the-pillow">2582. Pass the Pillow</a></h1>
+
+<h2 id="description">Description</h2>
+
+<p>There are <code>n</code> people standing in a line labeled from <code>1</code> to <code>n</code>. The first person in the line is holding a pillow initially. Every second, the person holding the pillow passes it to the next person standing in the line. Once the pillow reaches the end of the line, the direction changes, and people continue passing the pillow in the opposite direction.</p>
+
+<ul>
+	<li>For example, once the pillow reaches the <code>n<sup>th</sup></code> person they pass it to the <code>n - 1<sup>th</sup></code> person, then to the <code>n - 2<sup>th</sup></code> person and so on.</li>
+</ul>
+
+<p>Given the two positive integers <code>n</code> and <code>time</code>, return <em>the index of the person holding the pillow after </em><code>time</code><em> seconds</em>.</p>
+<p>&nbsp;</p>
+<p><strong class="example">Example 1:</strong></p>
+
+<pre>
+<strong>Input:</strong> n = 4, time = 5
+<strong>Output:</strong> 2
+<strong>Explanation:</strong> People pass the pillow in the following way: 1 -&gt; 2 -&gt; 3 -&gt; 4 -&gt; 3 -&gt; 2.
+Afer five seconds, the pillow is given to the 2<sup>nd</sup> person.
+</pre>
+
+<p><strong class="example">Example 2:</strong></p>
+
+<pre>
+<strong>Input:</strong> n = 3, time = 2
+<strong>Output:</strong> 3
+<strong>Explanation:</strong> People pass the pillow in the following way: 1 -&gt; 2 -&gt; 3.
+Afer two seconds, the pillow is given to the 3<sup>r</sup><sup>d</sup> person.
+</pre>
+
+<p>&nbsp;</p>
+<p><strong>Constraints:</strong></p>
+
+<ul>
+	<li><code>2 &lt;= n &lt;= 1000</code></li>
+	<li><code>1 &lt;= time &lt;= 1000</code></li>
+</ul>
+
+<h2 id="solutions">Solutions</h2>
+
+<p><strong>Solution 1: Simulation</strong></p>
+
+<p>We can simulate the process of passing the pillow, and each time the pillow is passed, if the pillow reaches the front or the end of the queue, the direction of the pillow will change, and the queue will continue to pass the pillow along the opposite direction.</p>
+
+<p>The time complexity is $O(time)$ and the space complexity is $O(1)$, where $time$ is the given time.</p>
+
+<p><strong>Solution 2: Math</strong></p>
+
+<p>We notice that there are $n - 1$ passes in each round. Therefore, we can divide $time$ by $n - 1$ to get the number of rounds $k$ that the pillow is passed, and then take the remainder of $time$ modulo $n - 1$ to get the remaining passes $mod$ in the current round.</p>
+
+<p>Then we judge the current round $k$:</p>
+
+<ul>
+  <li>If $k$ is odd, then the current direction of the pillow is from the end of the queue to the front, so the pillow will be passed to the person with the number $n - mod$.</li>
+  <li>If $k$ is even, then the current direction of the pillow is from the front of the queue to the back, so the pillow will be passed to the person with the number $mod + 1$.</li>
+</ul>
+
+<p>The time complexity is $O(1)$ and the space complexity is $O(1)$.</p>
+
+<ul class="uk-tab" data-uk-switcher="{connect:'#95935204-bba5-4f04-866d-54e7b75e6240'}">
+
+	<li class="uk-active"><a href="#">Java</a></li>
+
+	<li><a href="#">C++</a></li>
+
+	<li><a href="#">Python</a></li>
+
+	<li><a href="#">Go</a></li>
+
+	<li><a href="#">TypeScript</a></li>
+
+	<li><a href="#">RenderScript</a></li>
+
+</ul>
+
+<ul id="95935204-bba5-4f04-866d-54e7b75e6240" class="uk-switcher uk-margin">
+
+	<li>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Solution</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">passThePillow</span><span class="o">(</span><span class="kt">int</span> <span class="n">n</span><span class="o">,</span> <span class="kt">int</span> <span class="n">time</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kt">int</span> <span class="n">ans</span> <span class="o">=</span> <span class="mi">1</span><span class="o">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">1</span><span class="o">;</span>
+        <span class="k">while</span> <span class="o">(</span><span class="n">time</span><span class="o">--</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">ans</span> <span class="o">+=</span> <span class="n">k</span><span class="o">;</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">ans</span> <span class="o">==</span> <span class="mi">1</span> <span class="o">||</span> <span class="n">ans</span> <span class="o">==</span> <span class="n">n</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">k</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span><span class="o">;</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="n">ans</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+</li>
+
+	<li>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Solution</span> <span class="p">{</span>
+<span class="nl">public:</span>
+    <span class="kt">int</span> <span class="n">passThePillow</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">,</span> <span class="kt">int</span> <span class="n">time</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">ans</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="k">while</span> <span class="p">(</span><span class="n">time</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">ans</span> <span class="o">+=</span> <span class="n">k</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">ans</span> <span class="o">==</span> <span class="mi">1</span> <span class="o">||</span> <span class="n">ans</span> <span class="o">==</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">k</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">ans</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</code></pre></div></div>
+</li>
+
+	<li>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Solution</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">passThePillow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">time</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="n">ans</span> <span class="o">=</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">time</span><span class="p">):</span>
+            <span class="n">ans</span> <span class="o">+=</span> <span class="n">k</span>
+            <span class="k">if</span> <span class="n">ans</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">ans</span> <span class="o">==</span> <span class="n">n</span><span class="p">:</span>
+                <span class="n">k</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">return</span> <span class="n">ans</span>
+
+</code></pre></div></div>
+</li>
+
+	<li>
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="n">passThePillow</span><span class="p">(</span><span class="n">n</span> <span class="kt">int</span><span class="p">,</span> <span class="n">time</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
+	<span class="n">ans</span><span class="p">,</span> <span class="n">k</span> <span class="o">:=</span> <span class="m">1</span><span class="p">,</span> <span class="m">1</span>
+	<span class="k">for</span> <span class="p">;</span> <span class="n">time</span> <span class="o">&gt;</span> <span class="m">0</span><span class="p">;</span> <span class="n">time</span><span class="o">--</span> <span class="p">{</span>
+		<span class="n">ans</span> <span class="o">+=</span> <span class="n">k</span>
+		<span class="k">if</span> <span class="n">ans</span> <span class="o">==</span> <span class="m">1</span> <span class="o">||</span> <span class="n">ans</span> <span class="o">==</span> <span class="n">n</span> <span class="p">{</span>
+			<span class="n">k</span> <span class="o">*=</span> <span class="o">-</span><span class="m">1</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="n">ans</span>
+<span class="p">}</span>
+</code></pre></div></div>
+</li>
+
+	<li>
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">passThePillow</span><span class="p">(</span><span class="nx">n</span><span class="p">:</span> <span class="kr">number</span><span class="p">,</span> <span class="nx">time</span><span class="p">:</span> <span class="kr">number</span><span class="p">):</span> <span class="kr">number</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">ans</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="nx">k</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="nx">time</span><span class="o">--</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">ans</span> <span class="o">+=</span> <span class="nx">k</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">ans</span> <span class="o">===</span> <span class="mi">1</span> <span class="o">||</span> <span class="nx">ans</span> <span class="o">===</span> <span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">k</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">ans</span><span class="p">;</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+</li>
+
+	<li>
+<div class="language-rs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">impl</span> <span class="n">Solution</span> <span class="p">{</span>
+    <span class="k">pub</span> <span class="k">fn</span> <span class="nf">pass_the_pillow</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">i32</span><span class="p">,</span> <span class="n">time</span><span class="p">:</span> <span class="nb">i32</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">i32</span> <span class="p">{</span>
+        <span class="k">let</span> <span class="k">mut</span> <span class="n">ans</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="k">let</span> <span class="k">mut</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">1</span><span class="o">..=</span><span class="n">time</span> <span class="p">{</span>
+            <span class="n">ans</span> <span class="o">+=</span> <span class="n">k</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="n">ans</span> <span class="o">==</span> <span class="mi">1</span> <span class="p">||</span> <span class="n">ans</span> <span class="o">==</span> <span class="n">n</span> <span class="p">{</span>
+                <span class="n">k</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="n">ans</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+</li>
+
+</ul>
+
+<h1 id="all-problems"><a href="https://leetcode.ca/all/problems.html">All Problems</a></h1>
+
+<h1 id="all-solutions"><a href="https://leetcode.ca/blog">All Solutions</a></h1>
+
+      </article>
+
+      
+
+      
+
+      
+        <!-- Check if any share-links are active -->
+
+
+
+
+<section id = "social-share-section">
+  <span class="sr-only">Share: </span>
+
+  
+    <a href="https://twitter.com/intent/tweet?text=2582+-+Pass+the+Pillow&url=https%3A%2F%2Fleetcode.ca%2F2022-12-25-2582-Pass-the-Pillow%2F"
+      class="btn btn-social-icon btn-twitter" title="Share on Twitter">
+      <span class="fab fa-fw fa-twitter" aria-hidden="true"></span>
+      <span class="sr-only">Twitter</span>
+    </a>
+  
+
+  
+    <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fleetcode.ca%2F2022-12-25-2582-Pass-the-Pillow%2F"
+      class="btn btn-social-icon btn-facebook" title="Share on Facebook">
+      <span class="fab fa-fw fa-facebook" aria-hidden="true"></span>
+      <span class="sr-only">Facebook</span>
+    </a>
+  
+
+  
+    <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fleetcode.ca%2F2022-12-25-2582-Pass-the-Pillow%2F"
+      class="btn btn-social-icon btn-linkedin" title="Share on LinkedIn">
+      <span class="fab fa-fw fa-linkedin" aria-hidden="true"></span>
+      <span class="sr-only">LinkedIn</span>
+    </a>
+  
+
+  
+
+</section>
+
+
+
+      
+
+      <ul class="pagination blog-pager">
+        
+        <li class="page-item previous">
+          <a class="page-link" href="/2022-12-24-2581-Count-Number-of-Possible-Root-Nodes/" data-toggle="tooltip" data-placement="top" title="2581 - Count Number of Possible Root Nodes">&larr; Previous Post</a>
+        </li>
+        
+        
+        <li class="page-item next">
+          <a class="page-link" href="/2022-12-26-2583-Kth-Largest-Sum-in-a-Binary-Tree/" data-toggle="tooltip" data-placement="top" title="2583 - Kth Largest Sum in a Binary Tree">Next Post &rarr;</a>
+        </li>
+        
+      </ul>
+      
+  <div class="disqus-comments">
+  <div class="comments">
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+	  var disqus_shortname = 'leetcodeca';
+	  /* ensure that pages with query string get the same discussion */
+	  var url_parts = window.location.href.split("?");
+	  var disqus_url = url_parts[0];
+	  (function() {
+		var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+		dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+		(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	  })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</div>
+  
+  
+
+  
+
+
+
+
+    </div>
+  </div>
+</div>
+
+
+  <footer>
+  <div class="container-md beautiful-jekyll-footer">
+    <div class="row">
+      <div class="col-xl-8 offset-xl-2 col-lg-10 offset-lg-1">
+      <ul class="list-inline text-center footer-links"><li class="list-inline-item">
+    <a href="/feed.xml" title="RSS">
+      <span class="fa-stack fa-lg" aria-hidden="true">
+        <i class="fas fa-circle fa-stack-2x"></i>
+        <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+      </span>
+      <span class="sr-only">RSS</span>
+    </a>
+  </li><li class="list-inline-item">
+    <a href="mailto:admin@leetcode.ca" title="Email me">
+      <span class="fa-stack fa-lg" aria-hidden="true">
+        <i class="fas fa-circle fa-stack-2x"></i>
+        <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+      </span>
+      <span class="sr-only">Email me</span>
+   </a>
+  </li></ul>
+
+      
+      <p class="copyright text-muted">
+      
+        Leetcode
+        &nbsp;&bull;&nbsp;
+      
+      2026
+
+      
+        &nbsp;&bull;&nbsp;
+        <span class="author-site">
+          <a href="https://leetcode.ca/">leetcode.ca</a>
+        </span>
+      
+
+      
+      </p>
+      
+      <p class="theme-by text-muted">
+        Copyright © 2025 leetcode.ca
+      </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+  
+  
+    
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous"></script>
+
+
+  
+    
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+
+
+  
+    
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+
+  
+
+
+
+  
+    <!-- doing something a bit funky here because I want to be careful not to include JQuery twice! -->
+    
+      <script src="/assets/js/beautifuljekyll.js"></script>
+    
+  
+
+
+
+
+
+  
+    
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+  
+    
+  <script src="https://cdn.jsdelivr.net/npm/anchor-js/anchor.min.js"></script>
+
+
+  
+
+
+
+  
+    <script src="/assets/js/anchor-js-config.js"></script>
+  
+
+
+
+</body>
+</html>

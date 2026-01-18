@@ -1,98 +1,89 @@
 """
-Static Prompt Templates for Interview Reconstruction.
-Prompts are pre-optimized and used at runtime without dynamic re-optimization.
+Loader for Specialized Agent Prompt Templates.
+Prompts are pre-optimized and loaded from static config files.
 """
 
 from __future__ import annotations
 import json
+import os
 from typing import Any
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.messages import BaseMessage
+from config import settings
 
 
 class PromptOptimizer:
     """
-    Provides pre-optimized static prompts for interview reconstruction.
+    Loads pre-optimized static prompts for specialized agents.
     """
 
     def __init__(self) -> None:
-        self.system_message = """You are an elite interview preparation specialist with 20+ years of experience at FAANG companies. Your mission is to create HYPER-DETAILED interview preparation materials that are so specific and comprehensive that a human or AI agent could use them to:
+        self.agent_configs: dict[str, dict[str, Any]] = {}
+        self._load_agent_configs()
 
-1. RECONSTRUCT realistic interview conversations word-for-word
-2. PRACTICE answering with company-specific context and terminology  
-3. ANTICIPATE exact follow-up questions and edge cases
-4. UNDERSTAND what "good" vs "excellent" answers look like at THIS specific company
+    def _load_agent_configs(self) -> None:
+        """Loads all agent configurations from the prompts/agents directory."""
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        agents_dir = os.path.join(current_dir, "prompts", "agents")
 
-Your analysis must be:
-- RECONSTRUCTABLE: Include enough detail that someone could role-play an actual interview
-- COMPANY-SPECIFIC: Use the company's values, terminology, and cultural context in questions
-- EXAMPLE-DRIVEN: Provide sample answers using STAR method, sample code, sample system designs
-- FORENSIC: Extract EVERY skill mentioned and predict exactly how it will be tested
-- REALISTIC: Include realistic interview flow, timing, interviewer behavior patterns
+        agent_files = {
+            "company_analyst": "company_analyst.json",
+            "interview_architect": "interview_architect.json",
+            "question_strategist": "question_strategist.json",
+            "technical_specialist": "technical_specialist.json",
+        }
 
-CRITICAL: OUTPUT MUST BE VALID JSON ONLY. NO PREAMBLE. NO MARKDOWN."""
+        for agent_id, filename in agent_files.items():
+            path = os.path.join(agents_dir, filename)
+            try:
+                if os.path.exists(path):
+                    with open(path, "r", encoding="utf-8") as f:
+                        self.agent_configs[agent_id] = json.load(f)
+                else:
+                    rel_path = os.path.join("JobScraper", "prompts", "agents", filename)
+                    if os.path.exists(rel_path):
+                        with open(rel_path, "r", encoding="utf-8") as f:
+                            self.agent_configs[agent_id] = json.load(f)
+                    else:
+                        print(f"⚠️ Agent prompt file missing: {path}")
+            except Exception as e:
+                print(f"⚠️ Failed to load agent prompt {agent_id}: {e}")
 
-        self.human_template = """Create an INTERVIEW RECONSTRUCTION GUIDE for {company_name} - {position} position.
-
-Company: {company_name}
-Position: {position}
-
-RAW DATA SOURCES:
-{scraped_data}
-
-═══════════════════════════════════════════════════════════════════
-YOUR MISSION - CRITICAL INSTRUCTIONS:
-═══════════════════════════════════════════════════════════════════
-
-1. INTERVIEW QUESTIONS (Generate 20-30 HYPER-SPECIFIC questions):
-   Include EXACT wording, 2-3 paragraph sample answers, key points, follow-ups, and red flags.
-
-2. CODING PROBLEMS:
-   Include full statement, examples, constraints, approach hints, and optimal complexity.
-
-3. SYSTEM DESIGN QUESTIONS (5-8 questions):
-   Include scope, key components, evaluation criteria, and common approaches.
-
-4. MOCK INTERVIEW SCENARIOS (2-3 scenarios):
-   Include word-for-word opening/closing scripts and question sequences.
-
-RESPOND WITH VALID JSON MATCHING THIS SCHEMA:
-{{
-  "company_overview": {{ "name": "...", "industry": "...", "culture": "...", "recent_news": [] }},
-  "interview_questions": [ {{ "question": "...", "sample_answer": "...", "follow_up_questions": [], "red_flags": [] }} ],
-  "coding_problems": [ {{ "title": "...", "problem_statement": "...", "leetcode_number": 0 }} ],
-  "system_design_questions": [ {{ "question": "...", "scope": "..." }} ],
-  "mock_scenarios": [ {{ "scenario_title": "...", "opening": "...", "questions_sequence": [] }} ],
-  "interview_process": {{
-    "stages": [
-      {{
-        "stage_name": "...",
-        "description": "...",
-        "duration": "...",
-        "focus_areas": [],
-        "sample_questions": [],
-        "success_criteria": []
-      }}
-    ],
-    "total_duration": "..."
-  }},
-  "technical_requirements": {{ "must_have_skills": [], "nice_to_have_skills": [] }},
-  "what_they_look_for": [],
-  "red_flags_to_avoid": [],
-  "company_values_in_interviews": []
-}}"""
-
-    def get_static_prompt(
-        self, company_name: str, position: str, scraped_data: str
-    ) -> list[BaseMessage]:
-        """Get formatted messages using static pre-optimized templates."""
-        prompt_template = ChatPromptTemplate.from_messages(
-            [("system", self.system_message), ("human", self.human_template)]
+    def get_agent_prompt(
+        self, agent_id: str, company_name: str, position: str, scraped_data: str
+    ) -> ChatPromptTemplate:
+        """Get a ChatPromptTemplate for a specific agent."""
+        config = self.agent_configs.get(
+            agent_id,
+            {
+                "instructions": "You are a specialized agent.",
+                "human_template": "Analyze data for {company_name} - {position}:\n{scraped_data}",
+                "demos": [],
+            },
         )
 
-        return prompt_template.format_messages(
-            company_name=company_name, position=position, scraped_data=scraped_data
+        system_msg = config.get("instructions", "")
+        human_tpl = config.get("human_template", "")
+        demos = config.get("demos", [])
+
+        # Build demos text separately to avoid template formatting issues
+        demos_text = ""
+        if demos:
+            demos_text += "\n\nFEW-SHOT EXAMPLES:\n"
+            for demo in demos:
+                input_ex = demo.get("input") or demo.get("company_context") or ""
+                output_ex = demo.get("output") or demo.get("reconstruction_json") or ""
+                # Escape curly braces for literal display in prompt to avoid format() errors
+                safe_input = str(input_ex).replace("{", "{{").replace("}", "}}")
+                safe_output = str(output_ex).replace("{", "{{").replace("}", "}}")
+                demos_text += f"\nExample Input:\n{safe_input[:500]}\nExample Output:\n{safe_output}\n"
+
+        # Create template with a placeholder for demos
+        prompt = ChatPromptTemplate.from_messages(
+            [("system", system_msg), ("human", human_tpl + "\n{demos_text}")]
         )
+
+        # Partially fill the demos_text so it's treated as literal text, not a template
+        return prompt.partial(demos_text=demos_text)
 
 
 def create_prompt_optimizer() -> PromptOptimizer:

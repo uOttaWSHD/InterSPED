@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="shortcut icon" type="image/png" href="/assets/img/favicon.png">
+  <link rel="stylesheet" href="/assets/css/uikit.min.css" />
+  <script src="/assets/js/uikit.min.js" type="text/javascript"></script>
+  <script src="/assets/js/uikit-icons.min.js" type="text/javascript"></script>
+
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        packages: {'[+]': ['ams']}  // Include the 'ams' package
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  
+  
+
+  
+<!-- below block is overlapping with SEO plugin generated title and description   -->
+<!-- 
+  <title>3008 - Find Beautiful Indices in the Given Array II</title>
+
+  
+  <meta name="author" content="Leetcode">
+  
+
+  
+  <meta name="description" content="Welcome to Subscribe On Youtube 3008. Find Beautiful Indices in the Given Array II Description You are given a 0-indexed string s, a string a, a string b, and an integer k. An index i is beautiful if: 0 &amp;lt;= i &amp;lt;= s.length - a.length s[i..(i + a.length - 1)]...">
+   -->
+
+  
+
+  
+  <meta name="keywords" content="LeetCode, Solution, Company Tag, Unlock Prime, Java, C++, Interview, Job, Algorithm, SQL, Canada">
+  
+
+  <link rel="alternate" type="application/rss+xml" title="Leetcode" href="https://leetcode.ca/feed.xml">
+
+  
+
+  
+
+  
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-K108N8L891"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-K108N8L891');
+  </script>
+  <!-- End Google Analytics -->
+
+
+  
+  <script data-ad-client="ca-pub-6766885420008650" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+
+
+
+  
+    
+      
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+
+    
+      
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
+
+
+    
+      
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic">
+
+
+    
+      
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800">
+
+
+    
+  
+
+  
+    
+      <link rel="stylesheet" href="/assets/css/bootstrap-social.css">
+    
+      <link rel="stylesheet" href="/assets/css/beautifuljekyll.css">
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <meta property="og:site_name" content="Leetcode">
+  <meta property="og:title" content="3008 - Find Beautiful Indices in the Given Array II">
+  <meta property="og:description" content="Welcome to Subscribe On Youtube 3008. Find Beautiful Indices in the Given Array II Description You are given a 0-indexed string s, a string a, a string b, and an integer k. An index i is beautiful if: 0 &amp;lt;= i &amp;lt;= s.length - a.length s[i..(i + a.length - 1)] == a There exists an index j such that: 0 &amp;lt;= j &amp;lt;= s.length - b.length s[j..(j + b.length - 1)] == b |j - i| &amp;lt;= k Return the array that contains beautiful indices in sorted order from smallest to largest. &amp;nbsp; Example 1: Input: s = &amp;quot;isawsquirrelnearmysquirrelhouseohmy&amp;quot;, a = &amp;quot;my&amp;quot;, b = &amp;quot;squirrel&amp;quot;, k = 15 Output: [16,33] Explanation: There are 2 beautiful indices: [16,33]. - The index 16 is beautiful as s[16..17] == &amp;quot;my&amp;quot; and there exists an index 4 with s[4..11] == &amp;quot;squirrel&amp;quot; and |16 - 4| &amp;lt;= 15. - The index 33 is beautiful as s[33..34] == &amp;quot;my&amp;quot; and there exists an index 18 with s[18..25] == &amp;quot;squirrel&amp;quot; and |33 - 18| &amp;lt;= 15. Thus we return [16,33] as the result. Example 2: Input: s = &amp;quot;abcd&amp;quot;, a = &amp;quot;a&amp;quot;, b = &amp;quot;a&amp;quot;, k = 4 Output: [0] Explanation: There is 1 beautiful index: [0]. - The index 0 is beautiful as s[0..0] == &amp;quot;a&amp;quot; and there exists an index 0 with s[0..0] == &amp;quot;a&amp;quot; and |0 - 0| &amp;lt;= 4. Thus we return [0] as the result. &amp;nbsp; Constraints: 1 &amp;lt;= k &amp;lt;= s.length &amp;lt;= 5 * 105 1 &amp;lt;= a.length, b.length &amp;lt;= 5 * 105 s, a, and b contain only lowercase English letters. Solutions Java C++ Python Go public class Solution { public void computeLPS(String pattern, int[] lps) { int M = pattern.length(); int len = 0; lps[0] = 0; int i = 1; while (i &amp;lt; M) { if (pattern.charAt(i) == pattern.charAt(len)) { len++; lps[i] = len; i++; } else { if (len != 0) { len = lps[len - 1]; } else { lps[i] = 0; i++; } } } } public List&amp;lt;Integer&amp;gt; KMP_codestorywithMIK(String pat, String txt) { int N = txt.length(); int M = pat.length(); List&amp;lt;Integer&amp;gt; result = new ArrayList&amp;lt;&amp;gt;(); int[] lps = new int[M]; computeLPS(pat, lps); int i = 0; // Index for text int j = 0; // Index for pattern while (i &amp;lt; N) { if (pat.charAt(j) == txt.charAt(i)) { i++; j++; } if (j == M) { result.add(i - j); // Pattern found at index i-j+1 (If you have to return 1 Based // indexing, that&apos;s why added + 1) j = lps[j - 1]; } else if (i &amp;lt; N &amp;amp;&amp;amp; pat.charAt(j) != txt.charAt(i)) { if (j != 0) { j = lps[j - 1]; } else { i++; } } } return result; } private int lowerBound(List&amp;lt;Integer&amp;gt; list, int target) { int left = 0, right = list.size() - 1, result = list.size(); while (left &amp;lt;= right) { int mid = left + (right - left) / 2; if (list.get(mid) &amp;gt;= target) { result = mid; right = mid - 1; } else...">
+
+  
+  <meta property="og:image" content="https://leetcode.ca/assets/img/avatar-icon.jpg">
+  
+
+  <!-- remove canonical below to use SEO plugin -->
+  
+  <meta property="og:type" content="article">
+  <meta property="og:article:author" content="Leetcode">
+  <meta property="og:article:published_time" content="2024-01-20T00:00:00-08:00">
+  <meta property="og:url" content="https://leetcode.ca/2024-01-20-3008-Find-Beautiful-Indices-in-the-Given-Array-II/">
+  <!-- <link rel="canonical" href="https://leetcode.ca/2024-01-20-3008-Find-Beautiful-Indices-in-the-Given-Array-II/"> -->
+  
+
+  
+  <meta name="twitter:card" content="summary">
+  
+  <meta name="twitter:site" content="@">
+  <meta name="twitter:creator" content="@">
+
+  <meta property="twitter:title" content="3008 - Find Beautiful Indices in the Given Array II">
+  <meta property="twitter:description" content="Welcome to Subscribe On Youtube 3008. Find Beautiful Indices in the Given Array II Description You are given a 0-indexed string s, a string a, a string b, and an integer k. An index i is beautiful if: 0 &amp;lt;= i &amp;lt;= s.length - a.length s[i..(i + a.length - 1)] == a There exists an index j such that: 0 &amp;lt;= j &amp;lt;= s.length - b.length s[j..(j + b.length - 1)] == b |j - i| &amp;lt;= k Return the array that contains beautiful indices in sorted order from smallest to largest. &amp;nbsp; Example 1: Input: s = &amp;quot;isawsquirrelnearmysquirrelhouseohmy&amp;quot;, a = &amp;quot;my&amp;quot;, b = &amp;quot;squirrel&amp;quot;, k = 15 Output: [16,33] Explanation: There are 2 beautiful indices: [16,33]. - The index 16 is beautiful as s[16..17] == &amp;quot;my&amp;quot; and there exists an index 4 with s[4..11] == &amp;quot;squirrel&amp;quot; and |16 - 4| &amp;lt;= 15. - The index 33 is beautiful as s[33..34] == &amp;quot;my&amp;quot; and there exists an index 18 with s[18..25] == &amp;quot;squirrel&amp;quot; and |33 - 18| &amp;lt;= 15. Thus we return [16,33] as the result. Example 2: Input: s = &amp;quot;abcd&amp;quot;, a = &amp;quot;a&amp;quot;, b = &amp;quot;a&amp;quot;, k = 4 Output: [0] Explanation: There is 1 beautiful index: [0]. - The index 0 is beautiful as s[0..0] == &amp;quot;a&amp;quot; and there exists an index 0 with s[0..0] == &amp;quot;a&amp;quot; and |0 - 0| &amp;lt;= 4. Thus we return [0] as the result. &amp;nbsp; Constraints: 1 &amp;lt;= k &amp;lt;= s.length &amp;lt;= 5 * 105 1 &amp;lt;= a.length, b.length &amp;lt;= 5 * 105 s, a, and b contain only lowercase English letters. Solutions Java C++ Python Go public class Solution { public void computeLPS(String pattern, int[] lps) { int M = pattern.length(); int len = 0; lps[0] = 0; int i = 1; while (i &amp;lt; M) { if (pattern.charAt(i) == pattern.charAt(len)) { len++; lps[i] = len; i++; } else { if (len != 0) { len = lps[len - 1]; } else { lps[i] = 0; i++; } } } } public List&amp;lt;Integer&amp;gt; KMP_codestorywithMIK(String pat, String txt) { int N = txt.length(); int M = pat.length(); List&amp;lt;Integer&amp;gt; result = new ArrayList&amp;lt;&amp;gt;(); int[] lps = new int[M]; computeLPS(pat, lps); int i = 0; // Index for text int j = 0; // Index for pattern while (i &amp;lt; N) { if (pat.charAt(j) == txt.charAt(i)) { i++; j++; } if (j == M) { result.add(i - j); // Pattern found at index i-j+1 (If you have to return 1 Based // indexing, that&apos;s why added + 1) j = lps[j - 1]; } else if (i &amp;lt; N &amp;amp;&amp;amp; pat.charAt(j) != txt.charAt(i)) { if (j != 0) { j = lps[j - 1]; } else { i++; } } } return result; } private int lowerBound(List&amp;lt;Integer&amp;gt; list, int target) { int left = 0, right = list.size() - 1, result = list.size(); while (left &amp;lt;= right) { int mid = left + (right - left) / 2; if (list.get(mid) &amp;gt;= target) { result = mid; right = mid - 1; } else...">
+
+  
+  <meta name="twitter:image" content="https://leetcode.ca/assets/img/avatar-icon.jpg">
+  
+
+  
+
+
+  <!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>3008 - Find Beautiful Indices in the Given Array II | Leetcode</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="3008 - Find Beautiful Indices in the Given Array II" />
+<meta name="author" content="Leetcode" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Welcome to Subscribe On Youtube" />
+<meta property="og:description" content="Welcome to Subscribe On Youtube" />
+<link rel="canonical" href="https://leetcode.ca/2024-01-20-3008-Find-Beautiful-Indices-in-the-Given-Array-II/" />
+<meta property="og:url" content="https://leetcode.ca/2024-01-20-3008-Find-Beautiful-Indices-in-the-Given-Array-II/" />
+<meta property="og:site_name" content="Leetcode" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2024-01-20T00:00:00-08:00" />
+<script type="application/ld+json">
+{"description":"Welcome to Subscribe On Youtube","headline":"3008 - Find Beautiful Indices in the Given Array II","dateModified":"2024-01-20T00:00:00-08:00","datePublished":"2024-01-20T00:00:00-08:00","mainEntityOfPage":{"@type":"WebPage","@id":"https://leetcode.ca/2024-01-20-3008-Find-Beautiful-Indices-in-the-Given-Array-II/"},"url":"https://leetcode.ca/2024-01-20-3008-Find-Beautiful-Indices-in-the-Given-Array-II/","author":{"@type":"Person","name":"Leetcode"},"@type":"BlogPosting","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+  
+
+  
+
+</head>
+
+
+<body>
+
+  
+
+
+  <nav class="navbar navbar-expand-xl navbar-light fixed-top navbar-custom top-nav-regular"><a class="navbar-brand" href="https://leetcode.ca/">Leetcode</a><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="main-navbar">
+    <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/blog">Posts</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/tags">Tag Index</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/search">Search</a>
+          </li></ul>
+  </div>
+
+  
+
+  
+    <div class="avatar-container">
+      <div class="avatar-img-border">
+        <a href="https://leetcode.ca/">
+          <img alt="Navigation bar avatar" class="avatar-img" src="/assets/img/avatar-icon.jpg" />
+        </a>
+      </div>
+    </div>
+  
+
+</nav>
+
+
+  <!-- TODO this file has become a mess, refactor it -->
+
+
+
+
+
+
+
+<header class="header-section ">
+
+<div class="intro-header no-img">
+  <div class="container-md">
+    <div class="row">
+      <div class="col-xl-8 offset-xl-2 col-lg-10 offset-lg-1">
+        <div class="post-heading">
+          <h1>3008 - Find Beautiful Indices in the Given Array II</h1>
+          
+
+          
+            <span class="post-meta">Posted on January 20, 2024</span>
+            
+            
+              
+
+
+
+
+
+  
+  <span class="post-meta"><span class="d-none d-md-inline middot">&middot;</span> 6 minute read</span>
+
+
+            
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</header>
+
+
+
+
+
+<div class=" container-md ">
+  <div class="row">
+    <div class=" col-xl-8 offset-xl-2 col-lg-10 offset-lg-1 ">
+
+      
+
+      
+
+      <article role="main" class="blog-post">
+        <h5 id="welcome-to-subscribe-on-youtube">Welcome to Subscribe On Youtube</h5>
+<script src="https://apis.google.com/js/platform.js"></script>
+
+<div class="g-ytsubscribe" data-channelid="UCslk3mmaMJy1enit3L9vWig" data-layout="full" data-count="hidden"></div>
+
+<h1 id="3008-find-beautiful-indices-in-the-given-array-ii"><a href="https://leetcode.com/problems/find-beautiful-indices-in-the-given-array-ii">3008. Find Beautiful Indices in the Given Array II</a></h1>
+
+<h2 id="description">Description</h2>
+
+<p>You are given a <strong>0-indexed</strong> string <code>s</code>, a string <code>a</code>, a string <code>b</code>, and an integer <code>k</code>.</p>
+
+<p>An index <code>i</code> is <strong>beautiful</strong> if:</p>
+
+<ul>
+	<li><code>0 &lt;= i &lt;= s.length - a.length</code></li>
+	<li><code>s[i..(i + a.length - 1)] == a</code></li>
+	<li>There exists an index <code>j</code> such that:
+	<ul>
+		<li><code>0 &lt;= j &lt;= s.length - b.length</code></li>
+		<li><code>s[j..(j + b.length - 1)] == b</code></li>
+		<li><code>|j - i| &lt;= k</code></li>
+	</ul>
+	</li>
+</ul>
+
+<p>Return <em>the array that contains beautiful indices in <strong>sorted order from smallest to largest</strong></em>.</p>
+
+<p>&nbsp;</p>
+<p><strong class="example">Example 1:</strong></p>
+
+<pre>
+<strong>Input:</strong> s = &quot;isawsquirrelnearmysquirrelhouseohmy&quot;, a = &quot;my&quot;, b = &quot;squirrel&quot;, k = 15
+<strong>Output:</strong> [16,33]
+<strong>Explanation:</strong> There are 2 beautiful indices: [16,33].
+- The index 16 is beautiful as s[16..17] == &quot;my&quot; and there exists an index 4 with s[4..11] == &quot;squirrel&quot; and |16 - 4| &lt;= 15.
+- The index 33 is beautiful as s[33..34] == &quot;my&quot; and there exists an index 18 with s[18..25] == &quot;squirrel&quot; and |33 - 18| &lt;= 15.
+Thus we return [16,33] as the result.
+</pre>
+
+<p><strong class="example">Example 2:</strong></p>
+
+<pre>
+<strong>Input:</strong> s = &quot;abcd&quot;, a = &quot;a&quot;, b = &quot;a&quot;, k = 4
+<strong>Output:</strong> [0]
+<strong>Explanation:</strong> There is 1 beautiful index: [0].
+- The index 0 is beautiful as s[0..0] == &quot;a&quot; and there exists an index 0 with s[0..0] == &quot;a&quot; and |0 - 0| &lt;= 4.
+Thus we return [0] as the result.
+</pre>
+
+<p>&nbsp;</p>
+<p><strong>Constraints:</strong></p>
+
+<ul>
+	<li><code>1 &lt;= k &lt;= s.length &lt;= 5 * 10<sup>5</sup></code></li>
+	<li><code>1 &lt;= a.length, b.length &lt;= 5 * 10<sup>5</sup></code></li>
+	<li><code>s</code>, <code>a</code>, and <code>b</code> contain only lowercase English letters.</li>
+</ul>
+
+<h2 id="solutions">Solutions</h2>
+
+<!-- end -->
+
+<ul class="uk-tab" data-uk-switcher="{connect:'#dd9e6d7d-9ef0-499e-8dcf-822fcc424e9e'}">
+
+	<li class="uk-active"><a href="#">Java</a></li>
+
+	<li><a href="#">C++</a></li>
+
+	<li><a href="#">Python</a></li>
+
+	<li><a href="#">Go</a></li>
+
+</ul>
+
+<ul id="dd9e6d7d-9ef0-499e-8dcf-822fcc424e9e" class="uk-switcher uk-margin">
+
+	<li>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Solution</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">computeLPS</span><span class="o">(</span><span class="nc">String</span> <span class="n">pattern</span><span class="o">,</span> <span class="kt">int</span><span class="o">[]</span> <span class="n">lps</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kt">int</span> <span class="no">M</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="na">length</span><span class="o">();</span>
+        <span class="kt">int</span> <span class="n">len</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+
+        <span class="n">lps</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+
+        <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="o">;</span>
+        <span class="k">while</span> <span class="o">(</span><span class="n">i</span> <span class="o">&lt;</span> <span class="no">M</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">pattern</span><span class="o">.</span><span class="na">charAt</span><span class="o">(</span><span class="n">i</span><span class="o">)</span> <span class="o">==</span> <span class="n">pattern</span><span class="o">.</span><span class="na">charAt</span><span class="o">(</span><span class="n">len</span><span class="o">))</span> <span class="o">{</span>
+                <span class="n">len</span><span class="o">++;</span>
+                <span class="n">lps</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="n">len</span><span class="o">;</span>
+                <span class="n">i</span><span class="o">++;</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">len</span> <span class="o">!=</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="n">len</span> <span class="o">=</span> <span class="n">lps</span><span class="o">[</span><span class="n">len</span> <span class="o">-</span> <span class="mi">1</span><span class="o">];</span>
+                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                    <span class="n">lps</span><span class="o">[</span><span class="n">i</span><span class="o">]</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+                    <span class="n">i</span><span class="o">++;</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="nf">KMP_codestorywithMIK</span><span class="o">(</span><span class="nc">String</span> <span class="n">pat</span><span class="o">,</span> <span class="nc">String</span> <span class="n">txt</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kt">int</span> <span class="no">N</span> <span class="o">=</span> <span class="n">txt</span><span class="o">.</span><span class="na">length</span><span class="o">();</span>
+        <span class="kt">int</span> <span class="no">M</span> <span class="o">=</span> <span class="n">pat</span><span class="o">.</span><span class="na">length</span><span class="o">();</span>
+        <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">result</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;();</span>
+
+        <span class="kt">int</span><span class="o">[]</span> <span class="n">lps</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[</span><span class="no">M</span><span class="o">];</span>
+        <span class="n">computeLPS</span><span class="o">(</span><span class="n">pat</span><span class="o">,</span> <span class="n">lps</span><span class="o">);</span>
+
+        <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="c1">// Index for text</span>
+        <span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="c1">// Index for pattern</span>
+
+        <span class="k">while</span> <span class="o">(</span><span class="n">i</span> <span class="o">&lt;</span> <span class="no">N</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">pat</span><span class="o">.</span><span class="na">charAt</span><span class="o">(</span><span class="n">j</span><span class="o">)</span> <span class="o">==</span> <span class="n">txt</span><span class="o">.</span><span class="na">charAt</span><span class="o">(</span><span class="n">i</span><span class="o">))</span> <span class="o">{</span>
+                <span class="n">i</span><span class="o">++;</span>
+                <span class="n">j</span><span class="o">++;</span>
+            <span class="o">}</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="n">j</span> <span class="o">==</span> <span class="no">M</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">result</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">i</span> <span class="o">-</span> <span class="n">j</span><span class="o">);</span> <span class="c1">// Pattern found at index i-j+1 (If you have to return 1 Based</span>
+                                   <span class="c1">// indexing, that's why added + 1)</span>
+                <span class="n">j</span> <span class="o">=</span> <span class="n">lps</span><span class="o">[</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="o">];</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">i</span> <span class="o">&lt;</span> <span class="no">N</span> <span class="o">&amp;&amp;</span> <span class="n">pat</span><span class="o">.</span><span class="na">charAt</span><span class="o">(</span><span class="n">j</span><span class="o">)</span> <span class="o">!=</span> <span class="n">txt</span><span class="o">.</span><span class="na">charAt</span><span class="o">(</span><span class="n">i</span><span class="o">))</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">j</span> <span class="o">!=</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="n">j</span> <span class="o">=</span> <span class="n">lps</span><span class="o">[</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="o">];</span>
+                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                    <span class="n">i</span><span class="o">++;</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+
+        <span class="k">return</span> <span class="n">result</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">private</span> <span class="kt">int</span> <span class="nf">lowerBound</span><span class="o">(</span><span class="nc">List</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">list</span><span class="o">,</span> <span class="kt">int</span> <span class="n">target</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kt">int</span> <span class="n">left</span> <span class="o">=</span> <span class="mi">0</span><span class="o">,</span> <span class="n">right</span> <span class="o">=</span> <span class="n">list</span><span class="o">.</span><span class="na">size</span><span class="o">()</span> <span class="o">-</span> <span class="mi">1</span><span class="o">,</span> <span class="n">result</span> <span class="o">=</span> <span class="n">list</span><span class="o">.</span><span class="na">size</span><span class="o">();</span>
+
+        <span class="k">while</span> <span class="o">(</span><span class="n">left</span> <span class="o">&lt;=</span> <span class="n">right</span><span class="o">)</span> <span class="o">{</span>
+            <span class="kt">int</span> <span class="n">mid</span> <span class="o">=</span> <span class="n">left</span> <span class="o">+</span> <span class="o">(</span><span class="n">right</span> <span class="o">-</span> <span class="n">left</span><span class="o">)</span> <span class="o">/</span> <span class="mi">2</span><span class="o">;</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="n">list</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">mid</span><span class="o">)</span> <span class="o">&gt;=</span> <span class="n">target</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">mid</span><span class="o">;</span>
+                <span class="n">right</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">-</span> <span class="mi">1</span><span class="o">;</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="n">left</span> <span class="o">=</span> <span class="n">mid</span> <span class="o">+</span> <span class="mi">1</span><span class="o">;</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+
+        <span class="k">return</span> <span class="n">result</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="nf">beautifulIndices</span><span class="o">(</span><span class="nc">String</span> <span class="n">s</span><span class="o">,</span> <span class="nc">String</span> <span class="n">a</span><span class="o">,</span> <span class="nc">String</span> <span class="n">b</span><span class="o">,</span> <span class="kt">int</span> <span class="n">k</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="na">length</span><span class="o">();</span>
+
+        <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">i_indices</span> <span class="o">=</span> <span class="n">KMP_codestorywithMIK</span><span class="o">(</span><span class="n">a</span><span class="o">,</span> <span class="n">s</span><span class="o">);</span>
+        <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">j_indices</span> <span class="o">=</span> <span class="n">KMP_codestorywithMIK</span><span class="o">(</span><span class="n">b</span><span class="o">,</span> <span class="n">s</span><span class="o">);</span>
+
+        <span class="nc">List</span><span class="o">&lt;</span><span class="nc">Integer</span><span class="o">&gt;</span> <span class="n">result</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">&lt;&gt;();</span>
+
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">:</span> <span class="n">i_indices</span><span class="o">)</span> <span class="o">{</span>
+
+            <span class="kt">int</span> <span class="n">left_limit</span> <span class="o">=</span> <span class="nc">Math</span><span class="o">.</span><span class="na">max</span><span class="o">(</span><span class="mi">0</span><span class="o">,</span> <span class="n">i</span> <span class="o">-</span> <span class="n">k</span><span class="o">);</span> <span class="c1">// To avoid out of bound -&gt; I used max(0, i-k)</span>
+            <span class="kt">int</span> <span class="n">right_limit</span>
+                <span class="o">=</span> <span class="nc">Math</span><span class="o">.</span><span class="na">min</span><span class="o">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="o">,</span> <span class="n">i</span> <span class="o">+</span> <span class="n">k</span><span class="o">);</span> <span class="c1">// To avoid out of bound -&gt; I used min(n-1, i+k)</span>
+
+            <span class="kt">int</span> <span class="n">lowerBoundIndex</span> <span class="o">=</span> <span class="n">lowerBound</span><span class="o">(</span><span class="n">j_indices</span><span class="o">,</span> <span class="n">left_limit</span><span class="o">);</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="n">lowerBoundIndex</span> <span class="o">&lt;</span> <span class="n">j_indices</span><span class="o">.</span><span class="na">size</span><span class="o">()</span>
+                <span class="o">&amp;&amp;</span> <span class="n">j_indices</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">lowerBoundIndex</span><span class="o">)</span> <span class="o">&lt;=</span> <span class="n">right_limit</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">result</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">i</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+
+        <span class="k">return</span> <span class="n">result</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+</code></pre></div></div>
+</li>
+
+	<li>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Solution</span> <span class="p">{</span>
+<span class="nl">public:</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">beautifulIndices</span><span class="p">(</span><span class="n">string</span> <span class="n">s</span><span class="p">,</span> <span class="n">string</span> <span class="n">patternA</span><span class="p">,</span> <span class="n">string</span> <span class="n">patternB</span><span class="p">,</span> <span class="kt">int</span> <span class="n">k</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">beautifulIndicesA</span> <span class="o">=</span> <span class="n">kmpSearch</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">patternA</span><span class="p">);</span>
+        <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">beautifulIndicesB</span> <span class="o">=</span> <span class="n">kmpSearch</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">patternB</span><span class="p">);</span>
+
+        <span class="n">sort</span><span class="p">(</span><span class="n">beautifulIndicesB</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">beautifulIndicesB</span><span class="p">.</span><span class="n">end</span><span class="p">());</span>
+
+        <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">result</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">indexA</span> <span class="o">:</span> <span class="n">beautifulIndicesA</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kt">int</span> <span class="n">left</span> <span class="o">=</span> <span class="n">lower_bound</span><span class="p">(</span><span class="n">beautifulIndicesB</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">beautifulIndicesB</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span> <span class="n">indexA</span> <span class="o">-</span> <span class="n">k</span><span class="p">)</span> <span class="o">-</span> <span class="n">beautifulIndicesB</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span>
+            <span class="kt">int</span> <span class="n">right</span> <span class="o">=</span> <span class="n">lower_bound</span><span class="p">(</span><span class="n">beautifulIndicesB</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">beautifulIndicesB</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span> <span class="n">indexA</span> <span class="o">+</span> <span class="n">k</span> <span class="o">+</span> <span class="n">patternB</span><span class="p">.</span><span class="n">length</span><span class="p">())</span> <span class="o">-</span> <span class="n">beautifulIndicesB</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span>
+
+            <span class="n">left</span> <span class="o">=</span> <span class="p">(</span><span class="n">left</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">?</span> <span class="n">left</span> <span class="o">:</span> <span class="o">-</span><span class="p">(</span><span class="n">left</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+            <span class="n">right</span> <span class="o">=</span> <span class="p">(</span><span class="n">right</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">?</span> <span class="n">right</span> <span class="o">:</span> <span class="o">-</span><span class="p">(</span><span class="n">right</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+
+            <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">indexB</span> <span class="o">=</span> <span class="n">left</span><span class="p">;</span> <span class="n">indexB</span> <span class="o">&lt;</span> <span class="n">right</span><span class="p">;</span> <span class="n">indexB</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">abs</span><span class="p">(</span><span class="n">beautifulIndicesB</span><span class="p">[</span><span class="n">indexB</span><span class="p">]</span> <span class="o">-</span> <span class="n">indexA</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">k</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">result</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">indexA</span><span class="p">);</span>
+                    <span class="k">break</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+    <span class="p">}</span>
+
+<span class="nl">private:</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">kmpSearch</span><span class="p">(</span><span class="n">string</span> <span class="n">text</span><span class="p">,</span> <span class="n">string</span> <span class="n">pattern</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">indices</span><span class="p">;</span>
+        <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">pi</span> <span class="o">=</span> <span class="n">computePrefixFunction</span><span class="p">(</span><span class="n">pattern</span><span class="p">);</span>
+
+        <span class="kt">int</span> <span class="n">q</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">text</span><span class="p">.</span><span class="n">length</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">while</span> <span class="p">(</span><span class="n">q</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">pattern</span><span class="p">[</span><span class="n">q</span><span class="p">]</span> <span class="o">!=</span> <span class="n">text</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="p">{</span>
+                <span class="n">q</span> <span class="o">=</span> <span class="n">pi</span><span class="p">[</span><span class="n">q</span> <span class="o">-</span> <span class="mi">1</span><span class="p">];</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">pattern</span><span class="p">[</span><span class="n">q</span><span class="p">]</span> <span class="o">==</span> <span class="n">text</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="p">{</span>
+                <span class="n">q</span><span class="o">++</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">q</span> <span class="o">==</span> <span class="n">pattern</span><span class="p">.</span><span class="n">length</span><span class="p">())</span> <span class="p">{</span>
+                <span class="n">indices</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="n">q</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+                <span class="n">q</span> <span class="o">=</span> <span class="n">pi</span><span class="p">[</span><span class="n">q</span> <span class="o">-</span> <span class="mi">1</span><span class="p">];</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">indices</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">computePrefixFunction</span><span class="p">(</span><span class="n">string</span> <span class="n">pattern</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">m</span> <span class="o">=</span> <span class="n">pattern</span><span class="p">.</span><span class="n">length</span><span class="p">();</span>
+        <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">pi</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+        <span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">q</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">q</span> <span class="o">&lt;</span> <span class="n">m</span><span class="p">;</span> <span class="n">q</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">while</span> <span class="p">(</span><span class="n">k</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">pattern</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">!=</span> <span class="n">pattern</span><span class="p">[</span><span class="n">q</span><span class="p">])</span> <span class="p">{</span>
+                <span class="n">k</span> <span class="o">=</span> <span class="n">pi</span><span class="p">[</span><span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">];</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">pattern</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">==</span> <span class="n">pattern</span><span class="p">[</span><span class="n">q</span><span class="p">])</span> <span class="p">{</span>
+                <span class="n">k</span><span class="o">++</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="n">pi</span><span class="p">[</span><span class="n">q</span><span class="p">]</span> <span class="o">=</span> <span class="n">k</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">pi</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+</code></pre></div></div>
+</li>
+
+	<li>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Solution</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">beautifulIndices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+        <span class="k">def</span> <span class="nf">build_prefix_function</span><span class="p">(</span><span class="n">pattern</span><span class="p">):</span>
+            <span class="n">prefix_function</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span>
+            <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">pattern</span><span class="p">)):</span>
+                <span class="k">while</span> <span class="n">j</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">pattern</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="n">pattern</span><span class="p">[</span><span class="n">j</span><span class="p">]:</span>
+                    <span class="n">j</span> <span class="o">=</span> <span class="n">prefix_function</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">pattern</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">pattern</span><span class="p">[</span><span class="n">j</span><span class="p">]:</span>
+                    <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">prefix_function</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">j</span>
+            <span class="k">return</span> <span class="n">prefix_function</span>
+
+        <span class="k">def</span> <span class="nf">kmp_search</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">prefix_function</span><span class="p">):</span>
+            <span class="n">occurrences</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)):</span>
+                <span class="k">while</span> <span class="n">j</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">text</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="n">pattern</span><span class="p">[</span><span class="n">j</span><span class="p">]:</span>
+                    <span class="n">j</span> <span class="o">=</span> <span class="n">prefix_function</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">text</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">pattern</span><span class="p">[</span><span class="n">j</span><span class="p">]:</span>
+                    <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">pattern</span><span class="p">):</span>
+                    <span class="n">occurrences</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                    <span class="n">j</span> <span class="o">=</span> <span class="n">prefix_function</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">occurrences</span>
+
+        <span class="n">prefix_a</span> <span class="o">=</span> <span class="n">build_prefix_function</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+        <span class="n">prefix_b</span> <span class="o">=</span> <span class="n">build_prefix_function</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+
+        <span class="n">resa</span> <span class="o">=</span> <span class="n">kmp_search</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">prefix_a</span><span class="p">)</span>
+        <span class="n">resb</span> <span class="o">=</span> <span class="n">kmp_search</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">prefix_b</span><span class="p">)</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">resa</span><span class="p">,</span> <span class="n">resb</span><span class="p">)</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">resa</span><span class="p">):</span>
+            <span class="k">while</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">resb</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">resb</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="n">resa</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="n">k</span><span class="p">:</span>
+                    <span class="n">res</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">resa</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                    <span class="k">break</span>
+                <span class="k">elif</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">resb</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">resb</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">resa</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">&lt;</span> <span class="nb">abs</span><span class="p">(</span>
+                    <span class="n">resb</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="n">resa</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="p">):</span>
+                    <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">break</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">res</span>
+
+</code></pre></div></div>
+</li>
+
+	<li>
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="n">beautifulIndices</span><span class="p">(</span><span class="n">s</span> <span class="kt">string</span><span class="p">,</span> <span class="n">a</span> <span class="kt">string</span><span class="p">,</span> <span class="n">b</span> <span class="kt">string</span><span class="p">,</span> <span class="n">k</span> <span class="kt">int</span><span class="p">)</span> <span class="p">[]</span><span class="kt">int</span> <span class="p">{</span>
+
+	<span class="n">s_len</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+	<span class="n">a_len</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+	<span class="n">b_len</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+
+	<span class="n">final</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">int</span><span class="p">,</span> <span class="m">0</span><span class="p">)</span>
+	<span class="n">lps_a</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">int</span><span class="p">,</span> <span class="n">a_len</span><span class="p">)</span>
+	<span class="n">lps_b</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">int</span><span class="p">,</span> <span class="n">b_len</span><span class="p">)</span>
+	<span class="n">a_index</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">int</span><span class="p">,</span> <span class="m">0</span><span class="p">)</span>
+	<span class="n">b_index</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">int</span><span class="p">,</span> <span class="m">0</span><span class="p">)</span>
+
+	<span class="k">var</span> <span class="n">pat</span> <span class="k">func</span><span class="p">(</span><span class="n">lps</span> <span class="p">[]</span><span class="kt">int</span><span class="p">,</span> <span class="n">s_l</span> <span class="kt">int</span><span class="p">,</span> <span class="n">pattern</span> <span class="kt">string</span><span class="p">)</span>
+
+	<span class="n">pat</span> <span class="o">=</span> <span class="k">func</span><span class="p">(</span><span class="n">lps</span> <span class="p">[]</span><span class="kt">int</span><span class="p">,</span> <span class="n">s_l</span> <span class="kt">int</span><span class="p">,</span> <span class="n">pattern</span> <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+
+		<span class="n">l</span> <span class="o">:=</span> <span class="m">0</span>
+		<span class="n">lps</span><span class="p">[</span><span class="m">0</span><span class="p">]</span> <span class="o">=</span> <span class="m">0</span>
+		<span class="n">i</span> <span class="o">:=</span> <span class="m">1</span>
+
+		<span class="k">for</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">s_l</span> <span class="p">{</span>
+			<span class="k">if</span> <span class="n">pattern</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">pattern</span><span class="p">[</span><span class="n">l</span><span class="p">]</span> <span class="p">{</span>
+				<span class="n">l</span><span class="o">++</span>
+				<span class="n">lps</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">l</span>
+				<span class="n">i</span><span class="o">++</span>
+			<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+				<span class="k">if</span> <span class="n">l</span> <span class="o">!=</span> <span class="m">0</span> <span class="p">{</span>
+					<span class="n">l</span> <span class="o">=</span> <span class="n">lps</span><span class="p">[</span><span class="n">l</span><span class="o">-</span><span class="m">1</span><span class="p">]</span>
+				<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+					<span class="n">lps</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">l</span>
+					<span class="n">i</span><span class="o">++</span>
+				<span class="p">}</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+
+	<span class="n">pat</span><span class="p">(</span><span class="n">lps_a</span><span class="p">,</span> <span class="n">a_len</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
+	<span class="n">pat</span><span class="p">(</span><span class="n">lps_b</span><span class="p">,</span> <span class="n">b_len</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+
+	<span class="k">var</span> <span class="n">kmp</span> <span class="k">func</span><span class="p">(</span><span class="n">pat</span> <span class="kt">string</span><span class="p">,</span> <span class="n">pat_l</span> <span class="kt">int</span><span class="p">,</span> <span class="n">lps</span> <span class="p">[]</span><span class="kt">int</span><span class="p">,</span> <span class="n">index</span> <span class="o">*</span><span class="p">[]</span><span class="kt">int</span><span class="p">)</span>
+
+	<span class="n">kmp</span> <span class="o">=</span> <span class="k">func</span><span class="p">(</span><span class="n">pat</span> <span class="kt">string</span><span class="p">,</span> <span class="n">pat_l</span> <span class="kt">int</span><span class="p">,</span> <span class="n">lps</span> <span class="p">[]</span><span class="kt">int</span><span class="p">,</span> <span class="n">index</span> <span class="o">*</span><span class="p">[]</span><span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+		<span class="n">i</span> <span class="o">:=</span> <span class="m">0</span>
+		<span class="n">j</span> <span class="o">:=</span> <span class="m">0</span>
+		<span class="k">for</span> <span class="n">s_len</span><span class="o">-</span><span class="n">i</span> <span class="o">&gt;=</span> <span class="n">pat_l</span><span class="o">-</span><span class="n">j</span> <span class="p">{</span>
+			<span class="k">if</span> <span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">pat</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="p">{</span>
+				<span class="n">i</span><span class="o">++</span>
+				<span class="n">j</span><span class="o">++</span>
+			<span class="p">}</span>
+			<span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="n">pat_l</span> <span class="p">{</span>
+				<span class="o">*</span><span class="n">index</span> <span class="o">=</span> <span class="nb">append</span><span class="p">(</span><span class="o">*</span><span class="n">index</span><span class="p">,</span> <span class="n">i</span><span class="o">-</span><span class="n">pat_l</span><span class="p">)</span>
+				<span class="n">j</span> <span class="o">=</span> <span class="n">lps</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="m">1</span><span class="p">]</span>
+			<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="n">pat</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="p">{</span>
+				<span class="k">if</span> <span class="n">j</span> <span class="o">!=</span> <span class="m">0</span> <span class="p">{</span>
+					<span class="n">j</span> <span class="o">=</span> <span class="n">lps</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="m">1</span><span class="p">]</span>
+				<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+					<span class="n">i</span><span class="o">++</span>
+				<span class="p">}</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+
+	<span class="n">kmp</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">a_len</span><span class="p">,</span> <span class="n">lps_a</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">a_index</span><span class="p">)</span>
+	<span class="n">kmp</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">b_len</span><span class="p">,</span> <span class="n">lps_b</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">b_index</span><span class="p">)</span>
+
+	<span class="c">// fmt.Println(a_index, b_index)</span>
+
+	<span class="n">i</span> <span class="o">:=</span> <span class="m">0</span>
+	<span class="n">j</span> <span class="o">:=</span> <span class="m">0</span>
+
+	<span class="k">for</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">a_index</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">b_index</span><span class="p">)</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="n">a_index</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">k</span> <span class="o">&gt;=</span> <span class="n">b_index</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="n">a_index</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="n">k</span> <span class="o">&lt;=</span> <span class="n">b_index</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="p">{</span>
+			<span class="n">final</span> <span class="o">=</span> <span class="nb">append</span><span class="p">(</span><span class="n">final</span><span class="p">,</span> <span class="n">a_index</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+			<span class="n">i</span><span class="o">++</span>
+		<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="n">a_index</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="n">k</span> <span class="o">&gt;</span> <span class="n">b_index</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="p">{</span>
+			<span class="n">j</span><span class="o">++</span>
+		<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+			<span class="n">i</span><span class="o">++</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+
+	<span class="k">return</span> <span class="n">final</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+</li>
+
+</ul>
+
+<h1 id="all-problems"><a href="https://leetcode.ca/all/problems.html">All Problems</a></h1>
+
+<h1 id="all-solutions"><a href="https://leetcode.ca/blog">All Solutions</a></h1>
+
+      </article>
+
+      
+
+      
+
+      
+        <!-- Check if any share-links are active -->
+
+
+
+
+<section id = "social-share-section">
+  <span class="sr-only">Share: </span>
+
+  
+    <a href="https://twitter.com/intent/tweet?text=3008+-+Find+Beautiful+Indices+in+the+Given+Array+II&url=https%3A%2F%2Fleetcode.ca%2F2024-01-20-3008-Find-Beautiful-Indices-in-the-Given-Array-II%2F"
+      class="btn btn-social-icon btn-twitter" title="Share on Twitter">
+      <span class="fab fa-fw fa-twitter" aria-hidden="true"></span>
+      <span class="sr-only">Twitter</span>
+    </a>
+  
+
+  
+    <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fleetcode.ca%2F2024-01-20-3008-Find-Beautiful-Indices-in-the-Given-Array-II%2F"
+      class="btn btn-social-icon btn-facebook" title="Share on Facebook">
+      <span class="fab fa-fw fa-facebook" aria-hidden="true"></span>
+      <span class="sr-only">Facebook</span>
+    </a>
+  
+
+  
+    <a href="https://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fleetcode.ca%2F2024-01-20-3008-Find-Beautiful-Indices-in-the-Given-Array-II%2F"
+      class="btn btn-social-icon btn-linkedin" title="Share on LinkedIn">
+      <span class="fab fa-fw fa-linkedin" aria-hidden="true"></span>
+      <span class="sr-only">LinkedIn</span>
+    </a>
+  
+
+  
+
+</section>
+
+
+
+      
+
+      <ul class="pagination blog-pager">
+        
+        <li class="page-item previous">
+          <a class="page-link" href="/2024-01-20-3005-Count-Elements-With-Maximum-Frequency/" data-toggle="tooltip" data-placement="top" title="3005 - Count Elements With Maximum Frequency">&larr; Previous Post</a>
+        </li>
+        
+        
+        <li class="page-item next">
+          <a class="page-link" href="/2024-01-20-3009-Maximum-Number-of-Intersections-on-the-Chart/" data-toggle="tooltip" data-placement="top" title="3009 - Maximum Number of Intersections on the Chart">Next Post &rarr;</a>
+        </li>
+        
+      </ul>
+      
+  <div class="disqus-comments">
+  <div class="comments">
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+	  var disqus_shortname = 'leetcodeca';
+	  /* ensure that pages with query string get the same discussion */
+	  var url_parts = window.location.href.split("?");
+	  var disqus_url = url_parts[0];
+	  (function() {
+		var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+		dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+		(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	  })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</div>
+  
+  
+
+  
+
+
+
+
+    </div>
+  </div>
+</div>
+
+
+  <footer>
+  <div class="container-md beautiful-jekyll-footer">
+    <div class="row">
+      <div class="col-xl-8 offset-xl-2 col-lg-10 offset-lg-1">
+      <ul class="list-inline text-center footer-links"><li class="list-inline-item">
+    <a href="/feed.xml" title="RSS">
+      <span class="fa-stack fa-lg" aria-hidden="true">
+        <i class="fas fa-circle fa-stack-2x"></i>
+        <i class="fas fa-rss fa-stack-1x fa-inverse"></i>
+      </span>
+      <span class="sr-only">RSS</span>
+    </a>
+  </li><li class="list-inline-item">
+    <a href="mailto:admin@leetcode.ca" title="Email me">
+      <span class="fa-stack fa-lg" aria-hidden="true">
+        <i class="fas fa-circle fa-stack-2x"></i>
+        <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+      </span>
+      <span class="sr-only">Email me</span>
+   </a>
+  </li></ul>
+
+      
+      <p class="copyright text-muted">
+      
+        Leetcode
+        &nbsp;&bull;&nbsp;
+      
+      2026
+
+      
+        &nbsp;&bull;&nbsp;
+        <span class="author-site">
+          <a href="https://leetcode.ca/">leetcode.ca</a>
+        </span>
+      
+
+      
+      </p>
+      
+      <p class="theme-by text-muted">
+        Copyright © 2025 leetcode.ca
+      </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+  
+  
+    
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs=" crossorigin="anonymous"></script>
+
+
+  
+    
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+
+
+  
+    
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+
+  
+
+
+
+  
+    <!-- doing something a bit funky here because I want to be careful not to include JQuery twice! -->
+    
+      <script src="/assets/js/beautifuljekyll.js"></script>
+    
+  
+
+
+
+
+
+  
+    
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+  
+    
+  <script src="https://cdn.jsdelivr.net/npm/anchor-js/anchor.min.js"></script>
+
+
+  
+
+
+
+  
+    <script src="/assets/js/anchor-js-config.js"></script>
+  
+
+
+
+</body>
+</html>
