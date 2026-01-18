@@ -14,6 +14,7 @@ const ELEVENLABS_VOICE_ID = "21m00Tcm4TlvDq8ikWAM"; // Rachel voice
 interface InterviewRoomProps {
   onEndInterview: () => void;
   initialResponse?: string | null;
+  debugMode?: boolean;
 }
 
 const sampleQuestions = [
@@ -71,7 +72,7 @@ Output: []`,
   },
 ];
 
-const InterviewRoom = ({ onEndInterview, initialResponse }: InterviewRoomProps) => {
+const InterviewRoom = ({ onEndInterview, initialResponse, debugMode = false }: InterviewRoomProps) => {
   const [isMuted, setIsMuted] = useState(false);
   const [isVideoOn, setIsVideoOn] = useState(true);
   const [isCodeSharing, setIsCodeSharing] = useState(false);
@@ -153,12 +154,12 @@ const InterviewRoom = ({ onEndInterview, initialResponse }: InterviewRoomProps) 
 
   // Speak the initial response from /start using ElevenLabs TTS
   useEffect(() => {
-    console.log("ElevenLabs TTS: useEffect triggered, initialResponse:", initialResponse);
-    if (initialResponse && !hasSpokenInitialRef.current && audioRef.current) {
+    console.log("ElevenLabs TTS: useEffect triggered, initialResponse:", initialResponse, "debugMode:", debugMode);
+    if (!debugMode && initialResponse && !hasSpokenInitialRef.current && audioRef.current) {
       hasSpokenInitialRef.current = true;
       speakWithElevenLabs(initialResponse);
     }
-  }, [initialResponse]);
+  }, [initialResponse, debugMode]);
 
   // Cleanup on unmount
   useEffect(() => {

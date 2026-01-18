@@ -49,7 +49,7 @@ const Index = () => {
   }
 
   if (interviewState === "interview") {
-    return <InterviewRoom onEndInterview={handleEndInterview} initialResponse={initialResponse} />;
+    return <InterviewRoom onEndInterview={handleEndInterview} initialResponse={initialResponse} debugMode={debugMode} />;
   }
 
   // Ended state - simple thank you screen
