@@ -1,0 +1,24 @@
+{
+  "company": "leetcode",
+  "source": "problem_details",
+  "url": "Same Tree",
+  "cached_at": "2026-01-17T20:40:40.769190",
+  "data": {
+    "url": "https://leetcode.ca/2016-03-09-100-Same-Tree/",
+    "leetcode_number": null,
+    "examples": [
+      "Input:p = [1,2,3], q = [1,2,3]Output:true",
+      "Input:p = [1,2], q = [1,null,2]Output:false",
+      "Input:p = [1,2,1], q = [1,1,2]Output:false"
+    ],
+    "constraints": [
+      "The number of nodes in both trees is in the range[0, 100].",
+      "-104<= Node.val <= 104"
+    ],
+    "problem_statement": "Given the roots of two binary treespandq, write a function to check if they are the same or not.\n\nTwo binary trees are considered the same if they are structurally identical, and the nodes have the same value.\n\n",
+    "difficulty": "medium",
+    "title": "Same Tree",
+    "example_input": "p = [1,2,3], q = [1,2,3]",
+    "example_output": "true"
+  }
+}

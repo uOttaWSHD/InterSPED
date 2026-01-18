@@ -1,0 +1,24 @@
+{
+  "company": "leetcode",
+  "source": "problem_details",
+  "url": "Longest Substring Without Repeating Characters",
+  "cached_at": "2026-01-17T20:43:13.521861",
+  "data": {
+    "url": "https://leetcode.ca/2015-12-03-3-Longest-Substring-Without-Repeating-Characters/",
+    "leetcode_number": null,
+    "examples": [
+      "Input:s = \"abcabcbb\"Output:3Explanation:The answer is \"abc\", with the length of 3.",
+      "Input:s = \"bbbbb\"Output:1Explanation:The answer is \"b\", with the length of 1.",
+      "Input:s = \"pwwkew\"Output:3Explanation:The answer is \"wke\", with the length of 3.\nNotice that the answer must be a substring, \"pwke\" is a subsequence and not a substring."
+    ],
+    "constraints": [
+      "0 <= s.length <= 5 * 104",
+      "sconsists of English letters, digits, symbols and spaces."
+    ],
+    "problem_statement": "Given a strings, find the length of thelongestsubstringwithout repeating characters.\n\n",
+    "difficulty": "medium",
+    "title": "Longest Substring Without Repeating Characters",
+    "example_input": "s = \"abcabcbb\"",
+    "example_output": "3"
+  }
+}

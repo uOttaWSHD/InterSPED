@@ -1,0 +1,27 @@
+{
+  "company": "leetcode",
+  "source": "problem_details",
+  "url": "Median of Two Sorted Arrays",
+  "cached_at": "2026-01-17T20:43:11.694885",
+  "data": {
+    "url": "https://leetcode.ca/2015-12-04-4-Median-of-Two-Sorted-Arrays/",
+    "leetcode_number": null,
+    "examples": [
+      "Input:nums1 = [1,3], nums2 = [2]Output:2.00000Explanation:merged array = [1,2,3] and median is 2.",
+      "Input:nums1 = [1,2], nums2 = [3,4]Output:2.50000Explanation:merged array = [1,2,3,4] and median is (2 + 3) / 2 = 2.5."
+    ],
+    "constraints": [
+      "nums1.length == m",
+      "nums2.length == n",
+      "0 <= m <= 1000",
+      "0 <= n <= 1000",
+      "1 <= m + n <= 2000",
+      "-106<= nums1[i], nums2[i] <= 106"
+    ],
+    "problem_statement": "Given two sorted arraysnums1andnums2of sizemandnrespectively, returnthe medianof the two sorted arrays.\n\nThe overall run time complexity should beO(log (m+n)).\n\n",
+    "difficulty": "medium",
+    "title": "Median of Two Sorted Arrays",
+    "example_input": "nums1 = [1,3], nums2 = [2]",
+    "example_output": "2.00000"
+  }
+}

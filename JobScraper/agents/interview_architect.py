@@ -2,6 +2,8 @@ from typing import List, Optional, Any, Dict
 from pydantic import BaseModel, Field
 import json
 from models import InterviewProcess, MockInterviewScenario
+from context_optimizer import optimize_context
+from tpm_limiter import tpm_limiter
 
 
 class InterviewArchitectOutput(BaseModel):
@@ -14,13 +16,8 @@ async def run_interview_architect(
 ) -> Dict[str, Any]:
     print("\n" + "🏗️" * 10 + " [AGENT START: Interview Architect] " + "🏗️" * 10)
 
-    parts = []
-    for item in state["raw_scraped_data"]:
-        if item["source_name"] in ["Glassdoor Interviews", "Job Posting"]:
-            parts.append(
-                f"=== {item['source_name']} ===\n{json.dumps(item['data'], indent=2)}"
-            )
-    context = "\n".join(parts)[:15000]
+    # Use optimized context
+    context = optimize_context(state["raw_scraped_data"], max_chars=6000)
 
     prompt_template = prompt_optimizer.get_agent_prompt(
         "interview_architect", state["company_name"], state["position"], context
@@ -33,18 +30,16 @@ async def run_interview_architect(
             position=state["position"],
             scraped_data=context,
         )
-        result = await structured_llm.ainvoke(messages)
-        print(
-            f"📄 [RAW OUTPUT: Interview Architect]\n{json.dumps(result.model_dump(), indent=2)}"
-        )
 
+        # TPM Limiting
+        estimated = tpm_limiter.estimate_tokens(str(messages))
+        await tpm_limiter.wait_for_capacity(estimated)
+
+        result = await structured_llm.ainvoke(messages)
         return {
             "interview_process": result.interview_process.model_dump(),
             "mock_scenarios": [m.model_dump() for m in result.mock_scenarios],
         }
     except Exception as e:
         print(f"❌ [AGENT ERROR: Interview Architect] {type(e).__name__}: {e}")
-        import traceback
-
-        traceback.print_exc()
         return {}

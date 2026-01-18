@@ -1,0 +1,23 @@
+{
+  "company": "leetcode",
+  "source": "problem_details",
+  "url": "Find the Index of the First Occurrence in a String",
+  "cached_at": "2026-01-17T20:40:21.501085",
+  "data": {
+    "url": "https://leetcode.ca/2015-12-28-28-Find-the-Index-of-the-First-Occurrence-in-a-String/",
+    "leetcode_number": null,
+    "examples": [
+      "Input:haystack = \"sadbutsad\", needle = \"sad\"Output:0Explanation:\"sad\" occurs at index 0 and 6.\nThe first occurrence is at index 0, so we return 0.",
+      "Input:haystack = \"leetcode\", needle = \"leeto\"Output:-1Explanation:\"leeto\" did not occur in \"leetcode\", so we return -1."
+    ],
+    "constraints": [
+      "1 <= haystack.length, needle.length <= 104",
+      "haystackandneedleconsist of only lowercase English characters."
+    ],
+    "problem_statement": "Given two stringsneedleandhaystack, return the index of the first occurrence ofneedleinhaystack, or-1ifneedleis not part ofhaystack.\n\n",
+    "difficulty": "medium",
+    "title": "Find the Index of the First Occurrence in a String",
+    "example_input": "haystack = \"sadbutsad\", needle = \"sad\"",
+    "example_output": "0"
+  }
+}

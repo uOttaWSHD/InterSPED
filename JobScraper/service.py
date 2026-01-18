@@ -28,6 +28,9 @@ from cache import get_cache
 from leetcode_scraper import create_leetcode_scraper
 from prompt_optimizer import create_prompt_optimizer
 from scraper_engine import ScraperEngine
+from tpm_limiter import tpm_limiter
+
+from pydantic import SecretStr
 
 # Import agents
 from agents.company_analyst import run_company_analyst
@@ -71,15 +74,17 @@ class ScraperService:
         if "llama" in model.lower() or "mixtral" in model.lower():
             from langchain_groq import ChatGroq
 
-            self.llm = ChatGroq(model=model, temperature=0.1, groq_api_key=api_key)
+            self.llm = ChatGroq(
+                model=model, temperature=0.1, api_key=SecretStr(api_key)
+            )
         else:
             from langchain_openai import ChatOpenAI
 
             self.llm = ChatOpenAI(
                 model=model,
                 temperature=0.1,
-                openai_api_key=api_key,
-                openai_api_base=settings.llm_api_base or "https://api.moonshot.cn/v1"
+                api_key=SecretStr(api_key),
+                base_url=settings.llm_api_base or "https://api.moonshot.cn/v1"
                 if "moonshot" in model.lower()
                 else None,
             )
@@ -308,7 +313,9 @@ class ScraperService:
                             response.interview_insights.coding_problems.append(
                                 CodingProblem(
                                     title=p.get("title", "Unknown"),
-                                    difficulty=p.get("difficulty", "medium"),
+                                    difficulty=p.get("difficulty", "medium")
+                                    if p.get("difficulty") in ["easy", "medium", "hard"]
+                                    else "medium",
                                     problem_statement=p.get("problem_statement", ""),
                                     leetcode_number=p.get("leetcode_number"),
                                     leetcode_url=p.get("url"),
@@ -318,6 +325,12 @@ class ScraperService:
                                     optimal_space_complexity=p.get(
                                         "optimal_space_complexity"
                                     ),
+                                    example_input=p.get("example_input") or "",
+                                    example_output=p.get("example_output") or "",
+                                    frequency="common",
+                                    topics=[],
+                                    approach_hints=[],
+                                    constraints=[],
                                     company_specific_notes="Recovered from background cache.",
                                 )
                             )
@@ -375,14 +388,15 @@ class ScraperService:
         }
 
     async def background_enrichment(self, company_name: str):
-        """Update cache in background."""
+        """Update cache in background sequentially to respect TPM."""
         try:
             problems = await self.leetcode_scraper.get_company_problems(
                 company_name, limit=50
             )
             if problems:
+                # Use sequential processing for background to avoid TPM spikes
                 await self.leetcode_scraper.enrich_with_details(
-                    problems, max_details=50
+                    problems, max_details=50, sequential=True
                 )
-        except:
-            pass
+        except Exception as e:
+            print(f"⚠️ [BACKGROUND] Enrichment failed for {company_name}: {e}")

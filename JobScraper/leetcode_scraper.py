@@ -22,6 +22,7 @@ from bs4 import BeautifulSoup, Tag
 
 from cache import get_cache
 from config import settings
+from tpm_limiter import tpm_limiter
 
 
 class LeetCodeProblemData(TypedDict, total=False):
@@ -94,7 +95,9 @@ class LeetCodeScraper:
         # Absolute fallback if file is missing
         return "Extract LeetCode problem details into JSON: leetcode_number, title, difficulty, problem_statement, examples, constraints, example_input, example_output, optimal_time_complexity, optimal_space_complexity."
 
-    async def _scrape_with_yellowcake(self, url: str, prompt: str) -> Any | None:
+    async def _scrape_with_yellowcake(
+        self, url: str, prompt: str, priority: str = "high"
+    ) -> Any | None:
         """
         Scrape a URL using Yellowcake API.
         """
@@ -110,7 +113,11 @@ class LeetCodeScraper:
             print("⚠️ [YELLOWCAKE] Invalid or missing API key.")
             return None
 
-        print(f"🍰 [YELLOWCAKE] Scraping {url}...")
+        print(f"🍰 [YELLOWCAKE] Scraping {url} (Priority: {priority})...")
+
+        # Estimate tokens and wait for capacity
+        estimated_tokens = tpm_limiter.estimate_tokens(prompt + url)
+        await tpm_limiter.wait_for_capacity(estimated_tokens, priority=priority)
 
         headers = {
             "Content-Type": "application/json",
@@ -191,7 +198,10 @@ class LeetCodeScraper:
             return []
 
     async def get_problem_details(
-        self, leetcode_number: int | None = None, problem_title: str | None = None
+        self,
+        leetcode_number: int | None = None,
+        problem_title: str | None = None,
+        priority: str = "high",
     ) -> dict[str, Any] | None:
         """
         Get full problem details from leetcode.ca.
@@ -208,12 +218,14 @@ class LeetCodeScraper:
         if cached:
             return cast(dict[str, Any], cached)
 
-        print(f"🔍 Scraping leetcode.ca for {cache_key}...")
+        print(f"🔍 Scraping leetcode.ca for {cache_key} (Priority: {priority})...")
 
         try:
             # Scrape from leetcode.ca
             problem_data = await self._scrape_leetcode_ca(
-                problem_number=leetcode_number, problem_title=problem_title
+                problem_number=leetcode_number,
+                problem_title=problem_title,
+                priority=priority,
             )
 
             if problem_data:
@@ -232,15 +244,46 @@ class LeetCodeScraper:
             return None
 
     async def enrich_with_details(
-        self, problems: list[dict[str, str | int]], max_details: int = 10
+        self,
+        problems: list[dict[str, str | int]],
+        max_details: int = 10,
+        sequential: bool = False,
     ) -> list[dict[str, Any]]:
         """
-        Enrich problem metadata with full details in parallel.
+        Enrich problem metadata with full details.
         """
         import asyncio
 
+        subset = problems[:max_details]
+        enriched: list[dict[str, Any]] = []
+
+        if sequential:
+            print(
+                f"🐢 [QUEUE] Sequentially fetching details for {len(subset)} problems..."
+            )
+            for problem in subset:
+                number = problem.get("leetcode_number")
+                title = problem.get("title")
+                details = None
+                if number is not None and isinstance(number, int):
+                    details = await self.get_problem_details(
+                        leetcode_number=number, priority="low"
+                    )
+                elif title is not None and isinstance(title, str):
+                    details = await self.get_problem_details(
+                        problem_title=title, priority="low"
+                    )
+
+                if details:
+                    enriched.append({**problem, **details})
+                else:
+                    enriched.append(problem)
+                # Avoid hitting TPM too hard even with limiter
+                await asyncio.sleep(0.5)
+            return enriched
+
         tasks = []
-        for i, problem in enumerate(problems[:max_details]):
+        for i, problem in enumerate(subset):
             number = problem.get("leetcode_number")
             title = problem.get("title")
 
@@ -250,14 +293,13 @@ class LeetCodeScraper:
                 tasks.append(self.get_problem_details(problem_title=title))
 
         if not tasks:
-            return problems[:max_details]
+            return subset
 
         print(f"⚡ [PARALLEL] Fetching details for {len(tasks)} problems...")
         results = await asyncio.gather(*tasks)
 
-        enriched: list[dict[str, Any]] = []
         for i, details in enumerate(results):
-            original_problem = problems[i]
+            original_problem = subset[i]
             if details:
                 enriched_problem = {**original_problem, **details}
                 if "leetcode_number" not in enriched_problem and "number" in details:
@@ -438,7 +480,10 @@ class LeetCodeScraper:
                 return None
 
     async def _scrape_leetcode_ca(
-        self, problem_number: int | None = None, problem_title: str | None = None
+        self,
+        problem_number: int | None = None,
+        problem_title: str | None = None,
+        priority: str = "high",
     ) -> dict[str, Any] | None:
         """Discovers link and extracts data."""
         problem_link = await self.discover_problem_link(problem_number, problem_title)
@@ -447,7 +492,7 @@ class LeetCodeScraper:
 
         if self.yellowcake_api_key:
             data = await self._scrape_with_yellowcake(
-                problem_link, self.yellowcake_prompt
+                problem_link, self.yellowcake_prompt, priority=priority
             )
             if data and isinstance(data, dict):
                 return {

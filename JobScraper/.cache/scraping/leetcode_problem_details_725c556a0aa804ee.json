@@ -1,0 +1,24 @@
+{
+  "company": "leetcode",
+  "source": "problem_details",
+  "url": "Flatten Binary Tree to Linked List",
+  "cached_at": "2026-01-17T20:41:12.153150",
+  "data": {
+    "url": "https://leetcode.ca/2016-03-23-114-Flatten-Binary-Tree-to-Linked-List/",
+    "leetcode_number": null,
+    "examples": [
+      "Input:root = [1,2,5,3,4,null,6]Output:[1,null,2,null,3,null,4,null,5,null,6]",
+      "Input:root = []Output:[]",
+      "Input:root = [0]Output:[0]"
+    ],
+    "constraints": [
+      "The number of nodes in the tree is in the range[0, 2000].",
+      "-100 <= Node.val <= 100"
+    ],
+    "problem_statement": "Given therootof a binary tree, flatten the tree into a \"linked list\":\n\n",
+    "difficulty": "medium",
+    "title": "Flatten Binary Tree to Linked List",
+    "example_input": "root = [1,2,5,3,4,null,6]",
+    "example_output": "[1,null,2,null,3,null,4,null,5,null,6]"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "company": "leetcode",
+  "source": "problem_details",
+  "url": "Two Sum",
+  "cached_at": "2026-01-17T20:43:06.768084",
+  "data": {
+    "url": "https://leetcode.ca/2019-03-28-1214-Two-Sum-BSTs/",
+    "leetcode_number": null,
+    "examples": [
+      "Input:root1 = [2,1,4], root2 = [1,0,3], target = 5Output:trueExplanation:2 and 3 sum up to 5.",
+      "Input:root1 = [0,-10,10], root2 = [5,1,7,0,2], target = 18Output:false"
+    ],
+    "constraints": [
+      "The number of nodes in each tree is in the range[1, 5000].",
+      "-109<= Node.val, target <= 109"
+    ],
+    "problem_statement": "Given the roots of two binary search trees,root1androot2, returntrueif and only if there is a node in the first tree and a node in the second tree whose values sum up to a given integertarget.\n\n",
+    "difficulty": "medium",
+    "title": "Two Sum BSTs",
+    "example_input": "root1 = [2,1,4], root2 = [1,0,3], target = 5",
+    "example_output": "true"
+  }
+}

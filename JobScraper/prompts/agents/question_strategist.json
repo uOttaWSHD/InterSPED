@@ -1,5 +1,5 @@
 {
-  "instructions": "You are a Chief Question Strategist. Your mission is to generate the 'Core 30' interview questions that test behavioral, situational, and culture-fit dimensions.\n\nSCORING CRITERIA:\n- QUESTION QUALITY: Questions must be hyper-specific to {company_name}. Instead of 'Tell me about a time you failed', use 'At RBC, we prioritize community; tell me about a time...'.\n- STAR ANSWERS: Provide detailed, 2-3 paragraph sample answers that model the STAR method.\n- FOLLOW-UPS: Anticipate the next 2-3 questions an interviewer will ask based on the initial answer.\n- COMPANY VALUES: Map questions directly to the company's stated values (e.g., 'Inclusion', 'Progressive thinking').\n\nEnsure at least 15-20 high-quality questions are generated. Never return null for lists.",
-  "human_template": "Analyze the following raw data and company context for {company_name} - {position}:\n\n{scraped_data}",
+  "instructions": "You are a Question Strategist. Generate 15-20 interview questions for {company_name} - {position}.\nCriteria:\n1. QUALITY: Hyper-specific to {company_name}.\n2. STAR ANSWERS: Detailed sample answers using STAR method.\n3. FOLLOW-UPS: Anticipate next 2-3 questions.\n4. VALUES: Map to company values (e.g., 'Inclusion').\nNo null lists.",
+  "human_template": "Analyze data and context for {company_name} - {position}:\n{scraped_data}",
   "demos": []
 }

@@ -1,0 +1,29 @@
+{
+  "company": "leetcode",
+  "source": "problem_details",
+  "url": "Word Search II",
+  "cached_at": "2026-01-17T20:41:16.325255",
+  "data": {
+    "url": "https://leetcode.ca/2016-06-29-212-Word-Search-II/",
+    "leetcode_number": null,
+    "examples": [
+      "Input:board = [[\"o\",\"a\",\"a\",\"n\"],[\"e\",\"t\",\"a\",\"e\"],[\"i\",\"h\",\"k\",\"r\"],[\"i\",\"f\",\"l\",\"v\"]], words = [\"oath\",\"pea\",\"eat\",\"rain\"]Output:[\"eat\",\"oath\"]",
+      "Input:board = [[\"a\",\"b\"],[\"c\",\"d\"]], words = [\"abcb\"]Output:[]"
+    ],
+    "constraints": [
+      "m == board.length",
+      "n == board[i].length",
+      "1 <= m, n <= 12",
+      "board[i][j]is a lowercase English letter.",
+      "1 <= words.length <= 3 * 104",
+      "1 <= words[i].length <= 10",
+      "words[i]consists of lowercase English letters.",
+      "All the strings ofwordsare unique."
+    ],
+    "problem_statement": "Given anm x nboardof characters and a list of stringswords, returnall words on the board.\n\nEach word must be constructed from letters of sequentially adjacent cells, whereadjacent cellsare horizontally or vertically neighboring. The same letter cell may not be used more than once in a word.\n\n",
+    "difficulty": "medium",
+    "title": "Word Search II",
+    "example_input": "board = [[\"o\",\"a\",\"a\",\"n\"],[\"e\",\"t\",\"a\",\"e\"],[\"i\",\"h\",\"k\",\"r\"],[\"i\",\"f\",\"l\",\"v\"]], words = [\"oath\",\"pea\",\"eat\",\"rain\"]",
+    "example_output": "[\"eat\",\"oath\"]"
+  }
+}

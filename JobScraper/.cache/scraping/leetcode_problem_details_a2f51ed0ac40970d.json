@@ -1,0 +1,24 @@
+{
+  "company": "leetcode",
+  "source": "problem_details",
+  "url": "Group Shifted Strings",
+  "cached_at": "2026-01-17T20:41:14.101295",
+  "data": {
+    "url": "https://leetcode.ca/2016-08-05-249-Group-Shifted-Strings/",
+    "leetcode_number": null,
+    "examples": [
+      "Input:strings = [\"abc\",\"bcd\",\"acef\",\"xyz\",\"az\",\"ba\",\"a\",\"z\"]Output:[[\"acef\"],[\"a\",\"z\"],[\"abc\",\"bcd\",\"xyz\"],[\"az\",\"ba\"]]",
+      "Input:strings = [\"a\"]Output:[[\"a\"]]"
+    ],
+    "constraints": [
+      "1 <= strings.length <= 200",
+      "1 <= strings[i].length <= 50",
+      "strings[i]consists of lowercase English letters."
+    ],
+    "problem_statement": "We can shift a string by shifting each of its letters to its successive letter.\n\nWe can keep shifting the string to form a sequence.\n\nGiven an array of stringsstrings, group allstrings[i]that belong to the same shifting sequence. You may return the answer inany order.\n\n",
+    "difficulty": "medium",
+    "title": "Group Shifted Strings",
+    "example_input": "strings = [\"abc\",\"bcd\",\"acef\",\"xyz\",\"az\",\"ba\",\"a\",\"z\"]",
+    "example_output": "[[\"acef\"],[\"a\",\"z\"],[\"abc\",\"bcd\",\"xyz\"],[\"az\",\"ba\"]]"
+  }
+}

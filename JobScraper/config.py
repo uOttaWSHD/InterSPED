@@ -29,6 +29,9 @@ class Settings(BaseSettings):
     api_version: str = "1.0.0"
     api_description: str = "AI-powered company research and interview preparation API"
 
+    # Rate Limiting
+    tpm_limit: int = 10000
+
     # Server Configuration
     debug: bool = False
 

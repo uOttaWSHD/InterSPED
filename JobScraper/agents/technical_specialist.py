@@ -2,6 +2,8 @@ from typing import List, Optional, Any, Dict
 from pydantic import BaseModel, Field
 import json
 from models import CodingProblem, SystemDesignQuestion
+from context_optimizer import optimize_context
+from tpm_limiter import tpm_limiter
 
 
 class TechnicalSpecialistOutput(BaseModel):
@@ -15,13 +17,8 @@ async def run_technical_specialist(
 ) -> Dict[str, Any]:
     print("\n" + "🛠️" * 10 + " [AGENT START: Technical Specialist] " + "🛠️" * 10)
 
-    parts = []
-    for item in state["raw_scraped_data"]:
-        if item["source_name"] in ["LeetCode Problems", "Job Posting"]:
-            parts.append(
-                f"=== {item['source_name']} ===\n{json.dumps(item['data'], indent=2)}"
-            )
-    context = "\n".join(parts)[:15000]
+    # Use optimized context
+    context = optimize_context(state["raw_scraped_data"], max_chars=8000)
 
     prompt_template = prompt_optimizer.get_agent_prompt(
         "technical_specialist", state["company_name"], state["position"], context
@@ -34,11 +31,12 @@ async def run_technical_specialist(
             position=state["position"],
             scraped_data=context,
         )
-        result = await structured_llm.ainvoke(messages)
-        print(
-            f"📄 [RAW OUTPUT: Technical Specialist]\n{json.dumps(result.model_dump(), indent=2)}"
-        )
 
+        # TPM Limiting
+        estimated = tpm_limiter.estimate_tokens(str(messages))
+        await tpm_limiter.wait_for_capacity(estimated)
+
+        result = await structured_llm.ainvoke(messages)
         return {
             "coding_problems": [p.model_dump() for p in result.coding_problems],
             "system_design": [sd.model_dump() for sd in result.system_design_questions],
@@ -46,7 +44,4 @@ async def run_technical_specialist(
         }
     except Exception as e:
         print(f"❌ [AGENT ERROR: Technical Specialist] {type(e).__name__}: {e}")
-        import traceback
-
-        traceback.print_exc()
         return {}

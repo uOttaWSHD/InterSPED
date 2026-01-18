@@ -2,6 +2,8 @@ from typing import List, Optional, Any, Dict
 from pydantic import BaseModel, Field
 import json
 from models import InterviewQuestion
+from context_optimizer import optimize_context
+from tpm_limiter import tpm_limiter
 
 
 class QuestionStrategistOutput(BaseModel):
@@ -14,12 +16,8 @@ async def run_question_strategist(
 ) -> Dict[str, Any]:
     print("\n" + "🧠" * 10 + " [AGENT START: Question Strategist] " + "🧠" * 10)
 
-    parts = []
-    for item in state["raw_scraped_data"]:
-        parts.append(
-            f"=== {item['source_name']} ===\n{json.dumps(item['data'], indent=2)}"
-        )
-    context = "\n".join(parts)[:18000]
+    # Use optimized context
+    context = optimize_context(state["raw_scraped_data"], max_chars=8000)
 
     prompt_template = prompt_optimizer.get_agent_prompt(
         "question_strategist", state["company_name"], state["position"], context
@@ -32,18 +30,16 @@ async def run_question_strategist(
             position=state["position"],
             scraped_data=context,
         )
-        result = await structured_llm.ainvoke(messages)
-        print(
-            f"📄 [RAW OUTPUT: Question Strategist]\n{json.dumps(result.model_dump(), indent=2)}"
-        )
 
+        # TPM Limiting
+        estimated = tpm_limiter.estimate_tokens(str(messages))
+        await tpm_limiter.wait_for_capacity(estimated)
+
+        result = await structured_llm.ainvoke(messages)
         return {
             "common_questions": [q.model_dump() for q in result.common_questions],
             "company_values": result.company_values_in_interviews,
         }
     except Exception as e:
         print(f"❌ [AGENT ERROR: Question Strategist] {type(e).__name__}: {e}")
-        import traceback
-
-        traceback.print_exc()
         return {}
